@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LogAI - The Complete AI Platform</title>
+    <style>
+        /* Basic Reset and Font */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f8ff; /* Light sky blue background */
+            color: #0c1a3e;
+        }
+
+        /* Canvas for 3D Scene */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            display: block;
+        }
+
+        /* Faux scrollbar height to drive the animation */
+        .scroll-container {
+            height: 800vh;
+            width: 100%;
+        }
+
+        /* Section Content Styling */
+        .section {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 500px;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Unique positioning for different sections */
+        #section1 { top: 50%; left: 50%; }
+        #section2 { top: 30%; left: 25%; transform: translate(-50%, -50%); }
+        #section3 { top: 70%; left: 75%; transform: translate(-50%, -50%); }
+        #section4 { top: 50%; left: 50%; }
+        #section5 { top: 35%; left: 70%; transform: translate(-50%, -50%); }
+        #section6 { top: 65%; left: 30%; transform: translate(-50%, -50%); }
+        #section7 { top: 50%; left: 50%; }
+        #section8 { top: 50%; left: 50%; }
+
+        /* Make sections visible when 'active' class is added */
+        .section.active {
+            opacity: 1;
+            pointer-events: all;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #0077ff;
+            font-weight: 800;
+        }
+
+        .section h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .section p {
+            font-size: 1rem;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            .section {
+                width: 85%;
+                padding: 1.5rem;
+                /* Reset positions for a simpler stacked view on mobile */
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+            #section2, #section3, #section5, #section6 {
+                 top: 50%; left: 50%;
+            }
+            .section h1 { font-size: 2rem; }
+            .section h2 { font-size: 1rem; }
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="scroll-container">
+        <!-- Section 1: Hero -->
+        <div id="section1" class="section">
+            <h1>LogAI</h1>
+            <h2>The Complete AI Platform for Enterprise</h2>
+            <p>Unleash the power of artificial intelligence with our unified, scalable, and secure platform. Scroll down to explore the future.</p>
+        </div>
+
+        <!-- Section 2: Data Integration -->
+        <div id="section2" class="section">
+            <h2>Seamless Data Integration</h2>
+            <p>Connect to hundreds of data sources in real-time. Our platform effortlessly centralizes your enterprise data, from cloud services to on-premise databases, creating a single source of truth.</p>
+        </div>
+
+        <!-- Section 3: AI-Powered Analytics -->
+        <div id="section3" class="section">
+            <h2>AI-Powered Analytics</h2>
+            <p>Transform raw data into actionable insights. Utilize our advanced machine learning models to uncover trends, predict outcomes, and automate complex analytical tasks with unparalleled accuracy.</p>
+        </div>
+
+        <!-- Section 4: Machine Learning Hub -->
+        <div id="section4" class="section">
+            <h2>Machine Learning Hub</h2>
+            <p>Build, train, and deploy custom machine learning models with our intuitive, low-code environment. From natural language processing to computer vision, your imagination is the only limit.</p>
+        </div>
+
+        <!-- Section 5: Generative AI Suite -->
+        <div id="section5" class="section">
+            <h2>Generative AI Suite</h2>
+            <p>Leverage state-of-the-art generative models to create content, automate communication, and innovate product design. LogAI brings creative AI to the core of your business operations.</p>
+        </div>
+
+        <!-- Section 6: Enterprise-Grade Security -->
+        <div id="section6" class="section">
+            <h2>Enterprise-Grade Security</h2>
+            <p>Your data's security is our top priority. We provide end-to-end encryption, role-based access control, and continuous monitoring to ensure your assets are always protected.</p>
+        </div>
+
+        <!-- Section 7: Scalable Infrastructure -->
+        <div id="section7" class="section">
+            <h2>Scalable Infrastructure</h2>
+            <p>Built on a cloud-native architecture, LogAI scales dynamically with your needs. Whether you're a startup or a Fortune 500 company, our platform grows with you, ensuring peak performance.</p>
+        </div>
+
+        <!-- Section 8: Get Started -->
+        <div id="section8" class="section">
+            <h2>Join the AI Revolution</h2>
+            <p>Ready to transform your enterprise? Contact our team for a personalized demo and discover how LogAI can drive your business into the future.</p>
+        </div>
+    </div>
+
+    <!-- Import Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <script type="module">
+        // --- SCENE SETUP ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({
+            canvas: document.querySelector('#bg-canvas'),
+            antialias: true,
+            alpha: true, // Make canvas transparent
+        });
+
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // --- LIGHTING ---
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xadd8e6, 1); // Sky blue light
+        directionalLight.position.set(5, 5, 5);
+        scene.add(directionalLight);
+        
+        // --- 3D GLOBE ---
+        // Create a group to hold all globe parts for easier rotation
+        const globeGroup = new THREE.Group();
+        scene.add(globeGroup);
+
+        // Inner core sphere
+        const coreGeometry = new THREE.SphereGeometry(2, 32, 32);
+        const coreMaterial = new THREE.MeshStandardMaterial({
+             color: 0x87ceeb, // Sky blue
+             metalness: 0.3,
+             roughness: 0.6
+        });
+        const core = new THREE.Mesh(coreGeometry, coreMaterial);
+        globeGroup.add(core);
+
+        // Outer wireframe sphere
+        const wireframeGeometry = new THREE.SphereGeometry(2.1, 32, 32);
+        const wireframeMaterial = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.3
+        });
+        const wireframe = new THREE.Mesh(wireframeGeometry, wireframeMaterial);
+        globeGroup.add(wireframe);
+
+        // --- BACKGROUND STARS ---
+        const starGeometry = new THREE.BufferGeometry();
+        const starCount = 5000;
+        const positions = new Float32Array(starCount * 3);
+
+        for (let i = 0; i < starCount; i++) {
+            positions[i * 3 + 0] = (Math.random() - 0.5) * 100;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 100;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 100;
+        }
+        starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+        const starMaterial = new THREE.PointsMaterial({
+            color: 0xffffff,
+            size: 0.05
+        });
+        const stars = new THREE.Points(starGeometry, starMaterial);
+        scene.add(stars);
+
+        // --- SCROLL-BASED ANIMATION ---
+        const sections = document.querySelectorAll('.section');
+        let currentSection = 0;
+
+        // Define camera waypoints for each section
+        const cameraPositions = [
+            { pos: new THREE.Vector3(0, 0, 8), lookAt: new THREE.Vector3(0, 0, 0) }, // Section 1
+            { pos: new THREE.Vector3(1, 3, 4), lookAt: new THREE.Vector3(0, 2, 0) }, // Section 2
+            { pos: new THREE.Vector3(4, -2, 4), lookAt: new THREE.Vector3(2, -1, 0) },// Section 3
+            { pos: new THREE.Vector3(-3, -3, 3), lookAt: new THREE.Vector3(-2, -2, 0) },// Section 4
+            { pos: new THREE.Vector3(4, 2, 4), lookAt: new THREE.Vector3(2, 1, 0) },  // Section 5
+            { pos: new THREE.Vector3(-3, 2, 4), lookAt: new THREE.Vector3(-2, 1, 0) }, // Section 6
+            { pos: new THREE.Vector3(0, -4, 4), lookAt: new THREE.Vector3(0, -2, 0) },// Section 7
+            { pos: new THREE.Vector3(0, 0, 6), lookAt: new THREE.Vector3(0, 0, 0) }  // Section 8
+        ];
+
+        function lerp(start, end, alpha) {
+            return start * (1 - alpha) + end * alpha;
+        }
+
+        function updateCameraAndContent() {
+            const scrollY = window.scrollY;
+            const scrollHeight = document.body.scrollHeight - window.innerHeight;
+            const scrollFraction = scrollY / scrollHeight;
+
+            // Determine which two waypoints we are between
+            const sectionIndex = Math.min(
+                Math.floor(scrollFraction * (cameraPositions.length - 1)),
+                cameraPositions.length - 2
+            );
+            
+            // Determine progress between these two waypoints
+            const sectionProgress = (scrollFraction * (cameraPositions.length - 1)) - sectionIndex;
+            
+            const start = cameraPositions[sectionIndex];
+            const end = cameraPositions[sectionIndex + 1];
+
+            // Interpolate camera position
+            camera.position.lerpVectors(start.pos, end.pos, sectionProgress);
+            
+            // Interpolate lookAt target
+            const lookAtTarget = new THREE.Vector3().lerpVectors(start.lookAt, end.lookAt, sectionProgress);
+            camera.lookAt(lookAtTarget);
+
+            // Update active section content
+            const newSection = Math.round(scrollFraction * (sections.length - 1));
+            if (newSection !== currentSection) {
+                sections[currentSection].classList.remove('active');
+                sections[newSection].classList.add('active');
+                currentSection = newSection;
+            }
+        }
+        
+        window.addEventListener('scroll', updateCameraAndContent);
+        // Set initial state
+        sections[0].classList.add('active');
+        camera.position.copy(cameraPositions[0].pos);
+        camera.lookAt(cameraPositions[0].lookAt);
+        
+
+        // --- RESIZE HANDLER ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- ANIMATION LOOP ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Add subtle rotation to the globe
+            globeGroup.rotation.y += 0.0005;
+            globeGroup.rotation.x += 0.0002;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
+
