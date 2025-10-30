@@ -750,8 +750,6 @@
 
 
     /* === START OF GRADUAL BLUR CSS (ADDED) === */
-
-    /* Base style for the blur container */
     .gradual-blur {
       pointer-events: none;
       /* Allows clicks to pass through by default */
@@ -760,7 +758,6 @@
       /* Creates a new stacking context */
     }
 
-    /* Applied when target="parent" */
     .gradual-blur-parent {
       overflow: hidden;
     }
@@ -772,13 +769,11 @@
       pointer-events: none;
     }
 
-    /* Individual blur layers */
     .gradual-blur-inner>div {
       -webkit-backdrop-filter: inherit;
       backdrop-filter: inherit;
     }
 
-    /* Applied when target="page" */
     .gradual-blur-fixed {
       position: fixed !important;
       top: 0;
@@ -789,16 +784,125 @@
       z-index: 1000;
     }
 
-    /* Fallback for browsers that don't support backdrop-filter */
     @supports not (backdrop-filter: blur(1px)) {
       .gradual-blur-inner>div {
-        /* Shows a simple gradient instead of a blur */
         background: rgba(0, 0, 0, 0.3);
         opacity: 0.5;
       }
     }
 
     /* === END OF GRADUAL BLUR CSS === */
+
+
+    /* === START OF GLASSSURFACE CSS (NEW) === */
+    .glass-surface {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: opacity 0.26s ease-out;
+    }
+
+    .glass-surface__filter {
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      z-index: -1;
+    }
+
+    .glass-surface__content {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      /* Allow content to stack */
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem;
+      /* This matches Tailwind's p-2 */
+      border-radius: inherit;
+      position: relative;
+      z-index: 1;
+    }
+
+    .glass-surface--svg {
+      background: light-dark(hsl(0 0% 100% / var(--glass-frost, 0)), hsl(0 0% 0% / var(--glass-frost, 0)));
+      backdrop-filter: var(--filter-id, url(#glass-filter)) saturate(var(--glass-saturation, 1));
+      box-shadow:
+        0 0 2px 1px light-dark(color-mix(in oklch, black, transparent 85%), color-mix(in oklch, white, transparent 65%)) inset,
+        0 0 10px 4px light-dark(color-mix(in oklch, black, transparent 90%), color-mix(in oklch, white, transparent 85%)) inset,
+        0px 4px 16px rgba(17, 17, 26, 0.05),
+        0px 8px 24px rgba(17, 17, 26, 0.05),
+        0px 16px 56px rgba(17, 17, 26, 0.05),
+        0px 4px 16px rgba(17, 17, 26, 0.05) inset,
+        0px 8px 24px rgba(17, 17, 26, 0.05) inset,
+        0px 16px 56px rgba(17, 17, 26, 0.05) inset;
+    }
+
+    .glass-surface--fallback {
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(12px) saturate(1.8) brightness(1.1);
+      -webkit-backdrop-filter: blur(12px) saturate(1.8) brightness(1.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow:
+        0 8px 32px 0 rgba(31, 38, 135, 0.2),
+        0 2px 16px 0 rgba(31, 38, 135, 0.1),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.4),
+        inset 0 -1px 0 0 rgba(255, 255, 255, 0.2);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .glass-surface--fallback {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(12px) saturate(1.8) brightness(1.2);
+        -webkit-backdrop-filter: blur(12px) saturate(1.8) brightness(1.2);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow:
+          inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
+          inset 0 -1px 0 0 rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    @supports not (backdrop-filter: blur(10px)) {
+      .glass-surface--fallback {
+        background: rgba(255, 255, 255, 0.4);
+        box-shadow:
+          inset 0 1px 0 0 rgba(255, 255, 255, 0.5),
+          inset 0 -1px 0 0 rgba(255, 255, 255, 0.3);
+      }
+
+      .glass-surface--fallback::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: inherit;
+        z-index: -1;
+      }
+    }
+
+    @supports not (backdrop-filter: blur(10px)) {
+      @media (prefers-color-scheme: dark) {
+        .glass-surface--fallback {
+          background: rgba(0, 0, 0, 0.4);
+        }
+
+        .glass-surface--fallback::before {
+          background: rgba(255, 255, 255, 0.05);
+        }
+      }
+    }
+
+    .glass-surface:focus-visible {
+      outline: 2px solid light-dark(#007aff, #0a84ff);
+      outline-offset: 2px;
+    }
+
+    /* === END OF GLASSSURFACE CSS === */
   </style>
 </head>
 
@@ -813,7 +917,7 @@
     </defs>
   </svg>
 
-  <div class="bg-gray-200 w-full p-4 md:p-5">
+  <div id="hero-section" class="bg-gray-200 w-full p-4 md:p-5">
     <div class="relative w-full h-[95vh]">
 
       <div class="absolute z-10 flex items-center gap-2 p-2 bg-gray-200 rounded-[15px] logo-placeholder">
@@ -859,16 +963,6 @@
           </div>
         </div>
 
-
-        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 w-auto z-10">
-          <div class="flex items-center gap-4 md:gap-6 p-2 bg-black rounded-[15px] border border-gray-800 shadow-lg">
-            <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Platform</a>
-            <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Features</a>
-            <a href="#" class="gradient-text-button">Launch AI Platform</a>
-            <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Pricing</a>
-            <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Contact</a>
-          </div>
-        </div>
       </div>
 
     </div>
@@ -1332,7 +1426,7 @@
     </div>
 
 
-    <footer class="site-footer">
+    <footer id="site-footer" class="site-footer">
 
       <img src="https://i.imgur.com/vP1Gqjb.png" alt="Abstract 3D graphic" class="footer-deco-shape" aria-hidden="true">
 
@@ -1386,26 +1480,265 @@
     </footer>
   </main>
 
-  <div 
-    id="global-blur-bottom"
-    class="gradual-blur-init"
-    data-target="page"
-    data-position="bottom"
-    data-height="8rem"
-    data-strength="4"
-    data-div-count="10"
-    data-curve="bezier"
-    data-exponential="true"
-    data-opacity="1"
-    data-z-index="1000"> 
+  <div id="global-blur-bottom" class="gradual-blur-init" data-target="page" data-position="bottom" data-height="8rem"
+    data-strength="4" data-div-count="10" data-curve="bezier" data-exponential="true" data-opacity="1"
+    data-z-index="1000">
   </div>
 
+  <div id="sticky-nav" class="fixed bottom-8 left-1/2 -translate-x-1/2 w-auto z-[9999]">
+    <div class="flex items-center gap-4 md:gap-6">
+      <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Platform</a>
+      <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Features</a>
+      <a href="#" class="gradient-text-button">Launch AI Platform</a>
+      <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Pricing</a>
+      <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Contact</a>
+    </div>
+  </div>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-      // === START OF GRADUAL BLUR JS (ADDED) ===
+      // === GLASSSURFACE CLASS (NEW) ===
+      class GlassSurface {
+        constructor(element, options = {}) {
+          this.element = element;
+          this.defaults = {
+            width: 200, height: 80, borderRadius: 20, borderWidth: 0.07,
+            brightness: 50, opacity: 0.93, blur: 11, displace: 0,
+            backgroundOpacity: 0, saturation: 1, distortionScale: -180,
+            redOffset: 0, greenOffset: 10, blueOffset: 20,
+            xChannel: 'R', yChannel: 'G', mixBlendMode: 'difference',
+            className: '', style: {}
+          };
+          // Merge default options with user-provided options
+          this.options = { ...this.defaults, ...options };
 
-      // --- Configuration Objects (Ported from React) ---
+          // Generate unique IDs, replacing React's useId
+          const uniqueId = 'glass-' + Math.random().toString(36).substring(2, 9);
+          this.filterId = `glass-filter-${uniqueId}`;
+          this.redGradId = `red-grad-${uniqueId}`;
+          this.blueGradId = `blue-grad-${uniqueId}`;
+
+          // References to DOM elements, replacing React's useRef
+          this.feImageRef = null;
+          this.redChannelRef = null;
+          this.greenChannelRef = null;
+          this.blueChannelRef = null;
+          this.gaussianBlurRef = null;
+          this.svg = null;
+
+          this.init();
+        }
+
+        /**
+         * Checks for SVG filter support, same as the React component.
+         */
+        supportsSVGFilters() {
+          const isWebkit = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+          const isFirefox = /Firefox/.test(navigator.userAgent);
+
+          if (isWebkit || isFirefox) {
+            return false;
+          }
+
+          const div = document.createElement('div');
+          div.style.backdropFilter = `url(#${this.filterId})`;
+          return div.style.backdropFilter !== '';
+        }
+
+        /**
+         * Creates and injects the SVG filter definitions into the element.
+         */
+        createFilterSVG() {
+          const svgNS = "http://www.w3.org/2000/svg";
+          const svg = document.createElementNS(svgNS, 'svg');
+          svg.setAttribute('class', 'glass-surface__filter');
+          svg.setAttribute('xmlns', svgNS);
+
+          // This string is copied directly from your React component's JSX
+          svg.innerHTML = `
+            <defs>
+              <filter id="${this.filterId}" colorInterpolationFilters="sRGB" x="0%" y="0%" width="100%" height="100%">
+                <feImage x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="map" />
+                <feDisplacementMap in="SourceGraphic" in2="map" id="redchannel" result="dispRed" />
+                <feColorMatrix
+                  in="dispRed"
+                  type="matrix"
+                  values="1 0 0 0 0
+                          0 0 0 0 0
+                          0 0 0 0 0
+                          0 0 0 1 0"
+                  result="red" />
+                <feDisplacementMap
+                  in="SourceGraphic"
+                  in2="map"
+                  id="greenchannel"
+                  result="dispGreen" />
+                <feColorMatrix
+                  in="dispGreen"
+                  type="matrix"
+                  values="0 0 0 0 0
+                          0 1 0 0 0
+                          0 0 0 0 0
+                          0 0 0 1 0"
+                  result="green" />
+                <feDisplacementMap in="SourceGraphic" in2="map" id="bluechannel" result="dispBlue" />
+                <feColorMatrix
+                  in="dispBlue"
+                  type="matrix"
+                  values="0 0 0 0 0
+                          0 0 0 0 0
+                          0 0 1 0 0
+                          0 0 0 1 0"
+                  result="blue" />
+                <feBlend in="red" in2="green" mode="screen" result="rg" />
+                <feBlend in="rg" in2="blue" mode="screen" result="output" />
+                <feGaussianBlur in="output" stdDeviation="0.7" />
+              </filter>
+            </defs>
+          `;
+          return svg;
+        }
+
+        /**
+         * Generates the SVG displacement map, same as the React component.
+         */
+        generateDisplacementMap() {
+          const rect = this.element.getBoundingClientRect();
+          const actualWidth = rect?.width || 400;
+          const actualHeight = rect?.height || 200;
+          const edgeSize = Math.min(actualWidth, actualHeight) * (this.options.borderWidth * 0.5);
+
+          const { redGradId, blueGradId, borderRadius, mixBlendMode, brightness, opacity, blur } = this.options;
+
+          const svgContent = `
+            <svg viewBox="0 0 ${actualWidth} ${actualHeight}" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="${redGradId}" x1="100%" y1="0%" x2="0%" y2="0%">
+                  <stop offset="0%" stop-color="#0000"/>
+                  <stop offset="100%" stop-color="red"/>
+                </linearGradient>
+                <linearGradient id="${blueGradId}" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#0000"/>
+                  <stop offset="100%" stop-color="blue"/>
+                </linearGradient>
+              </defs>
+              <rect x="0" y="0" width="${actualWidth}" height="${actualHeight}" fill="black"></rect>
+              <rect x="0" y="0" width="${actualWidth}" height="${actualHeight}" rx="${borderRadius}" fill="url(#${redGradId})" />
+              <rect x="0" y="0" width="${actualWidth}" height="${actualHeight}" rx="${borderRadius}" fill="url(#${blueGradId})" style="mix-blend-mode: ${mixBlendMode}" />
+              <rect x="${edgeSize}" y="${edgeSize}" width="${actualWidth - edgeSize * 2}" height="${actualHeight - edgeSize * 2}" rx="${borderRadius}" fill="hsl(0 0% ${brightness}% / ${opacity})" style="filter:blur(${blur}px)" />
+            </svg>
+          `;
+
+          return `data:image/svg+xml,${encodeURIComponent(svgContent)}`;
+        }
+
+        /**
+         * Updates the href attribute of the feImage element.
+         */
+        updateDisplacementMap() {
+          this.feImageRef?.setAttribute('href', this.generateDisplacementMap());
+        }
+
+        /**
+         * Applies all filter attributes based on options.
+         * This replaces the main useEffect logic.
+         */
+        updateFilterAttributes() {
+          this.updateDisplacementMap();
+
+          const {
+            redOffset, greenOffset, blueOffset,
+            distortionScale, xChannel, yChannel, displace
+          } = this.options;
+
+          [
+            { ref: this.redChannelRef, offset: redOffset },
+            { ref: this.greenChannelRef, offset: greenOffset },
+            { ref: this.blueChannelRef, offset: blueOffset }
+          ].forEach(({ ref, offset }) => {
+            if (ref) {
+              ref.setAttribute('scale', (distortionScale + offset).toString());
+              ref.setAttribute('xChannelSelector', xChannel);
+              ref.setAttribute('yChannelSelector', yChannel);
+            }
+          });
+
+          this.gaussianBlurRef?.setAttribute('stdDeviation', displace.toString());
+        }
+
+        /**
+         * Sets up the element, injects SVG, wraps content, and starts observers.
+         * This is the main setup logic.
+         */
+        init() {
+          // 1. Wrap existing content in 'glass-surface__content'
+          // This mimics React's {children}
+          this.contentWrapper = document.createElement('div');
+          this.contentWrapper.className = 'glass-surface__content';
+          while (this.element.firstChild) {
+            this.contentWrapper.appendChild(this.element.firstChild);
+          }
+          this.element.appendChild(this.contentWrapper);
+
+          // 2. Create and inject SVG filter
+          this.svg = this.createFilterSVG();
+          this.element.appendChild(this.svg);
+
+          // 3. Store references to the filter elements
+          this.feImageRef = this.svg.querySelector('feImage');
+          this.redChannelRef = this.svg.querySelector('#redchannel');
+          this.greenChannelRef = this.svg.querySelector('#greenchannel');
+          this.blueChannelRef = this.svg.querySelector('#bluechannel');
+          this.gaussianBlurRef = this.svg.querySelector('feGaussianBlur');
+
+          // 4. Apply classes
+          this.element.classList.add('glass-surface');
+          if (this.options.className) {
+            this.element.classList.add(...this.options.className.split(' '));
+          }
+
+          if (this.supportsSVGFilters()) {
+            this.element.classList.add('glass-surface--svg');
+          } else {
+            this.element.classList.add('glass-surface--fallback');
+          }
+
+          // 5. Apply styles and CSS variables (from containerStyle)
+          const containerStyle = {
+            ...this.options.style,
+            width: typeof this.options.width === 'number' ? `${this.options.width}px` : this.options.width,
+            height: typeof this.options.height === 'number' ? `${this.options.height}px` : this.options.height,
+            borderRadius: `${this.options.borderRadius}px`,
+          };
+
+          for (const [key, value] of Object.entries(containerStyle)) {
+            // Convert camelCase to kebab-case (e.g., borderRadius to border-radius)
+            const cssKey = key.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`);
+            this.element.style[cssKey] = value;
+          }
+
+          // Set CSS Variables
+          this.element.style.setProperty('--glass-frost', this.options.backgroundOpacity);
+          this.element.style.setProperty('--glass-saturation', this.options.saturation);
+          this.element.style.setProperty('--filter-id', `url(#${this.filterId})`);
+
+          // 6. Set up ResizeObserver (from useEffect)
+          this.resizeObserver = new ResizeObserver(() => {
+            // Use setTimeout to avoid 'ResizeObserver loop limit exceeded' errors
+            setTimeout(() => this.updateDisplacementMap(), 0);
+          });
+          this.resizeObserver.observe(this.element);
+
+          // 7. Initial update of filter attributes
+          // This replaces the main useEffect call
+          this.updateFilterAttributes();
+        }
+      }
+      // === END OF GLASSSURFACE CLASS ===
+
+
+      // === START OF GRADUAL BLUR JS (ADDED) ===
+      // ... (Configuration Objects and Helper Functions) ...
       const DEFAULT_CONFIG = {
         position: 'bottom',
         strength: 2,
@@ -1427,7 +1760,6 @@
         'ease-in-out': p => (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2)
       };
 
-      // --- Helper Functions (Ported from React) ---
       const mergeConfigs = (...configs) => configs.reduce((acc, c) => ({ ...acc, ...c }), {});
 
       const getGradientDirection = position => ({
@@ -1437,36 +1769,24 @@
         right: 'to right'
       })[position] || 'to bottom';
 
-      // --- Main Initialization Function ---
-      /**
-       * Finds all elements with the class '.gradual-blur-init'
-       * and generates the blur effect inside them.
-       */
       function initAllGradualBlurs() {
         const blurElements = document.querySelectorAll('.gradual-blur-init');
 
         blurElements.forEach(container => {
-          // 1. Read props from data attributes
           const props = { ...container.dataset };
-
-          // Convert string data-attributes to correct types (number, boolean)
           if (props.strength) props.strength = parseFloat(props.strength);
           if (props.divCount) props.divCount = parseInt(props.divCount, 10);
           if (props.opacity) props.opacity = parseFloat(props.opacity);
           if (props.exponential) props.exponential = props.exponential === 'true';
           if (props.zIndex) props.zIndex = parseInt(props.zIndex, 10);
 
-          // 2. Merge with defaults (like React props)
           const config = mergeConfigs(DEFAULT_CONFIG, props);
-
-          // 3. Create the inner div
           const innerDiv = document.createElement('div');
           innerDiv.className = 'gradual-blur-inner';
           innerDiv.style.position = 'relative';
           innerDiv.style.width = '100%';
           innerDiv.style.height = '100%';
 
-          // 4. Generate Blur Divs (from useMemo)
           const blurFragment = document.createDocumentFragment();
           const increment = 100 / config.divCount;
           const curveFunc = CURVE_FUNCTIONS[config.curve] || CURVE_FUNCTIONS.linear;
@@ -1492,11 +1812,7 @@
             if (p4 <= 100) gradient += `, transparent ${p4}%`;
 
             const direction = getGradientDirection(config.position);
-
-            // Create the individual blur slice div
             const blurDiv = document.createElement('div');
-
-            // Define and apply styles
             const divStyle = {
               position: 'absolute',
               inset: '0',
@@ -1507,19 +1823,15 @@
               opacity: config.opacity,
             };
             Object.assign(blurDiv.style, divStyle);
-
             blurFragment.appendChild(blurDiv);
           }
 
-          // Add all blur divs to the inner div
           innerDiv.appendChild(blurFragment);
 
-          // 5. Style the main container (from useMemo)
           const isVertical = ['top', 'bottom'].includes(config.position);
           const isHorizontal = ['left', 'right'].includes(config.position);
           const isPageTarget = config.target === 'page';
 
-          // === SCRIPT MODIFIED HERE ===
           const containerStyle = {
             position: isPageTarget ? 'fixed' : 'absolute',
             pointerEvents: 'none',
@@ -1527,7 +1839,6 @@
             zIndex: isPageTarget ? config.zIndex + 100 : config.zIndex,
             transition: 'opacity 0.3s ease-out' // Add transition for smooth fade
           };
-          // === END OF MODIFICATION ===
 
           if (isVertical) {
             containerStyle.height = config.height;
@@ -1543,11 +1854,8 @@
             containerStyle.bottom = 0;
           }
 
-          // Apply styles and classes to the main container
           Object.assign(container.style, containerStyle);
           container.className = `gradual-blur ${isPageTarget ? 'gradual-blur-page' : 'gradual-blur-parent'} ${config.className}`;
-
-          // 6. Append the inner div to the main container
           container.appendChild(innerDiv);
         });
       }
@@ -1558,160 +1866,53 @@
       // --- 1. Card Swap Animation (GSAP) ---
       const cardContainer = document.querySelector('.card-swap-container');
       if (cardContainer) {
-        // --- Configuration (from React props) ---
+        // ... (GSAP logic remains unchanged) ...
         const config = {
-          width: 720,
-          height: 480,
-          cardDistance: 50,
-          verticalDistance: 60,
-          delay: 5000,
-          pauseOnHover: false,
-          skewAmount: 6,
-          easing: 'elastic' // 'elastic' or 'power'
+          width: 720, height: 480, cardDistance: 50, verticalDistance: 60,
+          delay: 5000, pauseOnHover: false, skewAmount: 6, easing: 'elastic'
         };
-
-        // --- Easing Setup ---
-        const easingConfig =
-          config.easing === 'elastic' ?
-            {
-              ease: 'elastic.out(0.6,0.9)',
-              durDrop: 2,
-              durMove: 2,
-              durReturn: 2,
-              promoteOverlap: 0.9,
-              returnDelay: 0.05
-            } :
-            {
-              ease: 'power1.inOut',
-              durDrop: 0.8,
-              durMove: 0.8,
-              durReturn: 0.8,
-              promoteOverlap: 0.45,
-              returnDelay: 0.2
-            };
-
-        // --- DOM Selections ---
+        const easingConfig = config.easing === 'elastic' ?
+          { ease: 'elastic.out(0.6,0.9)', durDrop: 2, durMove: 2, durReturn: 2, promoteOverlap: 0.9, returnDelay: 0.05 } :
+          { ease: 'power1.inOut', durDrop: 0.8, durMove: 0.8, durReturn: 0.8, promoteOverlap: 0.45, returnDelay: 0.2 };
         const cards = Array.from(cardContainer.querySelectorAll('.card'));
         const totalCards = cards.length;
-
-        // --- State Variables ---
-        let order = Array.from({
-          length: totalCards
-        }, (_, i) => i);
+        let order = Array.from({ length: totalCards }, (_, i) => i);
         let currentTimeline = null;
         let intervalId = null;
-
-        // --- Helper Functions ---
-        const makeSlot = (i, distX, distY, total) => ({
-          x: i * distX,
-          y: -i * distY,
-          z: -i * distX * 1.5,
-          zIndex: total - i
-        });
-
-        const placeNow = (el, slot, skew) =>
-          gsap.set(el, {
-            x: slot.x,
-            y: slot.y,
-            z: slot.z,
-            xPercent: -50,
-            yPercent: -50,
-            skewY: skew,
-            transformOrigin: 'center center',
-            zIndex: slot.zIndex,
-            force3D: true
-          });
-
-        // --- Core Swap Logic ---
+        const makeSlot = (i, distX, distY, total) => ({ x: i * distX, y: -i * distY, z: -i * distX * 1.5, zIndex: total - i });
+        const placeNow = (el, slot, skew) => gsap.set(el, { x: slot.x, y: slot.y, z: slot.z, xPercent: -50, yPercent: -50, skewY: skew, transformOrigin: 'center center', zIndex: slot.zIndex, force3D: true });
         const swap = () => {
           if (order.length < 2) return;
-
-          const [front, ...rest] =
-            order;
+          const [front, ...rest] = order;
           const elFront = cards[front];
-
           const tl = gsap.timeline();
           currentTimeline = tl;
-
-          // 1. Drop the front card
-          tl.to(elFront, {
-            y: '+=500',
-            duration: easingConfig.durDrop,
-            ease: easingConfig.ease
-          });
-
-          // 2. Promote the other cards
+          tl.to(elFront, { y: '+=500', duration: easingConfig.durDrop, ease: easingConfig.ease });
           tl.addLabel('promote', `-=${easingConfig.durDrop * easingConfig.promoteOverlap}`);
           rest.forEach((idx, i) => {
             const el = cards[idx];
             const slot = makeSlot(i, config.cardDistance, config.verticalDistance, totalCards);
-            tl.set(el, {
-              zIndex: slot.zIndex
-            }, 'promote');
-            tl.to(
-              el, {
-              x: slot.x,
-              y: slot.y,
-              z: slot.z,
-              duration: easingConfig.durMove,
-              ease: easingConfig.ease
-            },
-              `promote+=${i * 0.15}`
-            );
+            tl.set(el, { zIndex: slot.zIndex }, 'promote');
+            tl.to(el, { x: slot.x, y: slot.y, z: slot.z, duration: easingConfig.durMove, ease: easingConfig.ease }, `promote+=${i * 0.15}`);
           });
-
-          // 3. Return the front card to the back
           const backSlot = makeSlot(totalCards - 1, config.cardDistance, config.verticalDistance, totalCards);
           tl.addLabel('return', `promote+=${easingConfig.durMove * easingConfig.returnDelay}`);
-          tl.call(
-            () => {
-              gsap.set(elFront, {
-                zIndex: backSlot.zIndex
-              });
-            },
-            undefined,
-            'return'
-          );
-          tl.to(
-            elFront, {
-            x: backSlot.x,
-            y: backSlot.y,
-            z: backSlot.z,
-            duration: easingConfig.durReturn,
-            ease: easingConfig.ease
-          },
-            'return'
-          );
-
-          // 4. Update the order array
-          tl.call(() => {
-            order = [...rest, front];
-          });
+          tl.call(() => { gsap.set(elFront, { zIndex: backSlot.zIndex }); }, undefined, 'return');
+          tl.to(elFront, { x: backSlot.x, y: backSlot.y, z: backSlot.z, duration: easingConfig.durReturn, ease: easingConfig.ease }, 'return');
+          tl.call(() => { order = [...rest, front]; });
         };
-
-        // --- Initialization ---
         cardContainer.style.width = `${config.width}px`;
         cardContainer.style.height = `${config.height}px`;
-
         cards.forEach((card, i) => {
           card.style.width = `${config.width}px`;
           card.style.height = `${config.height}px`;
           placeNow(card, makeSlot(i, config.cardDistance, config.verticalDistance, totalCards), config.skewAmount);
         });
-
         swap();
         intervalId = window.setInterval(swap, config.delay);
-
         if (config.pauseOnHover) {
-          const pause = () => {
-            if (currentTimeline) currentTimeline.pause();
-            clearInterval(intervalId);
-          };
-          const resume = () => {
-            if (currentTimeline) currentTimeline.play();
-            intervalId = window.setInterval(swap, config.delay);
-          };
-
+          const pause = () => { if (currentTimeline) currentTimeline.pause(); clearInterval(intervalId); };
+          const resume = () => { if (currentTimeline) currentTimeline.play(); intervalId = window.setInterval(swap, config.delay); };
           cardContainer.addEventListener('mouseenter', pause);
           cardContainer.addEventListener('mouseleave', resume);
         }
@@ -1720,71 +1921,18 @@
       // --- 2. SVG Clip-Path Generation ---
       const heroElement = document.querySelector('.content-area-shape');
       const clipPathElement = document.querySelector('#hero-shape path');
-
       if (heroElement && clipPathElement) {
+        // ... (SVG path logic remains unchanged) ...
         const updatePath = () => {
-          const w = heroElement.clientWidth;
-          const h = heroElement.clientHeight;
-          if (w <= 0 || h <= 0) return;
-
-          let d = '';
-          const r_outer = 15;
-          const r_inner = 20;
-
+          const w = heroElement.clientWidth; const h = heroElement.clientHeight; if (w <= 0 || h <= 0) return;
+          let d = ''; const r_outer = 15; const r_inner = 20;
           if (window.innerWidth <= 768) {
-            d = [
-              `M 0 ${50 + r_outer}`,
-              `A ${r_outer} ${r_outer} 0 0 1 ${r_outer} 50`,
-              `L ${110 - r_inner} 50`,
-              `A ${r_inner} ${r_inner} 0 0 1 110 ${50 - r_inner}`,
-              `L 110 ${r_inner}`,
-              `A ${r_inner} ${r_inner} 0 0 1 ${110 + r_inner} 0`,
-              `L ${w - 110 - r_inner} 0`,
-              `A ${r_inner} ${r_inner} 0 0 1 ${w - 110} ${r_inner}`,
-              `L ${w - 110} ${50 - r_inner}`,
-              `A ${r_inner} ${r_inner} 0 0 1 ${w - 110 + r_inner} 50`,
-              `L ${w - r_outer} 50`,
-              `A ${r_outer} ${r_outer} 0 0 1 ${w} ${50 + r_outer}`,
-              `L ${w} ${h - 50 - r_outer}`,
-              `A ${r_outer} ${r_outer} 0 0 1 ${w - r_outer} ${h - 50}`,
-              `L ${w - 110 + r_inner} ${h - 50}`,
-              `A ${r_inner} ${r_inner} 0 0 1 ${w - 110} ${h - 50 + r_inner}`,
-              `L ${w - 110} ${h - r_inner}`,
-              `A ${r_inner} ${r_inner} 0 0 1 ${w - 110 - r_inner} ${h}`,
-              `L ${r_outer} ${h}`,
-              `A ${r_outer} ${r_outer} 0 0 1 0 ${h - r_outer}`,
-              `Z`
-            ].join(' ');
-
+            d = [`M 0 ${50 + r_outer}`, `A ${r_outer} ${r_outer} 0 0 1 ${r_outer} 50`, `L ${110 - r_inner} 50`, `A ${r_inner} ${r_inner} 0 0 1 110 ${50 - r_inner}`, `L 110 ${r_inner}`, `A ${r_inner} ${r_inner} 0 0 1 ${110 + r_inner} 0`, `L ${w - 110 - r_inner} 0`, `A ${r_inner} ${r_inner} 0 0 1 ${w - 110} ${r_inner}`, `L ${w - 110} ${50 - r_inner}`, `A ${r_inner} ${r_inner} 0 0 1 ${w - 110 + r_inner} 50`, `L ${w - r_outer} 50`, `A ${r_outer} ${r_outer} 0 0 1 ${w} ${50 + r_outer}`, `L ${w} ${h - 50 - r_outer}`, `A ${r_outer} ${r_outer} 0 0 1 ${w - r_outer} ${h - 50}`, `L ${w - 110 + r_inner} ${h - 50}`, `A ${r_inner} ${r_inner} 0 0 1 ${w - 110} ${h - 50 + r_inner}`, `L ${w - 110} ${h - r_inner}`, `A ${r_inner} ${r_inner} 0 0 1 ${w - 110 - r_inner} ${h}`, `L ${r_outer} ${h}`, `A ${r_outer} ${r_outer} 0 0 1 0 ${h - r_outer}`, `Z`].join(' ');
           } else {
-            d = [
-              `M 0 ${100 + r_outer}`,
-              `A ${r_outer} ${r_outer} 0 0 1 ${r_outer} 100`,
-              `L ${160 - r_inner} 100`,
-              `A ${r_inner} ${r_inner} 0 0 1 160 ${100 - r_inner}`,
-              `L 160 ${r_inner}`,
-              `A ${r_inner} ${r_inner} 0 0 1 ${160 + r_inner} 0`,
-              `L ${w - 380 - r_inner} 0`,
-              `A ${r_inner} ${r_inner} 0 0 1 ${w - 380} ${r_inner}`,
-              `L ${w - 380} ${100 - r_inner}`,
-              `A ${r_inner} ${r_inner} 0 0 0 ${w - 380 + r_inner} 100`,
-              `L ${w - r_outer} 100`,
-              `A ${r_outer} ${r_outer} 0 0 1 ${w} ${100 + r_outer}`,
-              `L ${w} ${h - 140 - r_outer}`,
-              `A ${r_outer} ${r_outer} 0 0 0 ${w - r_outer} ${h - 140}`,
-              `L ${w - 200 + r_inner} ${h - 140}`,
-              `A ${r_inner} ${r_inner} 0 0 0 ${w - 200} ${h - 140 + r_inner}`,
-              `L ${w - 200} ${h - r_inner}`,
-              `A ${r_inner} ${r_inner} 0 0 1 ${w - 200 - r_inner} ${h}`,
-              `L ${r_outer} ${h}`,
-              `A ${r_outer} ${r_outer} 0 0 1 0 ${h - r_outer}`,
-              `Z`
-            ].join(' ');
+            d = [`M 0 ${100 + r_outer}`, `A ${r_outer} ${r_outer} 0 0 1 ${r_outer} 100`, `L ${160 - r_inner} 100`, `A ${r_inner} ${r_inner} 0 0 1 160 ${100 - r_inner}`, `L 160 ${r_inner}`, `A ${r_inner} ${r_inner} 0 0 1 ${160 + r_inner} 0`, `L ${w - 380 - r_inner} 0`, `A ${r_inner} ${r_inner} 0 0 1 ${w - 380} ${r_inner}`, `L ${w - 380} ${100 - r_inner}`, `A ${r_inner} ${r_inner} 0 0 0 ${w - 380 + r_inner} 100`, `L ${w - r_outer} 100`, `A ${r_outer} ${r_outer} 0 0 1 ${w} ${100 + r_outer}`, `L ${w} ${h - 140 - r_outer}`, `A ${r_outer} ${r_outer} 0 0 0 ${w - r_outer} ${h - 140}`, `L ${w - 200 + r_inner} ${h - 140}`, `A ${r_inner} ${r_inner} 0 0 0 ${w - 200} ${h - 140 + r_inner}`, `L ${w - 200} ${h - r_inner}`, `A ${r_inner} ${r_inner} 0 0 1 ${w - 200 - r_inner} ${h}`, `L ${r_outer} ${h}`, `A ${r_outer} ${r_outer} 0 0 1 0 ${h - r_outer}`, `Z`].join(' ');
           }
-
           clipPathElement.setAttribute('d', d);
         };
-
         const resizeObserver = new ResizeObserver(updatePath);
         resizeObserver.observe(heroElement);
         updatePath();
@@ -1792,263 +1940,120 @@
 
       // --- 3. Scrolly-telling Logic ---
       window.addEventListener('scroll', () => {
+        // ... (Scrolly-telling logic remains unchanged) ...
         const container = document.getElementById('ecosystem-container');
-        if (!container) {
-          return;
-        }
+        if (!container) { return; }
         const cardsWrapper = document.getElementById('cards-wrapper');
         const rightPanel = document.getElementById('right-panel');
-        if (!cardsWrapper || !rightPanel || !cardsWrapper.firstElementChild || !cardsWrapper.lastElementChild) {
-          return;
-        }
+        if (!cardsWrapper || !rightPanel || !cardsWrapper.firstElementChild || !cardsWrapper.lastElementChild) { return; }
         const rect = container.getBoundingClientRect();
         const scrollableTrack = container.scrollHeight - window.innerHeight;
         const scrollAmount = -rect.top;
         let scrollPercent = Math.max(0, Math.min(1, scrollAmount / scrollableTrack));
-
         const startY = -(cardsWrapper.firstElementChild.offsetHeight / 2);
         const endY = -(cardsWrapper.scrollHeight - (cardsWrapper.lastElementChild.offsetHeight / 2));
         const newTransformY = startY + (endY - startY) * scrollPercent;
-
         cardsWrapper.style.transform = `translate(-50%, ${newTransformY}px)`;
       });
 
 
       // --- 4. NEW 3D VANILLA CAROUSEL LOGIC ---
       const carousel = document.getElementById('vanilla-carousel');
-
-      // Run carousel logic ONLY if the element exists
       if (carousel) {
-
-        // --- 1. Get props ---
-        const props = {
-          baseWidth: 600, // MODIFIED: Increased from 300 to 400
-          autoplay: true,
-          autoplayDelay: 3000,
-          pauseOnHover: true,
-          loop: true,
-          round: false,
-        };
-
-        // --- 2. Define constants and state variables ---
+        // ... (Carousel logic remains unchanged) ...
+        const props = { baseWidth: 600, autoplay: true, autoplayDelay: 3000, pauseOnHover: true, loop: true, round: false, };
         const track = carousel.querySelector('.carousel-track');
         const items = Array.from(track.children);
         const indicators = carousel.querySelectorAll('.carousel-indicator');
-
         const numOriginalItems = items.length - 1;
-        const containerPadding = 16;
-        const GAP = 16;
-        const DRAG_BUFFER = 50;
-
+        const containerPadding = 16; const GAP = 16; const DRAG_BUFFER = 50;
         let itemWidth = props.baseWidth - containerPadding * 2;
         let trackItemOffset = itemWidth + GAP;
-
-        let currentIndex = 0;
-        let isHovered = false;
-        let isResetting = false;
-
-        let isDragging = false;
-        let startX = 0;
-        let currentTranslate = 0;
-        let lastTranslate = 0;
-
+        let currentIndex = 0; let isHovered = false; let isResetting = false;
+        let isDragging = false; let startX = 0; let currentTranslate = 0; let lastTranslate = 0;
         let autoplayInterval = null;
-
-        // --- 3. Helper Functions ---
         function interpolate(value, inputRange, outputRange) {
-          if (value <= inputRange[0]) return outputRange[0];
-          if (value >= inputRange[inputRange.length - 1]) return outputRange[outputRange.length - 1];
-
+          if (value <= inputRange[0]) return outputRange[0]; if (value >= inputRange[inputRange.length - 1]) return outputRange[outputRange.length - 1];
           for (let i = 1; i < inputRange.length; i++) {
             if (value <= inputRange[i]) {
-              const x1 = inputRange[i - 1];
-              const y1 = outputRange[i - 1];
-              const x2 = inputRange[i];
-              const y2 = outputRange[i];
-              const t = (value - x1) / (x2 - x1);
-              return y1 + (y2 - y1) * t;
+              const x1 = inputRange[i - 1]; const y1 = outputRange[i - 1]; const x2 = inputRange[i]; const y2 = outputRange[i]; const t = (value - x1) / (x2 - x1); return y1 + (y2 - y1) * t;
             }
           }
           return outputRange[outputRange.length - 1];
         }
-
-        function apply3DRotations(x) {
-          items.forEach((item, index) => {
-            const range = [-(index + 1) * trackItemOffset, -index * trackItemOffset, -(index - 1) * trackItemOffset];
-            const outputRange = [90, 0, -90];
-            const rotateY = interpolate(x, range, outputRange);
-            item.style.transform = `rotateY(${rotateY}deg)`;
-          });
-        }
-
+        function apply3DRotations(x) { items.forEach((item, index) => { const range = [-(index + 1) * trackItemOffset, -index * trackItemOffset, -(index - 1) * trackItemOffset]; const outputRange = [90, 0, -90]; const rotateY = interpolate(x, range, outputRange); item.style.transform = `rotateY(${rotateY}deg)`; }); }
         function goToSlide(index) {
           if (isResetting) return;
-
           track.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
-
-          currentIndex = index;
-          currentTranslate = -(currentIndex * trackItemOffset);
-
+          currentIndex = index; currentTranslate = -(currentIndex * trackItemOffset);
           track.style.transform = `translateX(${currentTranslate}px)`;
           track.style.perspectiveOrigin = `${currentIndex * trackItemOffset + itemWidth / 2}px 50%`;
-
-          apply3DRotations(currentTranslate);
-          updateIndicators();
+          apply3DRotations(currentTranslate); updateIndicators();
         }
-
-        function updateIndicators() {
-          const activeIndex = currentIndex % numOriginalItems;
-          indicators.forEach((indicator, index) => {
-            if (index === activeIndex) {
-              indicator.classList.add('active');
-              indicator.classList.remove('inactive');
-            } else {
-              indicator.classList.add('inactive');
-              indicator.classList.remove('active');
-            }
-          });
-        }
-
+        function updateIndicators() { const activeIndex = currentIndex % numOriginalItems; indicators.forEach((indicator, index) => { if (index === activeIndex) { indicator.classList.add('active'); indicator.classList.remove('inactive'); } else { indicator.classList.add('inactive'); indicator.classList.remove('active'); } }); }
         function handleTransitionEnd() {
           if (currentIndex === numOriginalItems) {
-            isResetting = true;
-            track.style.transition = 'none';
-            currentIndex = 0;
-            currentTranslate = 0;
+            isResetting = true; track.style.transition = 'none'; currentIndex = 0; currentTranslate = 0;
             track.style.transform = `translateX(${currentTranslate}px)`;
             track.style.perspectiveOrigin = `${itemWidth / 2}px 50%`;
-
             apply3DRotations(currentTranslate);
-
             void track.offsetWidth;
-
             track.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
             isResetting = false;
           }
         }
-
-        // --- 4. Autoplay Logic ---
-        function startAutoplay() {
-          if (!props.autoplay) return;
-
-          clearInterval(autoplayInterval);
-          autoplayInterval = setInterval(() => {
-            if (props.pauseOnHover && isHovered) {
-              return;
-            }
-            goToSlide(currentIndex + 1);
-          }, props.autoplayDelay);
-        }
-
-        function stopAutoplay() {
-          clearInterval(autoplayInterval);
-        }
-
-        // --- 5. Event Listeners ---
-        if (props.pauseOnHover) {
-          carousel.addEventListener('mouseenter', () => {
-            isHovered = true;
-          });
-          carousel.addEventListener('mouseleave', () => {
-            isHovered = false;
-          });
-        }
-
-        indicators.forEach((indicator, index) => {
-          indicator.addEventListener('click', () => {
-            goToSlide(index);
-            stopAutoplay();
-            startAutoplay();
-          });
-        });
-
+        function startAutoplay() { if (!props.autoplay) return; clearInterval(autoplayInterval); autoplayInterval = setInterval(() => { if (props.pauseOnHover && isHovered) { return; } goToSlide(currentIndex + 1); }, props.autoplayDelay); }
+        function stopAutoplay() { clearInterval(autoplayInterval); }
+        if (props.pauseOnHover) { carousel.addEventListener('mouseenter', () => { isHovered = true; }); carousel.addEventListener('mouseleave', () => { isHovered = false; }); }
+        indicators.forEach((indicator, index) => { indicator.addEventListener('click', () => { goToSlide(index); stopAutoplay(); startAutoplay(); }); });
         track.addEventListener('transitionend', handleTransitionEnd);
-
         track.addEventListener('mousedown', dragStart);
         track.addEventListener('touchstart', dragStart, { passive: true });
-
         document.addEventListener('mousemove', dragMove);
         document.addEventListener('touchmove', dragMove);
-
         document.addEventListener('mouseup', dragEnd);
         document.addEventListener('touchend', dragEnd);
         document.addEventListener('mouseleave', dragEnd);
-
         function dragStart(e) {
-          isDragging = true;
-          isResetting = false;
-          stopAutoplay();
-
+          isDragging = true; isResetting = false; stopAutoplay();
           startX = e.pageX || e.touches[0].pageX;
-
-          const computedStyle = window.getComputedStyle(track);
-          const matrix = new DOMMatrix(computedStyle.transform);
-          lastTranslate = matrix.m41;
-
-          track.style.transition = 'none';
-          track.style.cursor = 'grabbing';
+          const computedStyle = window.getComputedStyle(track); const matrix = new DOMMatrix(computedStyle.transform); lastTranslate = matrix.m41;
+          track.style.transition = 'none'; track.style.cursor = 'grabbing';
         }
-
         function dragMove(e) {
           if (!isDragging) return;
-
-          const currentX = e.pageX || e.touches[0].pageX;
-          const deltaX = currentX - startX;
+          const currentX = e.pageX || e.touches[0].pageX; const deltaX = currentX - startX;
           currentTranslate = lastTranslate + deltaX;
-
           track.style.transform = `translateX(${currentTranslate}px)`;
           apply3DRotations(currentTranslate);
         }
-
         function dragEnd(e) {
           if (!isDragging) return;
-
           isDragging = false;
-
-          track.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
-          track.style.cursor = 'grab';
-
+          track.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)'; track.style.cursor = 'grab';
           const deltaX = currentTranslate - lastTranslate;
-
-          if (deltaX < -DRAG_BUFFER) {
-            goToSlide(Math.min(currentIndex + 1, items.length - 1));
-          } else if (deltaX > DRAG_BUFFER) {
-            goToSlide(Math.max(currentIndex - 1, 0));
-          } else {
-            goToSlide(currentIndex);
-          }
-
+          if (deltaX < -DRAG_BUFFER) { goToSlide(Math.min(currentIndex + 1, items.length - 1)); } else if (deltaX > DRAG_BUFFER) { goToSlide(Math.max(currentIndex - 1, 0)); } else { goToSlide(currentIndex); }
           startAutoplay();
         }
-
-        // --- 6. Initialization ---
         function initializeCarousel() {
           carousel.style.width = `${props.baseWidth}px`;
-
-          items.forEach(item => {
-            item.style.width = `${itemWidth}px`;
-          });
-
+          items.forEach(item => { item.style.width = `${itemWidth}px`; });
           track.style.gap = `${GAP}px`;
           track.style.perspective = '1000px';
-
           goToSlide(0);
           startAutoplay();
         }
-
         initializeCarousel();
       }
       // --- END OF 3D VANILLA CAROUSEL LOGIC ---
 
 
       // --- 5. GRADUAL BLUR INITIALIZATION ---
-      // This call will find all ".gradual-blur-init" divs and build them.
       initAllGradualBlurs();
 
 
-      // === 6. SHOW BLUR ON SCROLL (NEW CODE) ===
+      // === 6. SHOW BLUR ON SCROLL (EXISTING CODE) ===
       const globalBlur = document.getElementById('global-blur-bottom');
-      
       if (globalBlur) {
         window.addEventListener('scroll', () => {
           if (window.scrollY > 10) { // Show blur if scrolled more than 10px
@@ -2058,8 +2063,50 @@
           }
         });
       }
-      // === END OF NEW CODE ===
 
+      // === 7. STICKY NAV "STOP AT FOOTER" LOGIC (EXISTING CODE) ===
+      const stickyNav = document.getElementById('sticky-nav');
+      const footer = document.getElementById('site-footer');
+      const navBaseOffset = 24;
+
+      if (stickyNav && footer) {
+        window.addEventListener('scroll', () => {
+          const footerTop = footer.getBoundingClientRect().top;
+          const windowHeight = window.innerHeight;
+          if (footerTop < windowHeight) {
+            const bottomPosition = (windowHeight - footerTop) + navBaseOffset;
+            stickyNav.style.bottom = `${bottomPosition}px`;
+          } else {
+            stickyNav.style.bottom = '';
+          }
+        });
+      }
+
+     // === 8. INITIALIZE GLASSNAV (NEW) ===
+      const navElement = document.getElementById('sticky-nav');
+      if (navElement) {
+        new GlassSurface(navElement, {
+          width: 'auto',       // Let Tailwind's `w-auto` control width
+          height: 'auto',      // Let content control height
+          borderRadius: 15,    // Matches the original `rounded-[15px]`
+          
+          // Added a more defined borderWidth for the glass effect
+          borderWidth: 0.1,    // Increased from default (0.07) to make it more visible
+          
+          // Slightly tweaked for better border appearance
+          brightness: 65,      // Slightly brighter
+          opacity: 0.85,       // Slightly less transparent
+          
+          // Existing distortion settings
+          displace: 15,
+          distortionScale: -150,
+          redOffset: 5,
+          greenOffset: 15,
+          blueOffset: 25,
+          mixBlendMode: "screen"
+        });
+      }
+      // === END OF GLASSNAV INIT ===
     });
   </script>
 
