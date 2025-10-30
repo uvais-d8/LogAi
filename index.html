@@ -7,156 +7,173 @@
   <title>Hero Section with Card Swap</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@800&display=swap" rel="stylesheet">
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <style>
- 
-    /* --- Global Styles --- */
-body {
-    /* Set a dark background for the page to match the footer's context */
-    background-color: #02040a;
-    color: #fff;
-    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    margin: 0;
-}
+    /* --- Basic Setup --- */
+    body {
+      /* Set a dark background for the page to match the footer's context */
+      background-color: #02040a;
+      color: #fff;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+    }
 
-ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
 
-a {
-    text-decoration: none;
-    color: inherit;
-    transition: color 0.3s ease;
-}
+    a {
+      text-decoration: none;
+      color: inherit;
+      transition: color 0.3s ease;
+    }
 
-/* --- Footer Main Container --- */
-.site-footer {
-    /* Use a very dark, almost black background */
-    background-color: #000;
-    padding: 80px 0 40px;
-    position: relative;
-    overflow: hidden; /* Contains the decorative elements */
-}
+    /* --- Main Footer Container --- */
+    .site-footer {
+      background-color: #000;
+      padding: 80px 0 40px;
+      position: relative;
+      overflow: hidden;
+      /* This is crucial for containing the bg elements */
+    }
 
-.footer-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 40px;
-    position: relative;
-    z-index: 2; /* Ensures content is above background elements */
-}
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 40px;
+      position: relative;
+      z-index: 2;
+      /* Ensures content is above all background elements */
+    }
 
-/* --- Decorative Background Elements --- */
-.footer-deco-shape {
-    position: absolute;
-    left: -80px;  /* Position it off-screen to the left */
-    bottom: -50px; /* Position it at the bottom */
-    width: 450px;
-    opacity: 0.9;
-    z-index: 1; /* Above background, below text */
-    pointer-events: none; /* Prevents image from being clicked */
-}
+    /* --- 1. Decorative Background Elements --- */
+    .footer-deco-shape {
+      position: absolute;
+      left: -80px;
+      /* Position it partially off-screen */
+      bottom: -50px;
+      width: 450px;
+      opacity: 0.9;
+      z-index: 1;
+      /* Above the bg-text, but below the content */
+      pointer-events: none;
+      /* Prevents image from being draggable/clickable */
+    }
 
-.footer-bg-text {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 200px; /* Extremely large font size */
-    font-weight: 800;
-    /* This blue color creates the background glow */
-    color: #0d1a3f;
-    opacity: 0.6; /* Faint, but visible */
-    z-index: 0; /* Behind everything */
-    user-select: none; /* Prevents text selection */
-    white-space: nowrap;
-}
+    .footer-bg-text {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 200px;
+      font-weight: 800;
+      color: #0d1a3f;
+      /* This dark blue creates the watermark glow */
+      opacity: 0.6;
+      z-index: 0;
+      /* Sits at the very back */
+      user-select: none;
+      /* Prevents text selection */
+      white-space: nowrap;
+    }
 
 
-/* --- Top Social Links --- */
-.footer-social {
-    text-align: center;
-    margin-bottom: 70px;
-}
+    /* --- 2. Top Social Links --- */
+    .footer-social {
+      text-align: center;
+      margin-bottom: 70px;
+      /* Space between social links and columns */
+    }
 
-.footer-social ul {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 40px; /* Space between links */
-}
+    .footer-social ul {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 40px;
+    }
 
-.footer-social a {
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    color: #ffffff;
-    opacity: 0.8;
-}
+    .footer-social a {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      color: #ffffff;
+      opacity: 0.8;
+    }
 
-.footer-social a:hover {
-    opacity: 1;
-}
+    .footer-social a:hover {
+      opacity: 1;
+    }
 
-/* --- Main 3-Column Links --- */
-.footer-links {
-    display: flex;
-    justify-content: center; /* Centers the group of columns */
-    flex-wrap: wrap;
-    gap: 100px; /* Large space between columns */
-    margin-bottom: 80px;
-    /* This ensures the columns don't stretch too wide on large screens */
-    max-width: 900px; 
-    margin-left: auto;
-    margin-right: auto;
-}
+    /* --- 3. Main 3-Column Links --- */
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 100px;
+      /* Space between columns */
+      margin-bottom: 80px;
 
-.footer-column {
-    min-width: 180px; /* Ensures columns have space */
-}
+      /* Constrain the group of columns to prevent them from spreading too wide */
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
 
-.footer-column h4 {
-    font-size: 18px;
-    font-weight: 700;
-    color: #fff;
-    margin-top: 0;
-    margin-bottom: 24px;
-}
+    .footer-column {
+      min-width: 180px;
+      /* Gives each column a base width */
+    }
 
-.footer-column li {
-    margin-bottom: 16px;
-}
+    .footer-column h4 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-top: 0;
+      margin-bottom: 24px;
+    }
 
-.footer-column a {
-    font-size: 16px;
-    color: #aaa; /* Lighter gray for links */
-}
+    .footer-column li {
+      margin-bottom: 16px;
+    }
 
-.footer-column a:hover {
-    color: #fff;
-}
+    .footer-column a {
+      font-size: 16px;
+      color: #aaa;
+      /* Lighter gray for links */
+    }
 
-/* --- Bottom Copyright Bar --- */
-.footer-bottom {
-    padding-top: 30px;
-    /* This creates the subtle top border from the image */
-    /* border-top: 1px solid #222; */ 
-    /* Edit: Image doesn't have a border, it's just a space */
-}
+    .footer-column a:hover {
+      color: #fff;
+    }
 
-.footer-bottom p {
-    font-size: 14px;
-    color: #777;
-    margin: 0;
-}
+    .footer-bottom p {
+      font-size: 14px;
+      color: #777;
+      /* Dim gray for copyright */
+      margin: 0;
+    }
 
     .heading {
       font-size: 170px;
-      font-weight: 900;
-      letter-spacing: -0.05em;
-      text-align: left;
+      font-weight: 800;
+      /* Adjusted for Manrope's bold style */
+      font-family: 'Manrope', sans-serif;
+      /* <-- NEW FONT */
+      letter-spacing: 0.1em;
+      color: #e4e4e4ef;
+      /* <-- NEW LETTER SPACING */
+      text-align: center;
+      /* <-- CENTERED */
     }
 
     .content-area-shape {
@@ -496,15 +513,17 @@ a {
       border-radius: 24px;
       padding: 16px;
       --outer-r: 24px;
-      --p-distance: 12px; 
+      --p-distance: 12px;
     }
+
     .carousel-track {
       display: flex;
       /* JS will set perspective and origin */
       transform-style: preserve-3d;
       transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
     }
-.carousel-item {
+
+    .carousel-item {
       position: relative;
       display: flex;
       flex-shrink: 0;
@@ -519,7 +538,8 @@ a {
       user-select: none;
       /* Prevent text selection while dragging */
       transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-      height: 500px; /* <--- ADD THIS LINE HERE */
+      height: 400px;
+      /* <--- ADD THIS LINE HERE */
     }
 
     .carousel-item:active {
@@ -635,6 +655,35 @@ a {
       background-color: #555;
       transform: scale(1);
     }
+    .gradient-text-button {
+  /* Button Styling */
+  display: inline-block;
+  background-color: #000;
+  padding: 4px 12px;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 13px;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+  
+  /* --- Added Line --- */
+  border: 1px solid #374151; /* This is the hex code for gray-700 */
+  
+  /* Gradient Text Effect */
+  background-image: linear-gradient(
+    to right, 
+    #38bdf8, /* sky-400 */
+    #2563eb  /* blue-600 */
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gradient-text-button:hover {
+  opacity: 0.8;
+}
+
     /* --- END OF NEW 3D CAROUSEL CSS ---
     */
   </style>
@@ -702,8 +751,8 @@ a {
           <div class="flex items-center gap-4 md:gap-6 p-2 bg-black rounded-[15px] border border-gray-800 shadow-lg">
             <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Platform</a>
             <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Features</a>
-            <a href="#" class="text-white bg-gray-700 rounded-[15px] px-3 py-1">Launch AI Platform</a>
-            <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Pricing</a>
+          <a href="#" class="gradient-text-button">Launch AI Platform</a>
+          <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Pricing</a>
             <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Contact</a>
           </div>
         </div>
@@ -711,7 +760,7 @@ a {
 
     </div>
   </div>
-  
+
   <div class="flex flex-wrap justify-center items-center gap-4 md:gap-8 mt-10">
     <p class="text-white text-sm md:text-base">
       30-Day Free Trial
@@ -741,7 +790,7 @@ a {
           <span class="text-white"> for business</span>
         </p>
       </div>
-      
+
       <div class="flex flex-nowrap w-max mx-auto py-4 gap-10">
         <div
           class="relative w-96 h-[450px] rounded-3xl overflow-hidden shadow-lg group transition-transform duration-300 border-2 border-gray-700 hover:-translate-y-2">
@@ -804,7 +853,7 @@ a {
     </section>
 
     <div class="bg-gradient-to-b from-transparent to-[#0F40D4]/20">
-      
+
       <section class="px-8">
         <div
           class="relative glow-background flex flex-wrap flex-col justify-center items-center gap-4 md:gap-6 mt-40 pt-20 pb-10">
@@ -823,7 +872,7 @@ a {
       </section>
 
       <section class="relative z-10 py-24 px-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-min">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-min">
           <div
             class="md:col-span-1 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col justify-between transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
             <div>
@@ -1014,7 +1063,7 @@ a {
               <li>Email Support</li>
             </ul>
             <a href="#"
-              class="mt-auto text-center bg-gradient-to-r from-sky-400 to-blue-600 text-white font-bold py-3 rounded-lg hover:from-sky-500 hover:to-blue-700 transition-all shadow-lg shadow-blue-500/30 w-full">
+              class="mt-auto text-center bg-gradient-to-r from-sky-400 to-blue-1000 text-white font-bold py-3 rounded-lg hover:from-sky-500 hover:to-blue-700 transition-all shadow-lg shadow-blue-500/30 w-full">
               Choose Pro Plan
             </a>
           </div>
@@ -1040,179 +1089,187 @@ a {
 
         </div>
       </section>
-    </div>
-    
-    <section class="py-24 px-8 flex flex-col items-center justify-center text-white">
-      <h2 class="text-4xl md:text-5xl font-bold mb-12 text-center">
-        Explore Our
-        <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
-          Platform Features
-        </span>
-      </h2>
-    
-      <div style="height: 800px; position: relative;">
-        
-        <div class="carousel-container" id="vanilla-carousel">
-          <div class="carousel-track">
-            
-            <div class="carousel-item">
-              <div class="carousel-item-header">
-                <span class="carousel-icon-container">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="carousel-icon">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline>
-                  </svg>
-                </span>
+
+
+      <section class="py-24 px-8 flex flex-col items-center justify-center text-white">
+        <h2 class="text-4xl md:text-5xl font-bold mb-12 text-center">
+          Explore Our
+          <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
+            Platform Features
+          </span>
+        </h2>
+
+        <div style="height: 800px; position: relative;">
+
+          <div class="carousel-container" id="vanilla-carousel">
+            <div class="carousel-track">
+
+              <div class="carousel-item">
+                <div class="carousel-item-header">
+                  <span class="carousel-icon-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="carousel-icon">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="16" y1="13" x2="8" y2="13"></line>
+                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                      <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                  </span>
+                </div>
+                <div class="carousel-item-content">
+                  <div class="carousel-item-title">Text Animations</div>
+                  <p class="carousel-item-description">Cool text animations for your projects.</p>
+                </div>
               </div>
-              <div class="carousel-item-content">
-                <div class="carousel-item-title">Text Animations</div>
-                <p class="carousel-item-description">Cool text animations for your projects.</p>
+
+              <div class="carousel-item">
+                <div class="carousel-item-header">
+                  <span class="carousel-icon-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="carousel-icon">
+                      <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                  </span>
+                </div>
+                <div class="carousel-item-content">
+                  <div class="carousel-item-title">Animations</div>
+                  <p class="carousel-item-description">Smooth animations for your projects.</p>
+                </div>
               </div>
+
+              <div class="carousel-item">
+                <div class="carousel-item-header">
+                  <span class="carousel-icon-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="carousel-icon">
+                      <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                      <polyline points="2 17 12 22 22 17"></polyline>
+                      <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                  </span>
+                </div>
+                <div class="carousel-item-content">
+                  <div class="carousel-item-title">Components</div>
+                  <p class="carousel-item-description">Reusable components for your projects.</p>
+                </div>
+              </div>
+
+              <div class="carousel-item">
+                <div class="carousel-item-header">
+                  <span class="carousel-icon-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="carousel-icon">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="3" y1="9" x2="21" y2="9"></line>
+                      <line x1="9" y1="21" x2="9" y2="9"></line>
+                    </svg>
+                  </span>
+                </div>
+                <div class="carousel-item-content">
+                  <div class="carousel-item-title">Backgrounds</div>
+                  <p class="carousel-item-description">Beautiful backgrounds and patterns for your projects.</p>
+                </div>
+              </div>
+
+              <div class="carousel-item">
+                <div class="carousel-item-header">
+                  <span class="carousel-icon-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="carousel-icon">
+                      <polyline points="16 18 22 12 16 6"></polyline>
+                      <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                  </span>
+                </div>
+                <div class="carousel-item-content">
+                  <div class="carousel-item-title">Common UI</div>
+                  <p class="carousel-item-description">Common UI components are coming soon!</p>
+                </div>
+              </div>
+
+              <div class="carousel-item">
+                <div class="carousel-item-header">
+                  <span class="carousel-icon-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="carousel-icon">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="16" y1="13" x2="8" y2="13"></line>
+                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                      <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                  </span>
+                </div>
+                <div class="carousel-item-content">
+                  <div class="carousel-item-title">Text Animations</div>
+                  <p class="carousel-item-description">Cool text animations for your projects.</p>
+                </div>
+              </div>
+
             </div>
-    
-            <div class="carousel-item">
-              <div class="carousel-item-header">
-                <span class="carousel-icon-container">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="carousel-icon">
-                    <circle cx="12" cy="12" r="10"></circle>
-                  </svg>
-                </span>
+            <div class="carousel-indicators-container">
+              <div class="carousel-indicators">
+                <div class="carousel-indicator active" data-index="0"></div>
+                <div class="carousel-indicator inactive" data-index="1"></div>
+                <div class="carousel-indicator inactive" data-index="2"></div>
+                <div class="carousel-indicator inactive" data-index="3"></div>
+                <div class="carousel-indicator inactive" data-index="4"></div>
               </div>
-              <div class="carousel-item-content">
-                <div class="carousel-item-title">Animations</div>
-                <p class="carousel-item-description">Smooth animations for your projects.</p>
-              </div>
-            </div>
-    
-            <div class="carousel-item">
-              <div class="carousel-item-header">
-                <span class="carousel-icon-container">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="carousel-icon">
-                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                    <polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline>
-                  </svg>
-                </span>
-              </div>
-              <div class="carousel-item-content">
-                <div class="carousel-item-title">Components</div>
-                <p class="carousel-item-description">Reusable components for your projects.</p>
-              </div>
-            </div>
-    
-            <div class="carousel-item">
-              <div class="carousel-item-header">
-                <span class="carousel-icon-container">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="carousel-icon">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line>
-                  </svg>
-                </span>
-              </div>
-              <div class="carousel-item-content">
-                <div class="carousel-item-title">Backgrounds</div>
-                <p class="carousel-item-description">Beautiful backgrounds and patterns for your projects.</p>
-              </div>
-            </div>
-    
-            <div class="carousel-item">
-              <div class="carousel-item-header">
-                <span class="carousel-icon-container">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="carousel-icon">
-                    <polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline>
-                  </svg>
-                </span>
-              </div>
-              <div class="carousel-item-content">
-                <div class="carousel-item-title">Common UI</div>
-                <p class="carousel-item-description">Common UI components are coming soon!</p>
-              </div>
-            </div>
-    
-            <div class="carousel-item">
-              <div class="carousel-item-header">
-                <span class="carousel-icon-container">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="carousel-icon">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline>
-                  </svg>
-                </span>
-              </div>
-              <div class="carousel-item-content">
-                <div class="carousel-item-title">Text Animations</div>
-                <p class="carousel-item-description">Cool text animations for your projects.</p>
-              </div>
-            </div>
-    
-          </div>
-          <div class="carousel-indicators-container">
-            <div class="carousel-indicators">
-              <div class="carousel-indicator active" data-index="0"></div>
-              <div class="carousel-indicator inactive" data-index="1"></div>
-              <div class="carousel-indicator inactive" data-index="2"></div>
-              <div class="carousel-indicator inactive" data-index="3"></div>
-              <div class="carousel-indicator inactive" data-index="4"></div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-<footer class="site-footer">
-    <img src="https://i.imgur.com/vP1Gqjb.png" alt="" class="footer-deco-shape" aria-hidden="true">
-    
-    <div class="footer-bg-text" aria-hidden="true">LOG AI</div>
+    <footer class="site-footer">
+      <img src="https://i.imgur.com/vP1Gqjb.png" alt="" class="footer-deco-shape" aria-hidden="true">
 
-    <div class="footer-container">
+      <div class="footer-bg-text" aria-hidden="true">LOG AI</div>
+
+      <div class="footer-container">
         <nav class="footer-social">
-            <ul>
-                <li><a href="#">LINKEDIN</a></li>
-                <li><a href="#">X</a></li>
-                <li><a href="#">INSTAGRAM</a></li>
-                <li><a href="#">FACEBOOK</a></li>
-            </ul>
+          <ul>
+            <li><a href="#">LINKEDIN</a></li>
+            <li><a href="#">X</a></li>
+            <li><a href="#">INSTAGRAM</a></li>
+            <li><a href="#">FACEBOOK</a></li>
+          </ul>
         </nav>
 
         <div class="footer-links">
-            <div class="footer-column">
-                <h4>Company</h4>
-                <ul>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Careers</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#">News</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h4>Support</h4>
-                <ul>
-                    <li><a href="#">Help Center</a></li>
-                    <li><a href="#">Documentation</a></li>
-                    <li><a href="#">Community</a></li>
-                    <li><a href="#">API Reference</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h4>Legal</h4>
-                <ul>
-                    <li><a href="#">Security</a></li>
-                    <li><a href="#">Compliance</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Terms & Service</a></li>
-                </ul>
-            </div>
+          <div class="footer-column">
+            <h4>Company</h4>
+            <ul>
+              <li><a href="#">About</a></li>
+              <li><a href="#">Careers</a></li>
+              <li><a href="#">Blog</a></li>
+              <li><a href="#">News</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h4>Support</h4>
+            <ul>
+              <li><a href="#">Help Center</a></li>
+              <li><a href="#">Documentation</a></li>
+              <li><a href="#">Community</a></li>
+              <li><a href="#">API Reference</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h4>Legal</h4>
+            <ul>
+              <li><a href="#">Security</a></li>
+              <li><a href="#">Compliance</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Terms & Service</a></li>
+            </ul>
+          </div>
         </div>
 
         <div class="footer-bottom">
-            <p>&copy; 2025 LogAI. All rights reserved. Built for the future of work.</p>
+          <p>&copy; 2025 LogAI. All rights reserved. Built for the future of work.</p>
         </div>
-    </div>
-</footer>
-    </main>
+      </div>
+    </footer>
+  </main>
 
 
   <script>
@@ -1236,22 +1293,22 @@ a {
         // --- Easing Setup ---
         const easingConfig =
           config.easing === 'elastic' ?
-          {
-            ease: 'elastic.out(0.6,0.9)',
-            durDrop: 2,
-            durMove: 2,
-            durReturn: 2,
-            promoteOverlap: 0.9,
-            returnDelay: 0.05
-          } :
-          {
-            ease: 'power1.inOut',
-            durDrop: 0.8,
-            durMove: 0.8,
-            durReturn: 0.8,
-            promoteOverlap: 0.45,
-            returnDelay: 0.2
-          };
+            {
+              ease: 'elastic.out(0.6,0.9)',
+              durDrop: 2,
+              durMove: 2,
+              durReturn: 2,
+              promoteOverlap: 0.9,
+              returnDelay: 0.05
+            } :
+            {
+              ease: 'power1.inOut',
+              durDrop: 0.8,
+              durMove: 0.8,
+              durReturn: 0.8,
+              promoteOverlap: 0.45,
+              returnDelay: 0.2
+            };
 
         // --- DOM Selections ---
         const cards = Array.from(cardContainer.querySelectorAll('.card'));
@@ -1290,7 +1347,7 @@ a {
           if (order.length < 2) return;
 
           const [front, ...rest] =
-          order;
+            order;
           const elFront = cards[front];
 
           const tl = gsap.timeline();
@@ -1313,12 +1370,12 @@ a {
             }, 'promote');
             tl.to(
               el, {
-                x: slot.x,
-                y: slot.y,
-                z: slot.z,
-                duration: easingConfig.durMove,
-                ease: easingConfig.ease
-              },
+              x: slot.x,
+              y: slot.y,
+              z: slot.z,
+              duration: easingConfig.durMove,
+              ease: easingConfig.ease
+            },
               `promote+=${i * 0.15}`
             );
           });
@@ -1337,12 +1394,12 @@ a {
           );
           tl.to(
             elFront, {
-              x: backSlot.x,
-              y: backSlot.y,
-              z: backSlot.z,
-              duration: easingConfig.durReturn,
-              ease: easingConfig.ease
-            },
+            x: backSlot.x,
+            y: backSlot.y,
+            z: backSlot.z,
+            duration: easingConfig.durReturn,
+            ease: easingConfig.ease
+          },
             'return'
           );
 
@@ -1468,7 +1525,7 @@ a {
         const scrollableTrack = container.scrollHeight - window.innerHeight;
         const scrollAmount = -rect.top;
         let scrollPercent = Math.max(0, Math.min(1, scrollAmount / scrollableTrack));
-        
+
         const startY = -(cardsWrapper.firstElementChild.offsetHeight / 2);
         const endY = -(cardsWrapper.scrollHeight - (cardsWrapper.lastElementChild.offsetHeight / 2));
         const newTransformY = startY + (endY - startY) * scrollPercent;
@@ -1479,10 +1536,10 @@ a {
 
       // --- 4. NEW 3D VANILLA CAROUSEL LOGIC ---
       const carousel = document.getElementById('vanilla-carousel');
-      
+
       // Run carousel logic ONLY if the element exists
       if (carousel) {
-        
+
         // --- 1. Get props ---
         const props = {
           baseWidth: 600, // MODIFIED: Increased from 300 to 400
@@ -1497,24 +1554,24 @@ a {
         const track = carousel.querySelector('.carousel-track');
         const items = Array.from(track.children);
         const indicators = carousel.querySelectorAll('.carousel-indicator');
-        
+
         const numOriginalItems = items.length - 1;
         const containerPadding = 16;
         const GAP = 16;
         const DRAG_BUFFER = 50;
-        
+
         let itemWidth = props.baseWidth - containerPadding * 2;
         let trackItemOffset = itemWidth + GAP;
-        
+
         let currentIndex = 0;
         let isHovered = false;
         let isResetting = false;
-        
+
         let isDragging = false;
         let startX = 0;
         let currentTranslate = 0;
         let lastTranslate = 0;
-        
+
         let autoplayInterval = null;
 
         // --- 3. Helper Functions ---
@@ -1534,7 +1591,7 @@ a {
           }
           return outputRange[outputRange.length - 1];
         }
-        
+
         function apply3DRotations(x) {
           items.forEach((item, index) => {
             const range = [-(index + 1) * trackItemOffset, -index * trackItemOffset, -(index - 1) * trackItemOffset];
@@ -1546,15 +1603,15 @@ a {
 
         function goToSlide(index) {
           if (isResetting) return;
-          
+
           track.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
-          
+
           currentIndex = index;
           currentTranslate = -(currentIndex * trackItemOffset);
-          
+
           track.style.transform = `translateX(${currentTranslate}px)`;
           track.style.perspectiveOrigin = `${currentIndex * trackItemOffset + itemWidth / 2}px 50%`;
-          
+
           apply3DRotations(currentTranslate);
           updateIndicators();
         }
@@ -1580,11 +1637,11 @@ a {
             currentTranslate = 0;
             track.style.transform = `translateX(${currentTranslate}px)`;
             track.style.perspectiveOrigin = `${itemWidth / 2}px 50%`;
-            
+
             apply3DRotations(currentTranslate);
-            
-            void track.offsetWidth; 
-            
+
+            void track.offsetWidth;
+
             track.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
             isResetting = false;
           }
@@ -1593,7 +1650,7 @@ a {
         // --- 4. Autoplay Logic ---
         function startAutoplay() {
           if (!props.autoplay) return;
-          
+
           clearInterval(autoplayInterval);
           autoplayInterval = setInterval(() => {
             if (props.pauseOnHover && isHovered) {
@@ -1606,7 +1663,7 @@ a {
         function stopAutoplay() {
           clearInterval(autoplayInterval);
         }
-        
+
         // --- 5. Event Listeners ---
         if (props.pauseOnHover) {
           carousel.addEventListener('mouseenter', () => {
@@ -1624,9 +1681,9 @@ a {
             startAutoplay();
           });
         });
-        
+
         track.addEventListener('transitionend', handleTransitionEnd);
-        
+
         track.addEventListener('mousedown', dragStart);
         track.addEventListener('touchstart', dragStart, { passive: true });
 
@@ -1641,33 +1698,33 @@ a {
           isDragging = true;
           isResetting = false;
           stopAutoplay();
-          
+
           startX = e.pageX || e.touches[0].pageX;
-          
+
           const computedStyle = window.getComputedStyle(track);
           const matrix = new DOMMatrix(computedStyle.transform);
           lastTranslate = matrix.m41;
-          
+
           track.style.transition = 'none';
           track.style.cursor = 'grabbing';
         }
 
         function dragMove(e) {
           if (!isDragging) return;
-          
+
           const currentX = e.pageX || e.touches[0].pageX;
           const deltaX = currentX - startX;
           currentTranslate = lastTranslate + deltaX;
-          
+
           track.style.transform = `translateX(${currentTranslate}px)`;
           apply3DRotations(currentTranslate);
         }
 
         function dragEnd(e) {
           if (!isDragging) return;
-          
+
           isDragging = false;
-          
+
           track.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
           track.style.cursor = 'grab';
 
@@ -1680,18 +1737,18 @@ a {
           } else {
             goToSlide(currentIndex);
           }
-          
+
           startAutoplay();
         }
 
         // --- 6. Initialization ---
         function initializeCarousel() {
           carousel.style.width = `${props.baseWidth}px`;
-          
+
           items.forEach(item => {
             item.style.width = `${itemWidth}px`;
           });
-          
+
           track.style.gap = `${GAP}px`;
           track.style.perspective = '1000px';
 
