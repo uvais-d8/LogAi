@@ -6,38 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hero Section with Card Swap</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <!-- GSAP Animation Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <style>
-    /* This targets the H1 and sets the default color to white */
-    .left-panel h1 {
-      color: #ffffff;
-
-      /* These styles were in your original file */
-      font-size: 4.5vw;
-      line-height: 1.1;
-      margin: 0;
-      font-weight: 700;
-    }
-
-    /* This targets *only* the <span> inside the H1 */
-    .left-panel h1 span {
-      /* 1. Define the sky blue to dark blue gradient */
-      background-image: linear-gradient(to right, #38bdf8, #2563eb);
-      /* Uses sky-400 and blue-600 */
-
-      /* 2. Clip the background to the text's shape */
-      -webkit-background-clip: text;
-      /* For Safari/Chrome */
-      background-clip: text;
-
-      /* 3. Make the text color transparent so the gradient shows through */
-      color: transparent;
-    }
-
     body {
       font-family: 'Inter', sans-serif;
-      background-color: rgb(1, 0, 24);
+      /* MODIFIED: Updated background color per new code */
+      background-color: #0B0B0B;
       /* REMOVED height: 3000px; */
       /* NEW: Prevent horizontal scroll */
       overflow-x: hidden;
@@ -80,6 +56,38 @@
         /* MODIFIED: Changed 0.5rem to -0.025em to prevent overflow */
         letter-spacing: -0.025em;
       }
+
+      /* NEW: Responsive styles for new ecosystem section */
+      .left-panel h1 {
+        font-size: 8vw;
+      }
+
+      .left-panel p {
+        font-size: 2.5vw;
+        max-width: none;
+      }
+
+      .split-layout {
+        flex-direction: column;
+      }
+
+      .right-panel {
+        flex: 1.5;
+        /* Give more space for scrolling */
+      }
+
+      .ecosystem-container .card {
+        padding: 20px;
+        min-height: 250px;
+      }
+
+      .ecosystem-container .card h3 {
+        font-size: 1.5rem;
+      }
+
+      .ecosystem-container .card p {
+        font-size: 1rem;
+      }
     }
 
     /* Logo positioning for larger screens */
@@ -95,8 +103,8 @@
     /* --- Card Swap Styles --- */
     .card-swap-container {
       /* This is positioned using Tailwind classes on the div itself.
-             (absolute bottom-10 right-10 lg:bottom-20 lg:right-20) 
-           */
+            (absolute bottom-10 right-10 lg:bottom-20 lg:right-20) 
+          */
       transform-origin: bottom right;
       perspective: 3000px;
       overflow: visible;
@@ -104,11 +112,7 @@
       transform: scale(0.85);
     }
 
-    /* NOTE: .card class from the new section will override this.
-       This is okay because the card-swap cards are selected via
-       .card-swap-container .card in the JS.
-       The new section's styles are more specific or won't conflict.
-    */
+    /* MODIFIED: Scoped old card styles to .card-swap-container */
     .card-swap-container .card {
       position: absolute;
       top: 70%;
@@ -129,15 +133,23 @@
       -webkit-backface-visibility: hidden;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
 
-      /* Resetting values from the new section to avoid conflict */
+      /* NEW: Resetting values from new section to avoid conflict */
       min-height: auto;
       display: block;
       gap: 0;
       overflow: visible;
+      flex-direction: column;
+      /* Resetting flex-direction */
+      align-items: initial;
+      /* Resetting align-items */
+      backdrop-filter: none;
+      /* Resetting backdrop-filter */
+      transition: none;
+      /* Resetting transition */
     }
 
-
     /* Card content styling */
+    /* MODIFIED: Scoped old card styles */
     .card-swap-container .card h3 {
       margin-top: 0;
       font-size: 1.25rem;
@@ -147,11 +159,14 @@
       color: #fff;
     }
 
+    /* MODIFIED: Scoped old card styles */
     .card-swap-container .card p {
       font-size: 0.875rem;
       /* text-sm */
       color: #D1D5DB;
       /* gray-300 */
+      line-height: 1.25rem;
+      /* Resetting line-height */
     }
 
     /* Responsive adjustments for cards */
@@ -164,18 +179,53 @@
       }
     }
 
-    @media (max-width: 768px) {
+    /* NEW: Glow effect for title section */
+    .glow-background {
+      position: relative;
+      z-index: 1;
+    }
 
-      /* md */
-      .card-swap-container {
-        /* Hide on small screens to avoid clutter */
-        display: none;
-      }
+    .glow-background::before {
+      content: '';
+      position: absolute;
+      /* Center it */
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      /* Make it large */
+      width: 60%;
+      height: 60%;
+      /* The glow effect using user's color */
+      background-image: radial-gradient(circle, rgba(15, 64, 212, 0.4) 0%, rgba(15, 64, 212, 0) 60%);
+      filter: blur(50px);
+      /* Place it behind the content */
+      z-index: -1;
+      opacity: 0.7;
     }
 
 
+    /* --- START OF NEW AI ECOSYSTEM CSS --- */
 
-    /* --- START OF AI ECOSYSTEM CSS (SECTION 4) --- */
+    /* NEW: Gradient text styles for new H1 */
+    .left-panel h1 {
+      color: #ffffff;
+      /* "Complete" is now white */
+      font-size: 4.5vw;
+      line-height: 1.1;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    /* NEW: Gradient text styles for new H1 span */
+    .left-panel h1 span {
+      /* Sky blue to dark blue gradient */
+      background-image: linear-gradient(to right, #38bdf8, #2563eb);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      /* Kept -webkit-text-fill-color for broader compatibility */
+      -webkit-text-fill-color: transparent;
+    }
 
     .ecosystem-container {
       position: relative;
@@ -211,27 +261,6 @@
       box-sizing: border-box;
       height: 100vh;
     }
-
-    /* FIXED: Corrected h1 styling */
-    .left-panel h1 {
-      color: #ffffff;
-      /* "Complete" is now white */
-      font-size: 4.5vw;
-      line-height: 1.1;
-      margin: 0;
-      font-weight: 700;
-    }
-
-    /* FIXED: Corrected h1 span styling */
-    .left-panel h1 span {
-      /* Sky blue to dark blue gradient */
-      background-image: linear-gradient(to right, #38bdf8, #2563eb);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      /* Kept -webkit-text-fill-color for broader compatibility */
-      -webkit-text-fill-color: transparent;
-          }
 
     .left-panel p {
       font-size: 1.2vw;
@@ -276,6 +305,7 @@
       min-height: 300px;
       box-sizing: border-box;
       position: relative;
+      /* Changed from absolute */
       transform-origin: center top;
       transition: transform 0.3s ease, opacity 0.3s ease;
       display: flex;
@@ -283,6 +313,14 @@
       align-items: flex-start;
       gap: 15px;
       overflow: hidden;
+
+      /* NEW: Resets for properties from old .card rule */
+      top: auto;
+      left: auto;
+      transform-style: flat;
+      will-change: auto;
+      backface-visibility: visible;
+      -webkit-backface-visibility: visible;
     }
 
     .ecosystem-container .card:not(:last-child) {
@@ -301,6 +339,8 @@
       filter: blur(50px);
       z-index: -2;
       animation: rotateGlow 15s linear infinite;
+      /* NEW: Added example gradient */
+      background-image: linear-gradient(to right, #38bdf8, #2563eb);
     }
 
     .ecosystem-container .card::after {
@@ -345,22 +385,76 @@
       color: #c0c0c0;
       line-height: 1.6;
     }
+
+    /* NEW: Stats Section Styles */
+    .stats-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6rem 2rem;
+      color: white;
+    }
+
+    .stats-icon {
+      background-color: rgba(59, 130, 246, 0.2);
+      /* bg-blue-500/20 */
+      border: 1px solid rgba(59, 130, 246, 0.5);
+      /* border-blue-500/50 */
+      border-radius: 50%;
+      padding: 20px;
+      margin-bottom: 1.5rem;
+    }
+
+    .stats-percent {
+      font-size: 6rem;
+      /* text-8xl */
+      font-weight: 900;
+      /* font-black */
+      line-height: 1;
+    }
+
+    .stats-label {
+      font-size: 1.25rem;
+      /* text-xl */
+      font-weight: 500;
+      /* font-medium */
+      color: #D1D5DB;
+      /* text-gray-300 */
+      margin-top: 0.5rem;
+    }
+
+    /* --- END OF NEW CSS --- */
   </style>
 </head>
 
+
 <body>
 
+  <!-- NEW: SVG Definition for rounded clip-path -->
   <svg width="0" height="0" class="absolute">
     <defs>
       <clipPath id="hero-shape" clipPathUnits="userSpaceOnUse">
+        <!-- This path will be generated by JavaScript -->
         <path d="" />
       </clipPath>
     </defs>
   </svg>
 
+  <!-- 
+    MODIFICATION 2:
+    This is now the Hero Section Wrapper.
+    Removed h-screen to allow the page to scroll.
+  -->
   <div class="bg-gray-200 w-full p-4 md:p-5">
-    <div class="relative w-full h-[90vh]">
+    <!-- 
+      MODIFICATION 3:
+      This is the Hero Section Container.
+      MODIFIED: Changed h-[90vh] to h-[95vh].
+    -->
+    <div class="relative w-full h-[95vh]">
 
+      <!-- Adjusted logo position and border radius -->
       <div class="absolute z-10 flex items-center gap-2 p-2 bg-gray-200 rounded-[15px] logo-placeholder">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#111827" stroke-width="2" stroke-linecap="round"
@@ -373,22 +467,40 @@
         <span class="font-bold text-lg text-black">LogAI</span>
       </div>
 
+      <!-- 
+        This shape container now has h-full, which maps to the parent's h-[95vh].
+      -->
       <div class="content-area-shape bg-black w-full h-full rounded-[15px] p-6 md:p-12 text-white">
 
+        <!-- 
+                
+                Removed 'mx-auto' and 'text-center' to align the
+                text block (h1, h2, p) to the left.
+              -->
         <div class="pt-20 md:pt-24 max-w-2xl relative z-0">
+
           <h1 class="heading">LOG AI</h1>
+
           <h2 class="text-3xl md:text-5xl font-bold mb-4 text-white">
             The Future of<br>
             <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
               AI Business Intelligence
             </span>
           </h2>
+
+
           <p class="text-lg md:text-xl text-gray-300">
             Streamline operations, boost productivity, and accelerate growth
             with our comprehensive AI-powered business suite.
           </p>
+
         </div>
 
+        <!-- 
+                
+                Positioned absolutely in the bottom-right of the hero area.
+                Hidden on mobile (see CSS: @media (max-width: 768px))
+              -->
         <div class="card-swap-container absolute bottom-10 right-10 lg:bottom-20 lg:right-20 z-0">
           <div class="card">
             <h3>Real-time Analytics</h3>
@@ -404,6 +516,8 @@
           </div>
         </div>
 
+
+        <!-- Navigation bar at the bottom. Updated border radius -->
         <div class="absolute bottom-6 left-1/2 -translate-x-1/2 w-auto z-10">
           <div class="flex items-center gap-4 md:gap-6 p-2 bg-black rounded-[15px] border border-gray-800 shadow-lg">
             <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Platform</a>
@@ -417,28 +531,42 @@
 
     </div>
   </div>
-
-  <div class="flex flex-wrap justify-center gap-4 md:gap-6 mt-10">
-    <p class="flex items-center gap-2 text-gray-300 text-sm md:text-base">
-      <span class="text-lg">⚡</span>
+  <!-- 
+                
+                Added flex wrapper to center the items and give them color.
+              -->
+  <!-- MODIFICATION: Reverted to centered layout with dividers -->
+  <div class="flex flex-wrap justify-center items-center gap-4 md:gap-8 mt-10">
+    <p class="text-white text-sm md:text-base">
       30-Day Free Trial
     </p>
-    <p class="flex items-center gap-2 text-gray-300 text-sm md:text-base">
-      <span class="text-lg">🧠</span>
+    <span class="text-gray-500">|</span>
+    <p class="text-white text-sm md:text-base">
       50+ AI Modules
     </p>
-    <p class="flex items-center gap-2 text-gray-300 text-sm md:text-base">
-      <span class="text-lg">🔒</span>
+    <span class="text-gray-500">|</span>
+    <p class="text-white text-sm md:text-base">
       Enterprise Security
     </p>
-    <p class="flex items-center gap-2 text-gray-300 text-sm md:text-base">
-      <span class="text-lg">🚀</span>
+    <span class="text-gray-500">|</span>
+    <p class="text-white text-sm md:text-base">
       Instant Deployment
     </p>
   </div>
-  <main class="w-full p-8 mt-12 space-y-12">
-    <section>
-      <div class="flex flex-wrap justify-center gap-4 md:gap-6 mt-10">
+  <!-- *** END NEW FEATURES SECTION *** -->
+
+  <!-- 
+      MODIFICATION 4:
+      NEW CONTENT SECTION
+      *** MODIFIED: Removed 'max-w-7xl' and 'mx-auto' to make it full width ***
+      *** MODIFICATION: Reduced top margin from mt-24 to mt-12 ***
+      *** MODIFICATION: Removed p-8 from main, added px-8 to section ***
+    -->
+  <main class="w-full mt-12 space-y-12">
+    <section class="px-8">
+
+      <!-- MODIFICATION: Reduced mt-10 to mt-6 -->
+      <div class="flex flex-wrap justify-center gap-4 md:gap-6 mt-6">
         <p class="text-3xl md:text-5xl font-bold mb-4 text-center">
           <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
             Log AI
@@ -446,175 +574,233 @@
           <span class="text-white"> for business</span>
         </p>
       </div>
-      <div class="flex flex-wrap justify-center gap-6 md:gap-10 mt-10 text-center">
+      <!-- MODIFIED: Replaced the blue icon cards with image cards -->
+      <!-- 2. "images in the center with proper aligning and spacing" -->
+
+      <!-- MODIFIED: Removed the 'w-full overflow-x-auto' wrapper.
+            This container now centers the "jigsaw" group, which may overflow the viewport.
+            The 'overflow-x: hidden' on the <body> will prevent a scrollbar.
+          -->
+      <!-- MODIFICATION: Added gap-10 to space out the cards -->
+      <!-- MODIFICATION: Increased width from w-80 to w-96 -->
+      <div class="flex flex-nowrap w-max mx-auto py-4 gap-10">
+        <!-- Image Card 1 -->
         <div
-          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
-          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="Unified Platform"
-            class="w-20 h-20 mx-auto mb-6">
-          <h3 class="text-xl font-semibold mb-2">Unified Platform</h3>
-          <p class="text-gray-200 text-sm">
-            One platform for all your business needs — no more juggling multiple tools.
-          </p>
+          class="relative w-96 h-[450px] rounded-3xl overflow-hidden shadow-lg group transition-transform duration-300 border-2 border-gray-700 hover:-translate-y-2">
+          <img src="https://placehold.co/600x800/111827/4B5563?text=Platform+UI" alt="Unified Platform"
+            onerror="this.src='httpsImage.png'" class="w-full h-full object-cover">
+          <!-- Gradient overlay for text readability -->
+          <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/80 to-transparent z-0"></div>
+          <!-- Text at the bottom-left -->
+          <div class="absolute bottom-0 left-0 p-6 z-10">
+            <h3 class="text-2xl font-semibold text-white mb-2">Unified Platform</h3>
+            <p class="text-gray-300 text-sm">
+              One platform for all your business needs — no more juggling multiple tools.
+            </p>
+          </div>
         </div>
+
+        <!-- Image Card 2 -->
+        <!-- MODIFIED: Removed -ml-16 -->
         <div
-          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
-          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg"
-            alt="Enterprise Security" class="w-20 h-20 mx-auto mb-6">
-          <h3 class="text-xl font-semibold mb-2">Enterprise Security</h3>
-          <p class="text-gray-200 text-sm">
-            One platform for all your business needs — no more juggling multiple tools.
-          </p>
+          class="relative w-96 h-[450px] rounded-3xl overflow-hidden shadow-lg group transition-transform duration-300 border-2 border-gray-700 hover:-translate-y-2">
+          <img src="https://placehold.co/600x800/111827/4B5563?text=Security+UI" alt="Enterprise Security"
+            onerror="this.src='httpsImage.png'" class="w-full h-full object-cover">
+          <!-- Gradient overlay for text readability -->
+          <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/80 to-transparent z-0"></div>
+          <!-- Text at the bottom-left -->
+          <div class="absolute bottom-0 left-0 p-6 z-10">
+            <h3 class="text-2xl font-semibold text-white mb-2">Enterprise Security</h3>
+            <p class="text-gray-300 text-sm">
+              One platform for all your business needs — no more juggling multiple tools.
+            </p>
+          </div>
         </div>
+
+        <!-- Image Card 3 -->
+        <!-- MODIFIED: Removed -ml-16 -->
         <div
-          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
-          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg"
-            alt="Seamless Integration" class="w-20 h-20 mx-auto mb-6">
-          <h3 class="text-xl font-semibold mb-2">Seamless Integration</h3>
-          <p class="text-gray-200 text-sm">
-            One platform for all your business needs — no more juggling multiple tools.
-          </p>
+          class="relative w-96 h-[450px] rounded-3xl overflow-hidden shadow-lg group transition-transform duration-300 border-2 border-gray-700 hover:-translate-y-2">
+          <img src="https://placehold.co/600x800/111827/4B5563?text=Integration+UI" alt="Seamless Integration"
+            onerror="this.src='httpsImage.png'" class="w-full h-full object-cover">
+          <!-- Gradient overlay for text readability -->
+          <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/80 to-transparent z-0"></div>
+          <!-- Text at the bottom-left -->
+          <div class="absolute bottom-0 left-0 p-6 z-10">
+            <h3 class="text-2xl font-semibold text-white mb-2">Seamless Integration</h3>
+            <p class="text-gray-300 text-sm">
+              One platform for all your business needs — no more juggling multiple tools.
+            </p>
+          </div>
         </div>
       </div>
-      <div class="flex flex-wrap justify-center gap-12 md:gap-20 mt-10 text-center">
-        <div>
-          <h3 class="text-2xl md:text-3xl font-semibold text-white">500+</h3>
-          <p class="text-gray-300 text-sm md:text-base mt-1">Enterprise Clients</p>
-        </div>
-        <div>
-          <h3 class="text-2xl md:text-3xl font-semibold text-white">99.9%</h3>
-          <p class="text-gray-300 text-sm md:text-base mt-1">Uptime SLA</p>
-        </div>
-        <div>
-          <h3 class="text-2xl md:text-3xl font-semibold text-white">50M+</h3>
-          <p class="text-gray-300 text-sm md:text-base mt-1">Points Processed</p>
-        </div>
-        <div>
-          <h3 class="text-2xl md:text-3xl font-semibold text-white">24/7</h3>
-          <p class="text-gray-300 text-sm md:text-base mt-1">Expert Support</p>
+      <!-- END OF REPLACEMENT -->
+
+      <!-- MODIFIED: Moved this content up from the next section -->
+      <!-- MODIFICATION: Re-aligned to 80% width with justify-between -->
+      <div class="w-4/5 mx-auto">
+        <div class="flex flex-wrap justify-between items-center mt-10">
+          <div class="text-center">
+            <!-- MODIFIED: Text updated -->
+            <h3 class="text-2xl md:text-3xl font-medium text-white">500+</h3>
+            <p class="text-gray-300 text-sm md:text-base mt-1">Enterprise Clients</p>
+          </div>
+
+          <div class="text-center">
+            <!-- MODIFIED: Text updated -->
+            <h3 class="text-2xl md:text-3xl font-medium text-white">99.9%</h3>
+            <p class="text-gray-300 text-sm md:text-base mt-1">Uptime SLA</p>
+          </div>
+
+          <div class="text-center">
+            <!-- MODIFIED: Text updated -->
+            <h3 class="text-2xl md:text-3xl font-medium text-white">50M+</h3>
+            <p class="text-gray-300 text-sm md:text-base mt-1">Points Processed</p>
+          </div>
+
+          <div class="text-center">
+            <!-- MODIFIED: Text updated -->
+            <h3 class="text-2xl md:text-3xl font-medium text-white">24/7</h3>
+            <p class="text-gray-300 text-sm md:text-base mt-1">Expert Support</p>
+          </div>
         </div>
       </div>
+      <!-- MODIFIED: Moved this content up from the next section -->
+      <!-- MODIFICATION: Increased mt-24 to mt-40 (10rem) -->
+      <!-- DELETED: Old "Complete Business Ecosystem" title and grid section -->
     </section>
 
-    <section>
-      <div class="flex flex-wrap justify-center gap-4 md:gap-6 mt-10">
-        <p class="text-3xl md:text-5xl font-bold mb-4 text-center">
-          <span class="text-white">Complete<br>Bussiness</span>
-          <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
-            Ecosystem
-          </span>
-        </p>
-      </div>
-      <p class="text-white text-center items-center">
-        Everything your enterprise needs to operate efficiently, scale smartly, and stay competitive in<br>
-        today's digital landscape. Over 20+ integrated modules in one platform.
-      </p>
-      <div class="flex flex-wrap justify-center gap-6 md:gap-10 mt-10 text-center">
+    <!-- NEW: Wrapper for gradient background -->
+    <div class="bg-gradient-to-b from-transparent to-[#0F40D4]/20">
+      <!-- 
+        *** NEW "Complete AI Ecosystem" Title (MOVED HERE) ***
+      -->
+      <!-- MODIFICATION: Added px-8 -->
+      <section class="px-8">
+        <!-- MODIFICATION: Removed background gradient from inner div, added relative and glow-background -->
         <div
-          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
-          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="Unified Platform"
-            class="w-20 h-20 mx-auto mb-6">
-          <h3 class="text-xl font-semibold mb-2">Unified Platform</h3>
-          <p class="text-gray-200 text-sm">
-            One platform for all your business needs — no more juggling multiple tools.
+          class="relative glow-background flex flex-wrap flex-col justify-center items-center gap-4 md:gap-6 mt-40 pt-20 pb-10">
+          <p class="text-3xl md:text-5xl font-bold mb-4 text-center">
+            <span class="text-white">Complete</span>
+            <br>
+            <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
+              Business Ecosystem
+            </span>
+          </p>
+          <p class="text-white text-center px-4 max-w-2xl">
+            Everything your enterprise needs to operate efficiently, scale smartly, and stay competitive in<br>
+            today's digital landscape. Over 20+ integrated modules in one platform.
           </p>
         </div>
-        <div
-          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
-          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg"
-            alt="Enterprise Security" class="w-20 h-20 mx-auto mb-6">
-          <h3 class="text-xl font-semibold mb-2">Enterprise Security</h3>
-          <p class="text-gray-200 text-sm">
-            One platform for all your business needs — no more juggling multiple tools.
-          </p>
-        </div>
-        <div
-          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
-          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg"
-            alt="Seamless Integration" class="w-20 h-20 mx-auto mb-6">
-          <h3 class="text-xl font-semibold mb-2">Seamless Integration</h3>
-          <p class="text-gray-200 text-sm">
-            One platform for all your business needs — no more juggling multiple tools.
-          </p>
-        </div>
-      </div>
-      <div class="flex flex-wrap justify-center gap-6 md:gap-10 mt-10 text-center">
-        <div
-          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
-          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="Unified Platform"
-            class="w-20 h-20 mx-auto mb-6">
-          <h3 class="text-xl font-semibold mb-2">Unified Platform</h3>
-          <p class="text-gray-200 text-sm">
-            One platform for all your business needs — no more juggling multiple tools.
-          </p>
-        </div>
-        <div
-          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
-          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg"
-            alt="Enterprise Security" class="w-20 h-20 mx-auto mb-6">
-          <h3 class="text-xl font-semibold mb-2">Enterprise Security</h3>
-          <p class="text-gray-200 text-sm">
-            One platform for all your business needs — no more juggling multiple tools.
-          </p>
-        </div>
-        <div
-          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
-          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg"
-            alt="Seamless Integration" class="w-20 h-20 mx-auto mb-6">
-          <h3 class="text-xl font-semibold mb-2">Seamless Integration</h3>
-          <p class="text-gray-200 text-sm">
-            One platform for all your business needs — no more juggling multiple tools.
-          </p>
-        </div>
-      </div>
-      <div class="flex flex-wrap justify-center gap-6 md:gap-10 mt-10 text-center">
-        <div
-          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
-          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="Unified Platform"
-            class="w-20 h-20 mx-auto mb-6">
-          <h3 class="text-xl font-semibold mb-2">Unified Platform</h3>
-          <p class="text-gray-200 text-sm">
-            One platform for all your business needs — no more juggling multiple tools.
-          </p>
-        </div>
-        <div
-          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
-          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg"
-            alt="Enterprise Security" class="w-20 h-20 mx-auto mb-6">
-          <h3 class="text-xl font-semibold mb-2">Enterprise Security</h3>
-          <p class="text-gray-200 text-sm">
-            One platform for all your business needs — no more juggling multiple tools.
-          </p>
-        </div>
-        <div
-          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
-          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg"
-            alt="Seamless Integration" class="w-20 h-20 mx-auto mb-6">
-          <h3 class="text-xl font-semibold mb-2">Seamless Integration</h3>
-          <p class="text-gray-200 text-sm">
-            One platform for all your business needs — no more juggling multiple tools.
-          </p>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <section>
-      <div class="flex flex-wrap justify-center gap-4 md:gap-6 mt-10">
-        <p class="text-3xl md:text-5xl font-bold mb-4 text-center">
-          <!-- FIXED: Corrected text as requested -->
-          <span class="text-white">Complete</span>
-          <br>
-          <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
-            AI Ecosystem
-          </span>
-        </p>
-      </div>
-      <p class="text-white text-center items-center">
-        Everything your enterprise needs to operate efficiently, scale smartly, and stay competitive in<br>
-        today's digital landscape. Over 20+ integrated modules in one platform.
-      </p>
+      <!-- 
+        *** NEWLY RE-INSERTED 11-CARD GRID SECTION ***
+      -->
+      <!-- MODIFICATION: Added px-8 -->
+      <section class="relative z-10 py-24 px-8">
+        <!-- MODIFICATION: Increased gap, reduced card sizes -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-min">
 
-      <!-- The Sticky Scroll element -->
-      <div class="ecosystem-container" id="ecosystem-container">
+          <!-- Card 1: Smart CRM -->
+          <div
+            class="md:col-span-1 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col justify-between transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            <div>
+              <h3 class="text-white font-semibold text-base">Smart CRM</h3>
+            </div>
+            <img src="https://placehold.co/80x80/111827/4B5563?text=CRM" alt="Smart CRM Graphic"
+              class="w-16 h-16 self-start object-cover rounded-full">
+          </div>
+
+          <!-- Card 2: Shield -->
+          <div
+            class="md:col-span-1 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex items-center justify-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            <img src="https://placehold.co/120x120/111827/4B5563?text=Shield" alt="Security Graphic"
+              class="w-28 h-28 object-cover">
+          </div>
+
+          <!-- Card 3: Workflow -->
+          <div
+            class="md:col-span-2 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col justify-between transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            <div>
+              <h3 class="text-white font-semibold text-base">Workflow Automation</h3>
+            </div>
+            <img src="https://placehold.co/250x80/111827/4B5563?text=Workflow" alt="Workflow Graphic"
+              class="w-full h-16 object-cover rounded-lg">
+          </div>
+
+          <!-- Card 4: AI Content Studio (Tall) -->
+          <div
+            class="md:col-span-1 md:row-span-2 min-h-[13rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col justify-start transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            <h3 class="text-white font-semibold text-base">AI Content Studio</h3>
+            <p class="text-gray-300 text-xs mt-2">AI-powered banner and poster generator plus intelligent.</p>
+          </div>
+
+          <!-- Card 5: AI Report Gen (Center) -->
+          <div
+            class="md:col-span-1 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            <img src="https://placehold.co/80x80/111827/4B5563?text=Report" alt="Report Graphic"
+              class="w-16 h-16 object-cover rounded-full mb-2">
+            <h3 class="text-white font-semibold text-base">AI Report Generator</h3>
+          </div>
+
+          <!-- Card 6: Meeting Platform (Tall) -->
+          <div
+            class="md:col-span-1 md:row-span-2 min-h-[13rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            <h3 class="text-white font-semibold text-base mb-2">Meeting Platform</h3>
+            <img src="https://placehold.co/150x150/111827/4B5563?text=Meeting" alt="Meeting Graphic"
+              class="w-36 h-36 object-cover rounded-lg">
+          </div>
+
+          <!-- Card 7: AI Report Gen 2 (Tall) -->
+          <div
+            class="md:col-span-1 md:row-span-2 min-h-[13rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            <h3 class="text-white font-semibold text-base mb-2">AI Report Generator</h3>
+            <img src="https://placehold.co/150x150/111827/4B5563?text=Report+2" alt="Report Graphic 2"
+              class="w-36 h-36 object-cover rounded-lg">
+          </div>
+
+          <!-- Card 8: AI Report Gen 3 (Text) -->
+          <div
+            class="md:col-span-1 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            <img src="https://placehold.co/80x80/111827/4B5563?text=Report+3" alt="Report Graphic"
+              class="w-16 h-16 object-cover rounded-full mb-2">
+            <h3 class="text-white font-semibold text-base">AI Report Generator</h3>
+            <p class="text-gray-300 text-xs mt-2">Al-powered banner and poster generator plus intelligent.</p>
+          </div>
+
+          <!-- Card 9: AI Content Studio (Bottom) -->
+          <div
+            class="md:col-span-1 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col justify-between transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            <div>
+              <h3 class="text-white font-semibold text-base">AI Content Studio</h3>
+              <p class="text-gray-300 text-xs mt-2">AI-powered banner and poster generator plus intelligent.</p>
+            </div>
+            <img src="https://placehold.co/100x50/111827/4B5563?text=Data" alt="Data Graphic"
+              class="w-full h-12 object-cover rounded-lg">
+          </div>
+
+          <!-- Card 10: Abstract -->
+          <div
+            class="md:col-span-2 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex items-center justify-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            <img src="https://placehold.co/300x150/111827/4B5563?text=Abstract" alt="Abstract Graphic"
+              class="w-full h-28 object-cover rounded-lg">
+          </div>
+
+          <!-- Card 11: Map -->
+          <div
+            class="md:col-span-1 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex items-center justify-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            <img src="https://placehold.co/200x150/111827/4B5563?text=Map" alt="World Map Graphic"
+              class="w-full h-28 object-cover rounded-lg">
+          </div>
+        </div>
+      </section>
+
+      <!-- 
+        *** NEW SCROLLY-TELLING SECTION ***
+      -->
+      <!-- MODIFICATION: Added px-8 -->
+      <section class="ecosystem-container px-8" id="ecosystem-container">
         <div class="sticky-wrapper">
           <div class="split-layout">
             <div class="left-panel">
@@ -664,181 +850,200 @@
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="stats-section">
-      <div class="stats-icon">
-        <!-- Inline SVG for the lightning bolt -->
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-        </svg>
-      </div>
-      <div class="stats-percent">85%</div>
-      <div class="stats-label">Less Manual Work</div>
-    </section>
-
-    <section class="py-20 px-8">
-      <h2 class="text-3xl md:text-5xl font-bold mb-4 text-center">
-        <span class="text-white">Find Your Perfect</span>
-        <br>
-        <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
-          Pricing Plan
-        </span>
-      </h2>
-      <p class="text-gray-300 text-lg text-center max-w-2xl mx-auto mb-16">
-        Scalable plans that grow with your business. No hidden fees, ever.
-      </p>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-
-        <div class="bg-gray-900 border border-gray-700 rounded-2xl p-8 flex flex-col h-full">
-          <h3 class="text-2xl font-semibold text-white mb-2">Starter</h3>
-          <p class="text-4xl font-bold text-white mb-4">$99<span class="text-lg font-normal text-gray-400">/mo</span>
-          </p>
-          <p class="text-gray-400 mb-6 min-h-[60px]">Ideal for individuals and small teams getting started.</p>
-          <ul class="space-y-3 text-gray-300 mb-8 flex-grow">
-            <li class="flex items-center gap-3">
-              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span>10 AI Modules</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span>1,000 Data Points/mo</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span>Basic Support</span>
-            </li>
-          </ul>
-          <a href="#"
-            class="mt-auto text-center bg-gray-700 text-white font-semibold py-3 rounded-lg hover:bg-gray-600 transition-colors w-full">
-            Choose Plan
-          </a>
+      <!-- 
+        *** NEW STATS SECTION ***
+      -->
+      <!-- MODIFICATION: Added px-8 -->
+      <section class="stats-section px-8">
+        <div class="stats-icon">
+          <!-- Heroicon: lightning-bolt -->
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
         </div>
+        <div class="stats-percent">85%</div>
+        <div class="stats-label">Less Manual Work</div>
+      </section>
 
-        <div
-          class="bg-gray-900 border border-blue-500 rounded-2xl p-8 flex flex-col h-full relative ring-2 ring-blue-500 shadow-2xl shadow-blue-500/20">
-          <span
-            class="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-            MOST POPULAR
+      <!-- 
+        *** NEW PRICING SECTION ***
+      -->
+      <!-- MODIFICATION: Added px-8 -->
+      <section class="py-20 px-8">
+        <h2 class="text-3xl md:text-5xl font-bold mb-4 text-center">
+          <span class="text-white">Find Your Perfect</span>
+          <br>
+          <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
+            Pricing Plan
           </span>
-          <h3 class="text-2xl font-semibold text-white mb-2">Pro</h3>
-          <p class="text-4xl font-bold text-white mb-4">$299<span class="text-lg font-normal text-gray-400">/mo</span>
-          </p>
-          <p class="text-gray-400 mb-6 min-h-[60px]">For growing businesses that need advanced features and support.</p>
-          <ul class="space-y-3 text-gray-300 mb-8 flex-grow">
-            <li class="flex items-center gap-3">
-              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span>50+ AI Modules</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span>50,000 Data Points/mo</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span>Priority Support</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span>Advanced Analytics</span>
-            </li>
-          </ul>
-          <a href="#"
-            class="mt-auto text-center bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-colors w-full">
-            Start Free Trial
-          </a>
-        </div>
-
-        <div class="bg-gray-900 border border-gray-700 rounded-2xl p-8 flex flex-col h-full">
-          <h3 class="text-2xl font-semibold text-white mb-2">Enterprise</h3>
-          <p class="text-4xl font-bold text-white mb-4">Custom</p>
-          <p class="text-gray-400 mb-6 min-h-[60px]">For large-scale organizations with custom needs and dedicated
-            support.</p>
-          <ul class="space-y-3 text-gray-300 mb-8 flex-grow">
-            <li class="flex items-center gap-3">
-              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span>Unlimited AI Modules</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span>Unlimited Data Points</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span>24/7 Dedicated Support</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span>Custom Integrations</span>
-            </li>
-          </ul>
-          <a href="#"
-            class="mt-auto text-center bg-gray-700 text-white font-semibold py-3 rounded-lg hover:bg-gray-600 transition-colors w-full">
-            Contact Sales
-          </a>
-        </div>
-
-      </div>
-    </section>
-    <section class="py-20 px-8">
-      <div
-        class="max-w-5xl mx-auto bg-gradient-to-r from-sky-500 to-blue-700 rounded-3xl p-12 md:p-16 text-center shadow-2xl shadow-blue-500/30">
-        <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
-          Ready to Transform Your Business?
         </h2>
-        <p class="text-lg text-blue-100 max-w-2xl mx-auto mb-10">
-          Join over 500 enterprise clients and unlock the full potential of your data.
-          Start your 30-day free trial today. No credit card required.
+        <p class="text-gray-300 text-lg text-center max-w-2xl mx-auto mb-16">
+          Scalable plans that grow with your business. No hidden fees, ever.
         </p>
-        <a href="#"
-          class="inline-block bg-white text-blue-700 font-bold text-lg px-10 py-4 rounded-xl hover:bg-gray-100 transition-colors shadow-lg transform hover:scale-105">
-          Start Your Free Trial
-        </a>
-      </div>
-    </section>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <!-- Starter Plan -->
+          <div class="bg-gray-900 border border-gray-700 rounded-2xl p-8 flex flex-col h-full">
+            <h3 class="text-2xl font-semibold text-white mb-2">Starter</h3>
+            <p class="text-4xl font-bold text-white mb-4">$99<span class="text-lg font-normal text-gray-400">/mo</span>
+            </p>
+            <p class="text-gray-400 mb-6 min-h-[60px]">Ideal for individuals and small teams getting started.</p>
+            <ul class="space-y-3 text-gray-300 mb-8 flex-grow">
+              <li class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>10 AI Modules</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>1,000 Data Points/mo</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>Basic Support</span>
+              </li>
+            </ul>
+            <a href="#"
+              class="mt-auto text-center bg-gray-700 text-white font-semibold py-3 rounded-lg hover:bg-gray-600 transition-colors w-full">
+              Choose Plan
+            </a>
+          </div>
+
+          <!-- Pro Plan (Most Popular) -->
+          <div
+            class="bg-gray-900 border border-blue-500 rounded-2xl p-8 flex flex-col h-full relative ring-2 ring-blue-500 shadow-2xl shadow-blue-500/20">
+            <span
+              class="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+              MOST POPULAR
+            </span>
+            <h3 class="text-2xl font-semibold text-white mb-2">Pro</h3>
+            <p class="text-4xl font-bold text-white mb-4">$299<span class="text-lg font-normal text-gray-400">/mo</span>
+            </p>
+            <p class="text-gray-400 mb-6 min-h-[60px]">For growing businesses that need advanced features and support.</p>
+            <ul class="space-y-3 text-gray-300 mb-8 flex-grow">
+              <li class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>50+ AI Modules</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>50,000 Data Points/mo</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>Priority Support</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>Advanced Analytics</span>
+              </li>
+            </ul>
+            <a href="#"
+              class="mt-auto text-center bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-colors w-full">
+              Start Free Trial
+            </a>
+          </div>
+
+          <!-- Enterprise Plan -->
+          <div class="bg-gray-900 border border-gray-700 rounded-2xl p-8 flex flex-col h-full">
+            <h3 class="text-2xl font-semibold text-white mb-2">Enterprise</h3>
+            <p class="text-4xl font-bold text-white mb-4">Custom</p>
+            <p class="text-gray-400 mb-6 min-h-[60px]">For large-scale organizations with custom needs and dedicated
+              support.</p>
+            <ul class="space-y-3 text-gray-300 mb-8 flex-grow">
+              <li class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>Unlimited AI Modules</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>Unlimited Data Points</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>24/7 Dedicated Support</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>Custom Integrations</span>
+              </li>
+            </ul>
+            <a href="#"
+              class="mt-auto text-center bg-gray-700 text-white font-semibold py-3 rounded-lg hover:bg-gray-600 transition-colors w-full">
+              Contact Sales
+            </a>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 
+        *** NEW CTA SECTION ***
+      -->
+      <!-- MODIFICATION: Added px-8 -->
+      <!-- <section class="py-20 px-8">
+        <div
+          class="max-w-5xl mx-auto bg-gradient-to-r from-sky-500 to-blue-700 rounded-3xl p-12 md:p-16 text-center shadow-2xl shadow-blue-500/30">
+          <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+            Ready to Transform Your Business?
+          </h2>
+          <p class="text-lg text-blue-100 max-w-2xl mx-auto mb-10">
+            Join over 500 enterprise clients and unlock the full potential of your data.
+            Start your 30-day free trial today. No credit card required.
+          </p>
+          <a href="#"
+            class="inline-block bg-white text-blue-700 font-bold text-lg px-10 py-4 rounded-xl hover:bg-gray-100 transition-colors shadow-lg transform hover:scale-105">
+            Start Your Free Trial
+          </a>
+        </div>
+      </section> -->
+      <!-- NEW: Closing gradient wrapper div -->
+    </div>
   </main>
 
 
+  <!-- 
+      JavaScript for the Card Swap Animation
+    -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-      // --- Card Swap Animation (UNMODIFIED) ---
+      // --- Card Swap Animation ---
       const cardContainer = document.querySelector('.card-swap-container');
       if (cardContainer) {
         // --- Configuration (from React props) ---
@@ -857,16 +1062,16 @@
 
         // --- Easing Setup ---
         const easingConfig =
-          config.easing === 'elastic' ?
-            {
+          config.easing === 'elastic'
+            ? {
               ease: 'elastic.out(0.6,0.9)',
               durDrop: 2,
               durMove: 2,
               durReturn: 2,
               promoteOverlap: 0.9,
               returnDelay: 0.05
-            } :
-            {
+            }
+            : {
               ease: 'power1.inOut',
               durDrop: 0.8,
               durMove: 0.8,
@@ -880,9 +1085,7 @@
         const totalCards = cards.length;
 
         // --- State Variables (from React refs) ---
-        let order = Array.from({
-          length: totalCards
-        }, (_, i) => i);
+        let order = Array.from({ length: totalCards }, (_, i) => i);
         let currentTimeline = null;
         let intervalId = null;
 
@@ -911,7 +1114,8 @@
         const swap = () => {
           if (order.length < 2) return;
 
-          const [front, ...rest] = order;
+          const [front, ...rest]
+            = order;
           const elFront = cards[front];
 
           const tl = gsap.timeline();
@@ -929,17 +1133,16 @@
           rest.forEach((idx, i) => {
             const el = cards[idx];
             const slot = makeSlot(i, config.cardDistance, config.verticalDistance, totalCards);
-            tl.set(el, {
-              zIndex: slot.zIndex
-            }, 'promote');
+            tl.set(el, { zIndex: slot.zIndex }, 'promote');
             tl.to(
-              el, {
-              x: slot.x,
-              y: slot.y,
-              z: slot.z,
-              duration: easingConfig.durMove,
-              ease: easingConfig.ease
-            },
+              el,
+              {
+                x: slot.x,
+                y: slot.y,
+                z: slot.z,
+                duration: easingConfig.durMove,
+                ease: easingConfig.ease
+              },
               `promote+=${i * 0.15}`
             );
           });
@@ -949,21 +1152,20 @@
           tl.addLabel('return', `promote+=${easingConfig.durMove * easingConfig.returnDelay}`);
           tl.call(
             () => {
-              gsap.set(elFront, {
-                zIndex: backSlot.zIndex
-              });
+              gsap.set(elFront, { zIndex: backSlot.zIndex });
             },
             undefined,
             'return'
           );
           tl.to(
-            elFront, {
-            x: backSlot.x,
-            y: backSlot.y,
-            z: backSlot.z,
-            duration: easingConfig.durReturn,
-            ease: easingConfig.ease
-          },
+            elFront,
+            {
+              x: backSlot.x,
+              y: backSlot.y,
+              z: backSlot.z,
+              duration: easingConfig.durReturn,
+              ease: easingConfig.ease
+            },
             'return'
           );
 
@@ -1009,7 +1211,7 @@
         }
       }
 
-      // --- SVG Clip-Path Generation (UNMODIFIED) ---
+      // --- NEW: SVG Clip-Path Generation ---
       const heroElement = document.querySelector('.content-area-shape');
       const clipPathElement = document.querySelector('#hero-shape path');
 
@@ -1088,7 +1290,7 @@
         updatePath(); // Initial call
       }
 
-      // --- START OF MODIFIED JAVASCRIPT ---
+      // --- START OF NEW JAVASCRIPT ---
       window.addEventListener('scroll', () => {
         const container = document.getElementById('ecosystem-container');
 
@@ -1146,7 +1348,7 @@
         // handles the `left: 50%` centering from the CSS.
         cardsWrapper.style.transform = `translate(-50%, ${newTransformY}px)`;
       });
-      // --- END OF MODIFIED JAVASCRIPT ---
+      // --- END OF NEW JAVASCRIPT ---
 
     });
   </script>
@@ -1154,3 +1356,4 @@
 </body>
 
 </html>
+
