@@ -1,11 +1,1156 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Hero Section with Card Swap</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    /* This targets the H1 and sets the default color to white */
+    .left-panel h1 {
+      color: #ffffff;
+
+      /* These styles were in your original file */
+      font-size: 4.5vw;
+      line-height: 1.1;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    /* This targets *only* the <span> inside the H1 */
+    .left-panel h1 span {
+      /* 1. Define the sky blue to dark blue gradient */
+      background-image: linear-gradient(to right, #38bdf8, #2563eb);
+      /* Uses sky-400 and blue-600 */
+
+      /* 2. Clip the background to the text's shape */
+      -webkit-background-clip: text;
+      /* For Safari/Chrome */
+      background-clip: text;
+
+      /* 3. Make the text color transparent so the gradient shows through */
+      color: transparent;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: rgb(1, 0, 24);
+      /* REMOVED height: 3000px; */
+      /* NEW: Prevent horizontal scroll */
+      overflow-x: hidden;
+    }
+
+    .heading {
+      font-size: 170px;
+      font-weight: 900;
+      /* MODIFIED: Changed 1rem to -0.05em to prevent overflow */
+      letter-spacing: -0.05em;
+      /* MODIFIED: Changed text-align from center to left */
+      text-align: left;
+    }
+
+    /* MODIFICATION: Removed clip-path: polygon(...) from here */
+    .content-area-shape {
+      /* NEW: Link to the SVG clip-path */
+      clip-path: url(#hero-shape);
+    }
+
+    /* Responsive adjustments for smaller screens */
+    @media (max-width: 768px) {
+      /* MODIFICATION: Removed responsive clip-path from here */
+
+      .logo-placeholder {
+        top: 1rem;
+        /* Adjust position for full screen */
+        left: 1rem;
+      }
+
+      .icon-placeholder {
+        top: 1rem;
+        /* Adjust position for full screen */
+        right: 1rem;
+      }
+
+      /* Adjust heading font size on mobile */
+      .heading {
+        font-size: 80px;
+        /* MODIFIED: Changed 0.5rem to -0.025em to prevent overflow */
+        letter-spacing: -0.025em;
+      }
+    }
+
+    /* Logo positioning for larger screens */
+    @media (min-width: 769px) {
+      .logo-placeholder {
+        top: 1.25rem;
+        /* p-5 value */
+        left: 2.25rem;
+        /* p-5 + p-4 value */
+      }
+    }
+
+    /* --- Card Swap Styles --- */
+    .card-swap-container {
+      /* This is positioned using Tailwind classes on the div itself.
+             (absolute bottom-10 right-10 lg:bottom-20 lg:right-20) 
+           */
+      transform-origin: bottom right;
+      perspective: 3000px;
+      overflow: visible;
+      /* Set a default transform - MODIFIED */
+      transform: scale(0.85);
+    }
+
+    /* NOTE: .card class from the new section will override this.
+       This is okay because the card-swap cards are selected via
+       .card-swap-container .card in the JS.
+       The new section's styles are more specific or won't conflict.
+    */
+    .card-swap-container .card {
+      position: absolute;
+      top: 70%;
+      left: 70%;
+      border-radius: 12px;
+      /* Matched to the hero style */
+      border: 1px solid #4B5563;
+      /* gray-600 */
+      background: #111827;
+      /* gray-900 */
+      padding: 24px;
+      box-sizing: border-box;
+
+      /* 3D properties */
+      transform-style: preserve-3d;
+      will-change: transform;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+
+      /* Resetting values from the new section to avoid conflict */
+      min-height: auto;
+      display: block;
+      gap: 0;
+      overflow: visible;
+    }
+
+
+    /* Card content styling */
+    .card-swap-container .card h3 {
+      margin-top: 0;
+      font-size: 1.25rem;
+      /* text-xl */
+      font-weight: 600;
+      /* semibold */
+      color: #fff;
+    }
+
+    .card-swap-container .card p {
+      font-size: 0.875rem;
+      /* text-sm */
+      color: #D1D5DB;
+      /* gray-300 */
+    }
+
+    /* Responsive adjustments for cards */
+    @media (max-width: 1024px) {
+
+      /* lg */
+      .card-swap-container {
+        /* Scale down and move for tablets - MODIFIED */
+        transform: scale(0.7);
+      }
+    }
+
+    @media (max-width: 768px) {
+
+      /* md */
+      .card-swap-container {
+        /* Hide on small screens to avoid clutter */
+        display: none;
+      }
+    }
+
+
+
+    /* --- START OF AI ECOSYSTEM CSS (SECTION 4) --- */
+
+    .ecosystem-container {
+      position: relative;
+      height: 600vh;
+      /* 100vh per card */
+      margin-top: 5rem;
+      /* Space from title */
+    }
+
+    .sticky-wrapper {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 100%;
+      overflow: hidden;
+      /* FIXED: Added background */
+    }
+
+    .split-layout {
+      display: flex;
+      height: 100%;
+      width: 100%;
+      background: transparent;
+    }
+
+    /* --- Left (Sticky) Panel --- */
+    .left-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 5vw;
+      box-sizing: border-box;
+      height: 100vh;
+    }
+
+    /* FIXED: Corrected h1 styling */
+    .left-panel h1 {
+      color: #ffffff;
+      /* "Complete" is now white */
+      font-size: 4.5vw;
+      line-height: 1.1;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    /* FIXED: Corrected h1 span styling */
+    .left-panel h1 span {
+      /* Sky blue to dark blue gradient */
+      background-image: linear-gradient(to right, #38bdf8, #2563eb);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      /* Kept -webkit-text-fill-color for broader compatibility */
+      -webkit-text-fill-color: transparent;
+          }
+
+    .left-panel p {
+      font-size: 1.2vw;
+      line-height: 1.6;
+      max-width: 40ch;
+      opacity: 0.9;
+      margin-top: 20px;
+      color: #ffffff;
+      /* Ensure paragraph text is white */
+    }
+
+    /* --- Right (Scrollable) Panel --- */
+    .right-panel {
+      flex: 1;
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cards-wrapper {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 80%;
+      transform: translate(-50%, -50%);
+      will-change: transform;
+      z-index: 1;
+    }
+
+    /* --- Individual Card Styling (Scoped) --- */
+    .ecosystem-container .card {
+      background-color: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 30px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      min-height: 300px;
+      box-sizing: border-box;
+      position: relative;
+      transform-origin: center top;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 15px;
+      overflow: hidden;
+    }
+
+    .ecosystem-container .card:not(:last-child) {
+      margin-bottom: 25vh;
+    }
+
+    /* FIXED: Added background to card glow */
+    .ecosystem-container .card::before {
+      content: '';
+      position: absolute;
+      top: -200%;
+      left: -200%;
+      width: 500%;
+      height: 500%;
+      opacity: 0.2;
+      filter: blur(50px);
+      z-index: -2;
+      animation: rotateGlow 15s linear infinite;
+    }
+
+    .ecosystem-container .card::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      z-index: -1;
+      transform: translateZ(-20px) translateY(10px) scale(0.95);
+    }
+
+    @keyframes rotateGlow {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .ecosystem-container .card img {
+      max-width: 80px;
+      height: auto;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+    }
+
+    .ecosystem-container .card h3 {
+      margin: 0;
+      font-size: 1.8rem;
+      color: #fff;
+    }
+
+    .ecosystem-container .card p {
+      font-size: 1.1rem;
+      color: #c0c0c0;
+      line-height: 1.6;
+    }
+  </style>
 </head>
+
 <body>
-  
+
+  <svg width="0" height="0" class="absolute">
+    <defs>
+      <clipPath id="hero-shape" clipPathUnits="userSpaceOnUse">
+        <path d="" />
+      </clipPath>
+    </defs>
+  </svg>
+
+  <div class="bg-gray-200 w-full p-4 md:p-5">
+    <div class="relative w-full h-[90vh]">
+
+      <div class="absolute z-10 flex items-center gap-2 p-2 bg-gray-200 rounded-[15px] logo-placeholder">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#111827" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+          <path d="M2 17L12 22L22 17" stroke="#111827" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+          <path d="M2 12L12 17L22 12" stroke="#111827" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        <span class="font-bold text-lg text-black">LogAI</span>
+      </div>
+
+      <div class="content-area-shape bg-black w-full h-full rounded-[15px] p-6 md:p-12 text-white">
+
+        <div class="pt-20 md:pt-24 max-w-2xl relative z-0">
+          <h1 class="heading">LOG AI</h1>
+          <h2 class="text-3xl md:text-5xl font-bold mb-4 text-white">
+            The Future of<br>
+            <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
+              AI Business Intelligence
+            </span>
+          </h2>
+          <p class="text-lg md:text-xl text-gray-300">
+            Streamline operations, boost productivity, and accelerate growth
+            with our comprehensive AI-powered business suite.
+          </p>
+        </div>
+
+        <div class="card-swap-container absolute bottom-10 right-10 lg:bottom-20 lg:right-20 z-0">
+          <div class="card">
+            <h3>Real-time Analytics</h3>
+            <p>Monitor your business KPIs as they happen with our live data dashboards.</p>
+          </div>
+          <div class="card">
+            <h3>AI-Powered Insights</h3>
+            <p>Let our AI discover hidden trends and opportunities in your data.</p>
+          </div>
+          <div class="card">
+            <h3>Automated Reporting</h3>
+            <p>Generate comprehensive reports automatically, saving you hours of work.</p>
+          </div>
+        </div>
+
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 w-auto z-10">
+          <div class="flex items-center gap-4 md:gap-6 p-2 bg-black rounded-[15px] border border-gray-800 shadow-lg">
+            <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Platform</a>
+            <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Features</a>
+            <a href="#" class="text-white bg-gray-700 rounded-[15px] px-3 py-1">Launch AI Platform</a>
+            <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Pricing</a>
+            <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Contact</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="flex flex-wrap justify-center gap-4 md:gap-6 mt-10">
+    <p class="flex items-center gap-2 text-gray-300 text-sm md:text-base">
+      <span class="text-lg">⚡</span>
+      30-Day Free Trial
+    </p>
+    <p class="flex items-center gap-2 text-gray-300 text-sm md:text-base">
+      <span class="text-lg">🧠</span>
+      50+ AI Modules
+    </p>
+    <p class="flex items-center gap-2 text-gray-300 text-sm md:text-base">
+      <span class="text-lg">🔒</span>
+      Enterprise Security
+    </p>
+    <p class="flex items-center gap-2 text-gray-300 text-sm md:text-base">
+      <span class="text-lg">🚀</span>
+      Instant Deployment
+    </p>
+  </div>
+  <main class="w-full p-8 mt-12 space-y-12">
+    <section>
+      <div class="flex flex-wrap justify-center gap-4 md:gap-6 mt-10">
+        <p class="text-3xl md:text-5xl font-bold mb-4 text-center">
+          <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
+            Log AI
+          </span>
+          <span class="text-white"> for business</span>
+        </p>
+      </div>
+      <div class="flex flex-wrap justify-center gap-6 md:gap-10 mt-10 text-center">
+        <div
+          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="Unified Platform"
+            class="w-20 h-20 mx-auto mb-6">
+          <h3 class="text-xl font-semibold mb-2">Unified Platform</h3>
+          <p class="text-gray-200 text-sm">
+            One platform for all your business needs — no more juggling multiple tools.
+          </p>
+        </div>
+        <div
+          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg"
+            alt="Enterprise Security" class="w-20 h-20 mx-auto mb-6">
+          <h3 class="text-xl font-semibold mb-2">Enterprise Security</h3>
+          <p class="text-gray-200 text-sm">
+            One platform for all your business needs — no more juggling multiple tools.
+          </p>
+        </div>
+        <div
+          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg"
+            alt="Seamless Integration" class="w-20 h-20 mx-auto mb-6">
+          <h3 class="text-xl font-semibold mb-2">Seamless Integration</h3>
+          <p class="text-gray-200 text-sm">
+            One platform for all your business needs — no more juggling multiple tools.
+          </p>
+        </div>
+      </div>
+      <div class="flex flex-wrap justify-center gap-12 md:gap-20 mt-10 text-center">
+        <div>
+          <h3 class="text-2xl md:text-3xl font-semibold text-white">500+</h3>
+          <p class="text-gray-300 text-sm md:text-base mt-1">Enterprise Clients</p>
+        </div>
+        <div>
+          <h3 class="text-2xl md:text-3xl font-semibold text-white">99.9%</h3>
+          <p class="text-gray-300 text-sm md:text-base mt-1">Uptime SLA</p>
+        </div>
+        <div>
+          <h3 class="text-2xl md:text-3xl font-semibold text-white">50M+</h3>
+          <p class="text-gray-300 text-sm md:text-base mt-1">Points Processed</p>
+        </div>
+        <div>
+          <h3 class="text-2xl md:text-3xl font-semibold text-white">24/7</h3>
+          <p class="text-gray-300 text-sm md:text-base mt-1">Expert Support</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="flex flex-wrap justify-center gap-4 md:gap-6 mt-10">
+        <p class="text-3xl md:text-5xl font-bold mb-4 text-center">
+          <span class="text-white">Complete<br>Bussiness</span>
+          <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
+            Ecosystem
+          </span>
+        </p>
+      </div>
+      <p class="text-white text-center items-center">
+        Everything your enterprise needs to operate efficiently, scale smartly, and stay competitive in<br>
+        today's digital landscape. Over 20+ integrated modules in one platform.
+      </p>
+      <div class="flex flex-wrap justify-center gap-6 md:gap-10 mt-10 text-center">
+        <div
+          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="Unified Platform"
+            class="w-20 h-20 mx-auto mb-6">
+          <h3 class="text-xl font-semibold mb-2">Unified Platform</h3>
+          <p class="text-gray-200 text-sm">
+            One platform for all your business needs — no more juggling multiple tools.
+          </p>
+        </div>
+        <div
+          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg"
+            alt="Enterprise Security" class="w-20 h-20 mx-auto mb-6">
+          <h3 class="text-xl font-semibold mb-2">Enterprise Security</h3>
+          <p class="text-gray-200 text-sm">
+            One platform for all your business needs — no more juggling multiple tools.
+          </p>
+        </div>
+        <div
+          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg"
+            alt="Seamless Integration" class="w-20 h-20 mx-auto mb-6">
+          <h3 class="text-xl font-semibold mb-2">Seamless Integration</h3>
+          <p class="text-gray-200 text-sm">
+            One platform for all your business needs — no more juggling multiple tools.
+          </p>
+        </div>
+      </div>
+      <div class="flex flex-wrap justify-center gap-6 md:gap-10 mt-10 text-center">
+        <div
+          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="Unified Platform"
+            class="w-20 h-20 mx-auto mb-6">
+          <h3 class="text-xl font-semibold mb-2">Unified Platform</h3>
+          <p class="text-gray-200 text-sm">
+            One platform for all your business needs — no more juggling multiple tools.
+          </p>
+        </div>
+        <div
+          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg"
+            alt="Enterprise Security" class="w-20 h-20 mx-auto mb-6">
+          <h3 class="text-xl font-semibold mb-2">Enterprise Security</h3>
+          <p class="text-gray-200 text-sm">
+            One platform for all your business needs — no more juggling multiple tools.
+          </p>
+        </div>
+        <div
+          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg"
+            alt="Seamless Integration" class="w-20 h-20 mx-auto mb-6">
+          <h3 class="text-xl font-semibold mb-2">Seamless Integration</h3>
+          <p class="text-gray-200 text-sm">
+            One platform for all your business needs — no more juggling multiple tools.
+          </p>
+        </div>
+      </div>
+      <div class="flex flex-wrap justify-center gap-6 md:gap-10 mt-10 text-center">
+        <div
+          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="Unified Platform"
+            class="w-20 h-20 mx-auto mb-6">
+          <h3 class="text-xl font-semibold mb-2">Unified Platform</h3>
+          <p class="text-gray-200 text-sm">
+            One platform for all your business needs — no more juggling multiple tools.
+          </p>
+        </div>
+        <div
+          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg"
+            alt="Enterprise Security" class="w-20 h-20 mx-auto mb-6">
+          <h3 class="text-xl font-semibold mb-2">Enterprise Security</h3>
+          <p class="text-gray-200 text-sm">
+            One platform for all your business needs — no more juggling multiple tools.
+          </p>
+        </div>
+        <div
+          class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg"
+            alt="Seamless Integration" class="w-20 h-20 mx-auto mb-6">
+          <h3 class="text-xl font-semibold mb-2">Seamless Integration</h3>
+          <p class="text-gray-200 text-sm">
+            One platform for all your business needs — no more juggling multiple tools.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="flex flex-wrap justify-center gap-4 md:gap-6 mt-10">
+        <p class="text-3xl md:text-5xl font-bold mb-4 text-center">
+          <!-- FIXED: Corrected text as requested -->
+          <span class="text-white">Complete</span>
+          <br>
+          <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
+            AI Ecosystem
+          </span>
+        </p>
+      </div>
+      <p class="text-white text-center items-center">
+        Everything your enterprise needs to operate efficiently, scale smartly, and stay competitive in<br>
+        today's digital landscape. Over 20+ integrated modules in one platform.
+      </p>
+
+      <!-- The Sticky Scroll element -->
+      <div class="ecosystem-container" id="ecosystem-container">
+        <div class="sticky-wrapper">
+          <div class="split-layout">
+            <div class="left-panel">
+              <h1>
+                Complete
+                <br>
+                <span>AI Ecosystem</span>
+              </h1>
+              <p>
+                From lead generation to growth analytics, our AI-powered
+                platform automates and optimizes every aspect.
+              </p>
+            </div>
+            <div class="right-panel" id="right-panel">
+              <div class="cards-wrapper" id="cards-wrapper">
+                <div class="card">
+                  <img src="https://placehold.co/80x80/3a8dff/FFFFFF?text=PM" alt="Project Management Icon">
+                  <h3>Project Management</h3>
+                  <p>Intelligent task automation with smart scheduling and resource optimization.</p>
+                </div>
+                <div class="card">
+                  <img src="https://placehold.co/80x80/624aff/FFFFFF?text=LG" alt="Lead Generation Icon">
+                  <h3>Lead Generation</h3>
+                  <p>AI-driven prospecting to find and qualify high-value leads in your target market.</p>
+                </div>
+                <div class="card">
+                  <img src="https://placehold.co/80x80/3a8dff/FFFFFF?text=GA" alt="Growth Analytics Icon">
+                  <h3>Growth Analytics</h3>
+                  <p>Predictive analytics to forecast trends, identify opportunities, and mitigate risks.</p>
+                </div>
+                <div class="card">
+                  <img src="https://placehold.co/80x80/624aff/FFFFFF?text=CS" alt="Customer Support Icon">
+                  <h3>Customer Support</h3>
+                  <p>24/7 automated support bots that learn from interactions to solve complex problems.</p>
+                </div>
+                <div class="card">
+                  <img src="https://placehold.co/80x80/3a8dff/FFFFFF?text=CC" alt="Content Creation Icon">
+                  <h3>Content Creation</h3>
+                  <p>Generate high-quality blog posts, social media updates, and ad copy in seconds.</p>
+                </div>
+                <div class="card">
+                  <img src="https://placehold.co/80x80/624aff/FFFFFF?text=FM" alt="Financial Modeling Icon">
+                  <h3>Financial Modeling</h3>
+                  <p>Run complex financial simulations and get insights for smarter investments.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-section">
+      <div class="stats-icon">
+        <!-- Inline SVG for the lightning bolt -->
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+      </div>
+      <div class="stats-percent">85%</div>
+      <div class="stats-label">Less Manual Work</div>
+    </section>
+
+    <section class="py-20 px-8">
+      <h2 class="text-3xl md:text-5xl font-bold mb-4 text-center">
+        <span class="text-white">Find Your Perfect</span>
+        <br>
+        <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
+          Pricing Plan
+        </span>
+      </h2>
+      <p class="text-gray-300 text-lg text-center max-w-2xl mx-auto mb-16">
+        Scalable plans that grow with your business. No hidden fees, ever.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+
+        <div class="bg-gray-900 border border-gray-700 rounded-2xl p-8 flex flex-col h-full">
+          <h3 class="text-2xl font-semibold text-white mb-2">Starter</h3>
+          <p class="text-4xl font-bold text-white mb-4">$99<span class="text-lg font-normal text-gray-400">/mo</span>
+          </p>
+          <p class="text-gray-400 mb-6 min-h-[60px]">Ideal for individuals and small teams getting started.</p>
+          <ul class="space-y-3 text-gray-300 mb-8 flex-grow">
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>10 AI Modules</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>1,000 Data Points/mo</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>Basic Support</span>
+            </li>
+          </ul>
+          <a href="#"
+            class="mt-auto text-center bg-gray-700 text-white font-semibold py-3 rounded-lg hover:bg-gray-600 transition-colors w-full">
+            Choose Plan
+          </a>
+        </div>
+
+        <div
+          class="bg-gray-900 border border-blue-500 rounded-2xl p-8 flex flex-col h-full relative ring-2 ring-blue-500 shadow-2xl shadow-blue-500/20">
+          <span
+            class="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+            MOST POPULAR
+          </span>
+          <h3 class="text-2xl font-semibold text-white mb-2">Pro</h3>
+          <p class="text-4xl font-bold text-white mb-4">$299<span class="text-lg font-normal text-gray-400">/mo</span>
+          </p>
+          <p class="text-gray-400 mb-6 min-h-[60px]">For growing businesses that need advanced features and support.</p>
+          <ul class="space-y-3 text-gray-300 mb-8 flex-grow">
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>50+ AI Modules</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>50,000 Data Points/mo</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>Priority Support</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>Advanced Analytics</span>
+            </li>
+          </ul>
+          <a href="#"
+            class="mt-auto text-center bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-colors w-full">
+            Start Free Trial
+          </a>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-700 rounded-2xl p-8 flex flex-col h-full">
+          <h3 class="text-2xl font-semibold text-white mb-2">Enterprise</h3>
+          <p class="text-4xl font-bold text-white mb-4">Custom</p>
+          <p class="text-gray-400 mb-6 min-h-[60px]">For large-scale organizations with custom needs and dedicated
+            support.</p>
+          <ul class="space-y-3 text-gray-300 mb-8 flex-grow">
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>Unlimited AI Modules</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>Unlimited Data Points</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>24/7 Dedicated Support</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>Custom Integrations</span>
+            </li>
+          </ul>
+          <a href="#"
+            class="mt-auto text-center bg-gray-700 text-white font-semibold py-3 rounded-lg hover:bg-gray-600 transition-colors w-full">
+            Contact Sales
+          </a>
+        </div>
+
+      </div>
+    </section>
+    <section class="py-20 px-8">
+      <div
+        class="max-w-5xl mx-auto bg-gradient-to-r from-sky-500 to-blue-700 rounded-3xl p-12 md:p-16 text-center shadow-2xl shadow-blue-500/30">
+        <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+          Ready to Transform Your Business?
+        </h2>
+        <p class="text-lg text-blue-100 max-w-2xl mx-auto mb-10">
+          Join over 500 enterprise clients and unlock the full potential of your data.
+          Start your 30-day free trial today. No credit card required.
+        </p>
+        <a href="#"
+          class="inline-block bg-white text-blue-700 font-bold text-lg px-10 py-4 rounded-xl hover:bg-gray-100 transition-colors shadow-lg transform hover:scale-105">
+          Start Your Free Trial
+        </a>
+      </div>
+    </section>
+  </main>
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      // --- Card Swap Animation (UNMODIFIED) ---
+      const cardContainer = document.querySelector('.card-swap-container');
+      if (cardContainer) {
+        // --- Configuration (from React props) ---
+        const config = {
+          // *** MODIFIED: Made cards larger ***
+          width: 720,
+          height: 480,
+          cardDistance: 50,
+          verticalDistance: 60,
+          // --- End Modifications ---
+          delay: 5000,
+          pauseOnHover: false,
+          skewAmount: 6,
+          easing: 'elastic' // 'elastic' or 'power'
+        };
+
+        // --- Easing Setup ---
+        const easingConfig =
+          config.easing === 'elastic' ?
+            {
+              ease: 'elastic.out(0.6,0.9)',
+              durDrop: 2,
+              durMove: 2,
+              durReturn: 2,
+              promoteOverlap: 0.9,
+              returnDelay: 0.05
+            } :
+            {
+              ease: 'power1.inOut',
+              durDrop: 0.8,
+              durMove: 0.8,
+              durReturn: 0.8,
+              promoteOverlap: 0.45,
+              returnDelay: 0.2
+            };
+
+        // --- DOM Selections ---
+        const cards = Array.from(cardContainer.querySelectorAll('.card'));
+        const totalCards = cards.length;
+
+        // --- State Variables (from React refs) ---
+        let order = Array.from({
+          length: totalCards
+        }, (_, i) => i);
+        let currentTimeline = null;
+        let intervalId = null;
+
+        // --- Helper Functions (ported directly) ---
+        const makeSlot = (i, distX, distY, total) => ({
+          x: i * distX,
+          y: -i * distY,
+          z: -i * distX * 1.5,
+          zIndex: total - i
+        });
+
+        const placeNow = (el, slot, skew) =>
+          gsap.set(el, {
+            x: slot.x,
+            y: slot.y,
+            z: slot.z,
+            xPercent: -50,
+            yPercent: -50,
+            skewY: skew,
+            transformOrigin: 'center center',
+            zIndex: slot.zIndex,
+            force3D: true
+          });
+
+        // --- Core Swap Logic (ported from `swap` function) ---
+        const swap = () => {
+          if (order.length < 2) return;
+
+          const [front, ...rest] = order;
+          const elFront = cards[front];
+
+          const tl = gsap.timeline();
+          currentTimeline = tl;
+
+          // 1. Drop the front card
+          tl.to(elFront, {
+            y: '+=500',
+            duration: easingConfig.durDrop,
+            ease: easingConfig.ease
+          });
+
+          // 2. Promote the other cards
+          tl.addLabel('promote', `-=${easingConfig.durDrop * easingConfig.promoteOverlap}`);
+          rest.forEach((idx, i) => {
+            const el = cards[idx];
+            const slot = makeSlot(i, config.cardDistance, config.verticalDistance, totalCards);
+            tl.set(el, {
+              zIndex: slot.zIndex
+            }, 'promote');
+            tl.to(
+              el, {
+              x: slot.x,
+              y: slot.y,
+              z: slot.z,
+              duration: easingConfig.durMove,
+              ease: easingConfig.ease
+            },
+              `promote+=${i * 0.15}`
+            );
+          });
+
+          // 3. Return the front card to the back
+          const backSlot = makeSlot(totalCards - 1, config.cardDistance, config.verticalDistance, totalCards);
+          tl.addLabel('return', `promote+=${easingConfig.durMove * easingConfig.returnDelay}`);
+          tl.call(
+            () => {
+              gsap.set(elFront, {
+                zIndex: backSlot.zIndex
+              });
+            },
+            undefined,
+            'return'
+          );
+          tl.to(
+            elFront, {
+            x: backSlot.x,
+            y: backSlot.y,
+            z: backSlot.z,
+            duration: easingConfig.durReturn,
+            ease: easingConfig.ease
+          },
+            'return'
+          );
+
+          // 4. Update the order array
+          tl.call(() => {
+            order = [...rest, front];
+          });
+        };
+
+        // --- Initialization (ported from `useEffect`) ---
+
+        // Set container dimensions
+        cardContainer.style.width = `${config.width}px`;
+        cardContainer.style.height = `${config.height}px`;
+
+        // Set initial positions for all cards
+        cards.forEach((card, i) => {
+          // Apply width/height to each card (like React's cloneElement)
+          card.style.width = `${config.width}px`;
+          card.style.height = `${config.height}px`;
+
+          // Place the card in its starting slot
+          placeNow(card, makeSlot(i, config.cardDistance, config.verticalDistance, totalCards), config.skewAmount);
+        });
+
+        // Start the animation loop
+        swap(); // Run first animation immediately
+        intervalId = window.setInterval(swap, config.delay);
+
+        // Setup pause-on-hover logic
+        if (config.pauseOnHover) {
+          const pause = () => {
+            if (currentTimeline) currentTimeline.pause();
+            clearInterval(intervalId);
+          };
+          const resume = () => {
+            if (currentTimeline) currentTimeline.play();
+            intervalId = window.setInterval(swap, config.delay);
+          };
+
+          cardContainer.addEventListener('mouseenter', pause);
+          cardContainer.addEventListener('mouseleave', resume);
+        }
+      }
+
+      // --- SVG Clip-Path Generation (UNMODIFIED) ---
+      const heroElement = document.querySelector('.content-area-shape');
+      const clipPathElement = document.querySelector('#hero-shape path');
+
+      if (heroElement && clipPathElement) {
+        const updatePath = () => {
+          const w = heroElement.clientWidth;
+          const h = heroElement.clientHeight;
+          if (w <= 0 || h <= 0) return; // Don't run if element is hidden
+
+          let d = '';
+          // NEW: Define outer and inner radius
+          const r_outer = 15; // 15px to match rounded-[15px]
+          const r_inner = 20; // 20px for the cutouts
+
+          if (window.innerWidth <= 768) {
+            // --- Mobile Path (110px cuts, 50px vertical) ---
+            // Now includes 15px outer radius and 20px inner radius
+            d = [
+              `M 0 ${50 + r_outer}`, // Start on left edge, below top-left corner
+              `A ${r_outer} ${r_outer} 0 0 1 ${r_outer} 50`, // Arc for top-left outer corner
+              `L ${110 - r_inner} 50`, // Line to inner cutout
+              `A ${r_inner} ${r_inner} 0 0 1 110 ${50 - r_inner}`, // Inner-left-bottom arc
+              `L 110 ${r_inner}`, // Line up
+              `A ${r_inner} ${r_inner} 0 0 1 ${110 + r_inner} 0`, // Inner-left-top arc
+              `L ${w - 110 - r_inner} 0`, // Line across top
+              `A ${r_inner} ${r_inner} 0 0 1 ${w - 110} ${r_inner}`, // Inner-right-top arc
+              `L ${w - 110} ${50 - r_inner}`, // Line down
+              `A ${r_inner} ${r_inner} 0 0 1 ${w - 110 + r_inner} 50`, // Inner-right-bottom arc
+              `L ${w - r_outer} 50`, // Line to outer corner
+              `A ${r_outer} ${r_outer} 0 0 1 ${w} ${50 + r_outer}`, // **FIX 1**: Arc for top-right outer corner
+              `L ${w} ${h - 50 - r_outer}`, // **FIX 2**: Line down right edge
+              `A ${r_outer} ${r_outer} 0 0 1 ${w - r_outer} ${h - 50}`, // Arc for bottom-right outer corner
+              `L ${w - 110 + r_inner} ${h - 50}`, // Line to inner cutout
+              `A ${r_inner} ${r_inner} 0 0 1 ${w - 110} ${h - 50 + r_inner}`, // Inner-bottom-right-top arc
+              `L ${w - 110} ${h - r_inner}`, // Line down
+              `A ${r_inner} ${r_inner} 0 0 1 ${w - 110 - r_inner} ${h}`, // Inner-bottom-right-bottom arc
+              `L ${r_outer} ${h}`, // Line across bottom
+              `A ${r_outer} ${r_outer} 0 0 1 0 ${h - r_outer}`, // Arc for bottom-left outer corner
+              `Z` // Close path
+            ].join(' ');
+
+          } else {
+            // --- Desktop Path ---
+            // Now includes 15px outer radius and 20px inner radius
+            d = [
+              `M 0 ${100 + r_outer}`, // Start on left edge, below top-left corner
+              `A ${r_outer} ${r_outer} 0 0 1 ${r_outer} 100`, // Arc for top-left outer corner
+              `L ${160 - r_inner} 100`, // Line to inner cutout
+              `A ${r_inner} ${r_inner} 0 0 1 160 ${100 - r_inner}`, // Inner-left-bottom arc
+              `L 160 ${r_inner}`, // Line up
+              `A ${r_inner} ${r_inner} 0 0 1 ${160 + r_inner} 0`, // Inner-left-top arc
+              `L ${w - 380 - r_inner} 0`, // Line across top
+              `A ${r_inner} ${r_inner} 0 0 1 ${w - 380} ${r_inner}`, // Inner-right-top arc
+              `L ${w - 380} ${100 - r_inner}`, // Line down
+              `A ${r_inner} ${r_inner} 0 0 0 ${w - 380 + r_inner} 100`, // Inner-right-bottom arc (Note: flag 0)
+              `L ${w - r_outer} 100`, // Line to outer corner
+              `A ${r_outer} ${r_outer} 0 0 1 ${w} ${100 + r_outer}`, // **FIX 3**: Arc for top-right outer corner
+              `L ${w} ${h - 140 - r_outer}`, // **FIX 4**: Line down right edge
+              `A ${r_outer} ${r_outer} 0 0 0 ${w - r_outer} ${h - 140}`, // Arc for bottom-right outer corner (Note: flag 0)
+              `L ${w - 200 + r_inner} ${h - 140}`,
+              `A ${r_inner} ${r_inner} 0 0 0 ${w - 200} ${h - 140 + r_inner}`, // Inner-bottom-right-top arc (Note: flag 0)
+              `L ${w - 200} ${h - r_inner}`, // Line down
+              `A ${r_inner} ${r_inner} 0 0 1 ${w - 200 - r_inner} ${h}`, // Inner-bottom-right-bottom arc
+              `L ${r_outer} ${h}`, // Line across bottom
+              `A ${r_outer} ${r_outer} 0 0 1 0 ${h - r_outer}`, // Arc for bottom-left outer corner
+              `Z` // Close path
+            ].join(' ');
+          }
+
+          clipPathElement.setAttribute('d', d);
+        };
+
+        // Run the update function on load and on resize
+        const resizeObserver = new ResizeObserver(updatePath);
+        resizeObserver.observe(heroElement);
+        updatePath(); // Initial call
+      }
+
+      // --- START OF MODIFIED JAVASCRIPT ---
+      window.addEventListener('scroll', () => {
+        const container = document.getElementById('ecosystem-container');
+
+        // Safety check: if the container isn't on the page, do nothing
+        if (!container) {
+          return;
+        }
+
+        const cardsWrapper = document.getElementById('cards-wrapper');
+        const rightPanel = document.getElementById('right-panel');
+
+        // Safety check for other elements
+        if (!cardsWrapper || !rightPanel || !cardsWrapper.firstElementChild || !cardsWrapper.lastElementChild) {
+          return;
+        }
+
+        const rect = container.getBoundingClientRect();
+
+        // This is the total "track" length for the sticky effect
+        // (e.g., 600vh container - 100vh viewport = 500vh of scroll)
+        const scrollableTrack = container.scrollHeight - window.innerHeight;
+
+        // This is how far *into* the track we are (pixels)
+        const scrollAmount = -rect.top;
+
+        // Calculate scroll progress from 0 (top of track) to 1 (bottom of track)
+        // We clamp it between 0 and 1 to prevent overscrolling.
+        let scrollPercent = Math.max(0, Math.min(1, scrollAmount / scrollableTrack));
+
+        // --- NEW LOGIC ---
+
+        // 1. Define the Start Y position:
+        // We want to center the *first card*. Since the wrapper is at `top: 50%`,
+        // we just need to shift it UP by half the height of the first card.
+        const startY = - (cardsWrapper.firstElementChild.offsetHeight / 2);
+
+        // 2. Define the End Y position:
+        // We want to center the *last card*.
+        // A) The Y-position of the *top* of the last card is:
+        //    (cardsWrapper.scrollHeight - cardsWrapper.lastElementChild.offsetHeight)
+        // B) The Y-position of the *center* of the last card (relative to the wrapper's top) is:
+        //    (Y-top + (cardsWrapper.lastElementChild.offsetHeight / 2))
+        // C) This simplifies to:
+        //    (cardsWrapper.scrollHeight - (cardsWrapper.lastElementChild.offsetHeight / 2))
+        // D) We need to shift the wrapper UP by this full amount.
+        const endY = - (cardsWrapper.scrollHeight - (cardsWrapper.lastElementChild.offsetHeight / 2));
+
+        // 3. Linearly interpolate between startY and endY using our scrollPercent
+        //    Formula: start + (end - start) * percent
+        const newTransformY = startY + (endY - startY) * scrollPercent;
+
+        // --- END OF NEW LOGIC ---
+
+        // Apply the new transform. The `translate(-50%, ...)` correctly
+        // handles the `left: 50%` centering from the CSS.
+        cardsWrapper.style.transform = `translate(-50%, ${newTransformY}px)`;
+      });
+      // --- END OF MODIFIED JAVASCRIPT ---
+
+    });
+  </script>
+
 </body>
+
 </html>
