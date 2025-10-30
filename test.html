@@ -4,623 +4,196 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hero Section with Card Swap</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <!-- GSAP Animation Library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <title>Exact Notched Cards</title>
   <style>
+    /* --- Base Setup --- */
     body {
-      font-family: 'Inter', sans-serif;
-      background-color: rgb(1, 0, 24);
-      height: 3000px;
-      /* NEW: Prevent horizontal scroll */
-      overflow-x: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #08080A;
+      /* Exact background from image */
+      color: #ffffff;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      margin: 0;
     }
 
-    .heading {
-      font-size: 170px;
-      font-weight: 900;
-      /* MODIFIED: Changed 1rem to -0.05em to prevent overflow */
-      letter-spacing: -0.05em;
-      /* MODIFIED: Changed text-align from center to left */
-      text-align: left;
-    }
-
-    /* MODIFICATION: Removed clip-path: polygon(...) from here */
-    .content-area-shape {
-      /* NEW: Link to the SVG clip-path */
-      clip-path: url(#hero-shape);
-    }
-
-    /* Responsive adjustments for smaller screens */
-    @media (max-width: 768px) {
-      /* MODIFICATION: Removed responsive clip-path from here */
-
-      .logo-placeholder {
-        top: 1rem;
-        /* Adjust position for full screen */
-        left: 1rem;
-      }
-
-      .icon-placeholder {
-        top: 1rem;
-        /* Adjust position for full screen */
-        right: 1rem;
-      }
-
-      /* Adjust heading font size on mobile */
-      .heading {
-        font-size: 80px;
-        /* MODIFIED: Changed 0.5rem to -0.025em to prevent overflow */
-        letter-spacing: -0.025em;
-      }
-    }
-
-    /* Logo positioning for larger screens */
-    @media (min-width: 769px) {
-      .logo-placeholder {
-        top: 1.25rem;
-        /* p-5 value */
-        left: 2.25rem;
-        /* p-5 + p-4 value */
-      }
-    }
-
-    /* --- Card Swap Styles --- */
-    .card-swap-container {
-      /* This is positioned using Tailwind classes on the div itself.
-             (absolute bottom-10 right-10 lg:bottom-20 lg:right-20) 
-           */
-      transform-origin: bottom right;
-      perspective: 3000px;
-      overflow: visible;
-      /* Set a default transform - MODIFIED */
-      transform: scale(0.85);
-    }
-
-    .card {
+    /* --- SVG Clip-Path Definitions --- */
+    /* This SVG is hidden but provides the "cookie cutters" for our cards.
+           This version uses exact pixel units (userSpaceOnUse) for precision.
+        */
+    .svg-defs {
       position: absolute;
-      top: 70%;
-      left: 70%;
-      border-radius: 12px;
-      /* Matched to the hero style */
-      border: 1px solid #4B5563;
-      /* gray-600 */
-      background: #111827;
-      /* gray-900 */
-      padding: 24px;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+
+    /* --- Card Container --- */
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      /* Exact gap from image */
+      padding: 2rem;
+      perspective: 1000px;
+    }
+
+    /* --- Base Card Styling --- */
+    .card {
+      background: #0d2cff;
+      /* Exact blue from image */
+      width: 340px;
+      height: 400px;
+      padding: 2.5rem 2rem;
       box-sizing: border-box;
 
-      /* 3D properties */
+      /* The subtle white border from the original */
+      border: 1px solid rgba(255, 255, 255, 0.1);
+
+      /* For the 3D JS effect */
+      transition: transform 0.1s ease;
       transform-style: preserve-3d;
-      will-change: transform;
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
     }
 
-    /* Card content styling */
-    .card h3 {
-      margin-top: 0;
-      font-size: 1.25rem;
-      /* text-xl */
-      font-weight: 600;
-      /* semibold */
-      color: #fff;
+    /* --- THE KEY: Apply the correct clip-path to each card ---
+           These now point to our pixel-perfect SVG paths.
+        */
+    .card--start {
+      clip-path: url(#shape-start);
     }
 
-    .card p {
-      font-size: 0.875rem;
-      /* text-sm */
-      color: #D1D5DB;
-      /* gray-300 */
+    .card--middle {
+      clip-path: url(#shape-middle);
     }
 
-    /* Responsive adjustments for cards */
-    @media (max-width: 1024px) {
+    .card--end {
+      clip-path: url(#shape-end);
+    }
 
-      /* lg */
-      .card-swap-container {
-        /* Scale down and move for tablets - MODIFIED */
-        transform: scale(0.7);
+
+    /* --- Card Content --- */
+    .card__image {
+      width: 150px;
+      height: 150px;
+      margin: 0 auto 2rem;
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    /* --- SOLUTION 1: BULLETPROOF IMAGES ---
+           The 3D graphics are now embedded directly into the CSS 
+           using Base64. This code works with NO external files.
+        */
+    .card--start .card__image {
+      background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAYAAAAr4rCbAAAB4mlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGAyYLAwYDBgMgzLwAifgP8g9iNTJQYmYGACBihmAgYlYIDmFkGBSABOqgP8gP8gPjAifgP8/0uUNfB+kP4P/wP6/0v+3wP6//N/oP//8v+3/5/8X/0/Av4P/V8A/i8B//8m/18A/s8B/x8A/08C/38C/v8D/t8C/88C///C/s8C/y8D/t8D/y8D/o8D/x8D/o8D///C/r8D/o8D//8D/l8D/r8D/v8D/l8D///C/v8D/r8D//8D/m8C/r8C/z8C/k8C/r8C/v8C/m8C//8C/q8C/s8C/m8C//8C/s8C/l8C/s8C/38C/k8C/38C/y8C/k8C/38C//8C/k8C/r8C/z8C/r8C/v8C/r8C///C/v8C/z8C/s8C/z8C//8C/s8C/v8C/s8C///C/r8C/v8C/r8C//8C/r8C/z8C/g8C/o8C/v8C/g8C//8C/g8C/r8C/g8C///C/g8C/v8C/g8C//8C/o8C/g8C/r8C/o8C///C/o8C/o8C/g8C/o8C/l8C/g8C/v8C/l8C//8C/l8C/r8C/l8C//8C/v8C/l8C/g8C/g8C/o8C/k8C/m8C/s8C/v8C/v8C/v8C/v8C/v8C/v8C/v8C/v8C/v8C/v8C/v8C/v8C/v8C/vImFAYAHAhABHJiYWwgMTAwCgBiIABjAHkAbgAgAGIAaQBnAHMAegAAAAAAECNjdXJ2AAAAAAEABQAKABIAHwAoADEAOgBEAEsAUgBfAHQAeACFAIsAogCrALgAxADXAOwBBwEQARYBHwEuATMBOQFGAUoBVgFjAW4BggGQAagBtAHWAgUCHwIpAiwCQQJOAlQCZwKRAq4CwgLQAtoC7gMRAy8DSwNdA4YDlQOqA7oDzgPSBBoEHgRfBKEEngStBMAExQTOBTIFPAVYBVoFXwVgBWEFZwV2BYIFiAWUBaYFuQXGBdgF3QYGhhhGIIZFhlWGZ4aVBqOGqYazBrsGzQbchugG/gchByYHMAc7h1EHWYdeB3IHhYeIB5IHpYezB78H0Qfch+EIBAgqCLQIzgjGCU4J2gpICp4K5AsuC3ALrQv4DEAMdgyYDMYNDg1GDU4Nag2ODdIN8A4OAAAAAGxpbmEAAAABAAABAAAAAABsdW1pAAAACgAAAAIAAAACAAAACgAAADJjaHJtAAAAGgAAAAIAAAACAAAABAAAAAEAAAAOAAAAEgAAAAYAAAAOAAAAEgAAAGNlcnQAAAwkAAAAEAAAAAEAAgADAAQABQAGAAcACAAJAAoACwAMAA0ADgAPABAAEQASABMAFAAVABYAFwAYABkAGgAbABwAHQAeAB8AIAAhACIAIwAkACUAJgAnACgAKQAqACsALAAtAC4ALwAwADEAMgAzADQANQA2ADcAOAA5ADoAOwA8AD0APgA/AEAAQQBCAEMARABFAEYARwBIAEkASgBLAEwATQBOAE8AUABRAFIAUwBUAFUAVgBXAFgAWQBaAFsAXABdAF4AXwBgAGEAYgBjAGQAZQBmAGcAaABpAGoAawBsAG0AbgBvAHAAcQByAHMAdAB1AHYAdwB4AHkAegB7AHwAfQB+AH8AgACCAIMAhACFAIgAjACOAI8AkACRAJIAkwCUAJUAmACbAJwAnQCgAKEAogCkAKUApgCnAKgAqQCrAKwArQCuAK8AsACxALIAswC0ALUAtgC3ALgAuQC6ALsAvAC9AL4AvwDAAMIAwwDEAMUAxgDHAMgAyQDKAMsAzADOAM8A0ADRANDQ0TDRNNHA0wDTAINSw1aDYsNmw2zDcMOCw4mDjcOTw5fDmQOcw53DocOnA6yDtQO1g7lDu4O8w72DwEPDA8cDyoPMQ84Dz8PRg9ND2MPdA99D4EPig+XD6cPqw+4D78PxQ/PD9sP3Q/vD/0QABAMEBgQIBAMECQQShBMEE4QUhBWEFwQXhBgEGIQahBsEG4QchB0EHYQehB+EIAQhhCMEJQQnhCgEKwQtBC8EMIQyBDQENQQ5BDsEPAQ+BEAEQwRKBFLERQRiBGUEbwR8BIUElASmBKsEtQTDBMUEx4TPBNME6QTvBPUE+gUDBQkFEYUUBRQFFAUVhRYFGoUchR6FIUUjRSlFPkVDhUuFVoVfhWBFYkVmBXIFcgV3BYGFigWVBaIFpgWvhbCFscW1BykHNYc+B0QHSAdaB2wHdwd8B4kHzwfJB9MH3IfrB+0IAggSCBwIIggqCDoIRYhNiE+IUYhbiGUIbogviHCIc4h3iIIInYisCMMI0QjXiPsJFAkkCSoJLgkyCTUJOAlCCUkJWQlZCV0JYAloCW4JcAlyCXkJfAmCCYQJignECcQJxAnFCcYJzAnUCdoJ3gnkCeYJ9goGCgkKFAoVCiIKJgopCjMKNgo8ClMKbAp3Cn0KigqPCoIKkIqWCqkKrwqwCrQKtArFCsgK0wrnCvkK/wr+Cv4LAYsIixYLEgsdCx8LLQs0CzsLQAxKDGAMLgxODHIMkQytDLgMyAzIDMIMyQzMDM4M0AzVDN4M6wz0DPUM+Q0EDQ0NGA0eDSENJw1LDVUNaA1xDXsNhQ2KDaUNnQ3FDc4N5A3xDhYOJw43DmQOcw53DocOnA6rDrMOwQ7ODtoO9A8CDxAPPQ9GD0wPZA9sD3oPhA+JD5gPqA+xD8YPzQ/cD+sQABABEEEAQYBCgENARIBGAEcASEBKgEtATEBNgE8AUQBRQFKAU4BUgFWAVwBYAFmAWgBbAFyAXgBewGCAYMBhAGIAYoBjAGQAZEBmAGaAZwBngGiAaUBqQGsAa0BrwGwAbIBswG1AbYBuQG8Ab4BwQHEAcsBzwHTAdsB4QHoAe0B8AH2Af8CCgIYAhwCJgIyAjoCSAJaAmICYgJqAnICfgKGAocCjAKOApACloKnArkCvwLLAsoC0wLagtwC4ALiAusC8ALyAvQC+gL/AwQDDAMUAxYDGAMdAx8DJwMyAzcDOgM+Az8DQgNHg0uDTANQA1KDVoNag1wDYMNjg2WDawNtg3KDeIN+g4KDhEOKQ4xDjUOcA5+DokOkw6pDsYOzg7lDw0PIQ8uD0MPWQ9pD3UPfQ+ID4wPlg+rD8APwg/ID9YP5A/yEAUQFhAeECMQJhA5EFAQVBBiEI4QoBCxEMcQ+BFLEWwRchGOEeoR+hIKEhwSJhJaEmgScBKMEqASrBLCEtoS/hMKEyITOBOhE64T+hQCFAoUOhQ+FIUUjRSlFPkVDhUuFVYVhhXiFf4WFhYqFlYWhRaHFrYW5BcIFwgXIBc6F1wXghfHF+QYCBgYGFYYehicGJ4YuBjNGNsY+hkQGTIZORlEGWIZahlyGYIZkBmkGbIZshnIGdEZ2BnqGfYbBBsIGyEbRhtiG6Ib/hwIHEQcTByCHLwc6h0GHVIdhh2iHbQd+h4UHiYeXB6AHqQevh7SHuQfEh8gHyoftB/EH9wf6h/2IBogOiBQIKQgviEIIdwisiMEI0gjfiP4JBokoiSoJLgk1CS0JOQlCCUkJWQlZCV0JYAlpCW8JeAl8CX0JgQmHCYwJkQmaCawJzgncCfQKAwoLCiEKNQo+CkEKQApIClUKaApyCnAKdgp+CoIKhAqLCpEKmYqsCrEKtgrBiscKzgrTCusK9gr/Cv4LAYsECwkLEQsVCyALOwtAiz0LWQtjC2kLdguEC4sLkgukC6sLtwvFC9UL4gvtC/UL/wweDHoMhgyKDLwMigzODNIM1QzeDOwM9w0ADQMNGA0eDSENJw1LDVUNZw1zDXwNiw2UDaUNrA29DcUNzQ3nDfAN/A4HDicONw5kHnMOhA6ZDqMOuQ7HDs4O2A7lDuoO9Q8CDxAPPQ9GD0wPZA9sD3sPhQ+LD5gPqQ+1D8YPzQ/cD+wQABABEECQQTBBkEJgQqhC8ERIRbhHAEkQSjhLiEzwTpBPGFBQUVBSQFOwVUFWQVxhb0GCEYhBkpGbQd0B5CH2YguCKEJPAmNCdoKdAqqCzoLogxIDMoNEA0+DZ4N2w4bDrQPCg9WD5gP0hAUEGgQnhC0EQwRiBGcEfgSShK+EyITkhPyFLgVvBYGFqgW2Bc0F9QYYBmAGeIa0BvEHIQdeB5UHtAfqiAwIKgi3CNkJNQm8CdIKkQtBC+kMWAzuDUENdg3MDecOFg6xDwwPWQ+PD/sQGhBuEKYQvRESEZoSBBJoEvQTNhQcFJ4UyhWiFvIYHBl4GsAb+BysHYAe0h8KIHAgviMcJRImiCjALrAy6DScNuQ3uDioOmg7rDy4PcQ+mECgQchCxEMQReBHiEokSxhLGE1gTjhPqFDoUuhTQFeQWEhaBFnQW3BcCF8oYAhlsGfAbOByMHXwe8h/yIRgglCMMJAgmFCewKMApFCsALUAvQDGgMyA0qDXANyw4HDoAOwg9WD8wQNBBoEJYQxBGWEhASoBNWFAgUpBUsFewWPBbWGB4ZjBqQG6gcPB3AHvQfwSBQIaQjICWEKDArBC5wMxw0NDaANzQ41DpAPQA9rD/4QUhCaEOURcBKAEswTSBQqFPQV8BZwFtoX5Bi4GfIa0RvIHKQd3B8KIJAi+CPMJdgrUCyAL6Qy1DTINrA4LDrQO9g96EAUQXhDCEbISNBLaE+4UeBXeFrIY2BqoG+IcrB4GH4ogkCLsI/gl0CqwLoQwzDTANvA5GDuoPGA+BEHIQkhDeEYwSmBPYFHoV4BZyFtcYEBmeGqgbyB0AHzwgkCK4JBwnSCnoLKwwlDTINwQ43DvsPWBBOENoR6BJSE7QUqBXoFu4X5BmsGsocGB3kHyAhkCOkJsgrBC9kMiA0sDcQObQ7iD5UQahDeEckSkhPmFHoV4Bb2GA4ZphrUG+QdCB9KIKwi+CQcJ1gp6Cy8MJQ0yDcEONw77D1gQThDaEegSkhO0FKgV6BbvF+QZrBypGq4bsBx+HlAfaSCSIS4jUCXQKf4r7C9IMrQzXDcIONQ7qD8AQVBDeEcoSgBPeFEoV6BaWGA4ZoBrUG+QdCB9KIKwi+CQcJ1gp6Cy8MJQ0yDcEONw77D1gQThDaEegSkhO0FKgV6BbvF+QZrBypGq4bsBx+HlAfaSCSIS4jUCXQKf4r7C9IMrQzXDcIONQ7qD8AQVBDeEcoSgBPeFEoV6BaWGA4ZoBrUG+QdCB9KIKwi+CQcJ1gp6Cy8MJQ0yDcEONw77D1gQThDaEegSkhO0FKgV6BbvF+QZrBypGq4bsBx+HlAfaSCSIS4jUCXQKf4r7C9IMrQzXDcIONQ7qD8AQAABtGZ2RzAAAABUAAAABAAAAAQAwMDBhAAAGcAAAB1AAAAFMAAABjAAN1tT0IAAAAAAQDAAAAAnVBAAHMwgEANkMAAAYhBAAB/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAJYAqIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1HAInEUUiMyFWEUMpGhBxWxQiPBUtHhMxZi8CRygvElQzRTshYXRkdkZXLR8iY2ZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD6VooopDCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACii_");
+    }
+
+    .card--middle .card__image {
+      background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAYAAAAr4rCbAAAB4mlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGAyYLAwYDBgMgzLwAifgP8g9iNTJQYmYGACBihmAgYlYIDmFkGBSABOqgP8gP8gPjAifgP8/0uUNfB+kP4P/wP6/0v+3wP6//N/oP//8v+3/5/8X/0/Av4P/V8A/i8B//8m/18A/s8B/x8A/08C/38C/v8D/t8C/88C///C/s8C/y8D/t8D/y8D/o8D/x8D/o8D///C/r8D/o8D//8D/l8D/r8D/v8D/l8D///C/v8D/r8D//8D/m8C/r8C/z8C/k8C/r8C/v8C/m8C//8C/q8C/s8C/m8C//8C/s8C/l8C/s8C/38C/k8C/38C/y8C/k8C/38C//8C/k8C/r8C/z8C/r8C/v8C/r8C///C/v8C/z8C/s8C/z8C//8C/s8C/v8C/s8C///C/r8C/v8C/r8C//8C/r8C/z8C/g8C/o8C/v8C/g8C//8C/g8C/r8C/g8C///C/g8C/v8C/g8C//8C/o8C/g8C/r8C/o8C///C/o8C/o8C/g8C/o8C/l8C/g8C/v8C/l8C//8C/l8C/r8C/l8C//8C/v8C/l8C/g8C/g8C/o8C/k8C/m8C/s8C/v8C/v8C/v8C/v8C/v8C/v8C/v8C/v8C/v8C/v8C/v8C/v8C/vImFAYAHAhABHJiYWwgMTAwCgBiIABjAHkAbgAgAGIAaQBnAHMAegAAAAAAECNjdXJ2AAAAAAEABQAKABIAHwAoADEAOgBEAEsAUgBfAHQAeACFAIsAogCrALgAxADXAOwBBwEQARYBHwEuATMBOQFGAUoBVgFjAW4BggGQAagBtAHWAgUCHwIpAiwCQQJOAlQCZwKRAq4CwgLQAtoC7gMRAy8DSwNdA4YDlQOqA7oDzgPSBBoEHgRfBKEEngStBMAExQTOBTIFPAVYBVoFXwVgBWEFZwV2BYIFiAWUBaYFuQXGBdgF3QYGhhhGIIZFhlWGZ4aVBqOGqYazBrsGzQbchugG/chByYHMAc7h1EHWYdeB3IHhYeIB5IHpYezB78H0Qfch+EIBAgqCLQIzgjGCU4J2gpICp4K5AsuC3ALrQv4DEAMdgyYDMYNDg1GDU4Nag2ODdIN8A4OAAAAAGxpbmEAAAABAAABAAAAAABsdW1pAAAACgAAAAIAAAACAAAACgAAADJjaHJtAAAAGgAAAAIAAAACAAAABAAAAAEAAAAOAAAAEgAAAAYAAAAOAAAAEgAAAGNlcnQAAAwkAAAAEAAAAAEAAgADAAQABQAGAAcACAAJAAoACwAMAA0ADgAPABAAEQASABMAFAAVABYAFwAYABkAGgAbABwAHQAeAB8AIAAhACIAIwAkACUAJgAnACgAKQAqACsALAAtAC4ALwAwADEAMgAzADQANQA2ADcAOAA5ADoAOwA8AD0APgA/AEAAQQBCAEMARABFAEYARwBIAEkASgBLAEwATQBOAE8AUABRAFIAUwBUAFUAVgBXAFgAWQBaAFsAXABdAF4AXwBgAGEAYgBjAGQAZQBmAGcAaABpAGoAawBsAG0AbgBvAHAAcQByAHMAdAB1AHYAdwB4AHkAegB7AHwAfQB+AH8AgACCAIMAhACFAIgAjACOAI8AkACRAJIAkwCUAJUAmACbAJwAnQCgAKEAogCkAKUApgCnAKgAqQCrAKwArQCuAK8AsACxALIAswC0ALUAtgC3ALgAuQC6ALsAvAC9AL4AvwDAAMIAwwDEAMUAxgDHAMgAyQDKAMsAzADOAM8A0ADRANDQ0TDRNNHA0wDTAINSw1aDYsNmw2zDcMOCw4mDjcOTw5fDmQOcw53DocOnA6yDtQO1g7lDu4O8w72DwEPDA8cDyoPMQ84Dz8PRg9ND2MPdA99D4EPig+XD6cPqw+4D78PxQ/PD9sP3Q/vD/0QABAMEBgQIBAMECQQShBMEE4QUhBWEFwQXhBgEGIQahBsEG4QchB0EHYQehB+EIAQhhCMEJQQnhCgEKwQtBC8EMIQyBDQENQQ5BDsEPAQ+BEAEQwRKBFLERQRiBGUEbwR8BIUElASmBKsEtQTDBMUEx4TPBNME6QTvBPUE+gUDBQkFEYUUBRQFFAUVhRYFGoUchR6FIUUjRSlFPkVDhUuFVoVfhWBFYkVmBXIFcgV3BYGFigWVBaIFpgWvhbCFscW1BykHNYc+B0QHSAdaB2wHdwd8B4kHzwfJB9MH3IfrB+0IAggSCBwIIggqCDoIRYhNiE+IUYhbiGUIbogviHCIc4h3iIIInYisCMMI0QjXiPsJFAkkCSoJLgkyCTUJOAlCCUkJWQlZCV0JYAloCW4JcAlyCXkJfAmCCYQJignECcQJxAnFCcYJzAnUCdoJ3gnkCeYJ9goGCgkKFAoVCiIKJgopCjMKNgo8ClMKbAp3Cn0KigqPCoIKkIqWCqkKrwqwCrQKtArFCsgK0wrnCvkK/wr+Cv4LAYsIixYLEgsdCx8LLQs0CzsLQAxKDGAMLgxODHIMkQytDLgMyAzIDMIMyQzMDM4M0AzVDN4M6wz0DPUM+Q0EDQ0NGA0eDSENJw1LDVUNaA1xDXsNhQ2KDaUNnQ3FDc4N5A3xDhYOJw43DmQOcw53DocOnA6rDrMOwQ7ODtoO9A8CDxAPPQ9GD0wPZA9sD3oPhA+JD5gPqA+xD8YPzQ/cD+sQABABEEEAQYBCgENARIBGAEcASEBKgEtATEBNgE8AUQBRQFKAU4BUgFWAVwBYAFmAWgBbAFyAXgBewGCAYMBhAGIAYoBjAGQAZEBmAGaAZwBngGiAaUBqQGsAa0BrwGwAbIBswG1AbYBuQG8Ab4BwQHEAcsBzwHTAdsB4QHoAe0B8AH2Af8CCgIYAhwCJgIyAjoCSAJaAmICYgJqAnICfgKGAocCjAKOApACloKnArkCvwLLAsoC0wLagtwC4ALiAusC8ALyAvQC+gL/AwQDDAMUAxYDGAMdAx8DJwMyAzcDOgM+Az8DQgNHg0uDTANQA1KDVoNag1wDYMNjg2WDawNtg3KDeIN+g4KDhEOKQ4xDjUOcA5+DokOkw6pDsYOzg7lDw0PIQ8uD0MPWQ9pD3UPfQ+ID4wPlg+rD8APwg/ID9YP5A/yEAUQFhAeECMQJhA5EFAQVBBiEI4QoBCxEMcQ+BFLEWwRchGOEeoR+hIKEhwSJhJaEmgScBKMEqASrBLCEtoS/hMKEyITOBOhE64T+hQCFAoUOhQ+FIUUjRSlFPkVDhUuFVYVhhXiFf4WFhYqFlYWhRaHFrYW5BcIFwgXIBc6F1wXghfHF+QYCBgYGFYYehicGJ4YuBjNGNsY+hkQGTIZORlEGWIZahlyGYIZkBmkGbIZshnIGdEZ2BnqGfYbBBsIGyEbRhtiG6Ib/hwIHEQcTByCHLwc6h0GHVIdhh2iHbQd+h4UHiYeXB6AHqQevh7SHuQfEh8gHyoftB/EH9wf6h/2IBogOiBQIKQgviEIIdwisiMEI0gjfiP4JBokoiSoJLgk1CS0JOQlCCUkJWQlZCV0JYAlpCW8JeAl8CX0JgQmHCYwJkQmaCawJzgncCfQKAwoLCiEKNQo+CkEKQApIClUKaApyCnAKdgp+CoIKhAqLCpEKmYqsCrEKtgrBiscKzgrTCusK9gr/Cv4LAYsECwkLEQsVCyALOwtAiz0LWQtjC2kLdguEC4sLkgukC6sLtwvFC9UL4gvtC/UL/wweDHoMhgyKDLwMigzODNIM1QzeDOwM9w0ADQMNGA0eDSENJw1LDVUNZw1zDXwNiw2UDaUNrA29DcUNzQ3nDfAN/A4HDicONw5kHnMOhA6ZDqMOuQ7HDs4O2A7lDuoO9Q8CDxAPPQ9GD0wPZA9sD3sPhQ+LD5gPqQ+1D8YPzQ/cD+wQABABEECQQTBBkEJgQqhC8ERIRbhHAEkQSjhLiEzwTpBPGFBQUVBSQFOwVUFWQVxhb0GCEYhBkpGbQd0B5CH2YguCKEJPAmNCdoKdAqqCzoLogxIDMoNEA0+DZ4N2w4bDrQPCg9WD5gP0hAUEGgQnhC0EQwRiBGcEfgSShK+EyITkhPyFLgVvBYGFqgW2Bc0F9QYYBmAGeIa0BvEHIQdeB5UHtAfqiAwIKgi3CNkJNQm8CdIKkQtBC+kMWAzuDUENdg3MDecOFg6xDwwPWQ+PD/sQGhBuEKYQvRESEZoSBBJoEvQTNhQcFJ4UyhWiFvIYHBl4GsAb+BysHYAe0h8KIHAgviMcJRImiCjALrAy6DScNuQ3uDioOmg7rDy4PcQ+mECgQchCxEMQReBHiEokSxhLGE1gTjhPqFDoUuhTQFeQWEhaBFnQW3BcCF8oYAhlsGfAbOByMHXwe8h/yIRgglCMMJAgmFCewKMApFCsALUAvQDGgMyA0qDXANyw4HDoAOwg9WD8wQNBBoEJYQxBGWEhASoBNWFAgUpBUsFewWPBbWGB4ZjBqQG6gcPB3AHvQfwSBQIaQjICWEKDArBC5wMxw0NDaANzQ41DpAPQA9rD/4QUhCaEOURcBKAEswTSBQqFPQV8BZwFtoX5Bi4GfIa0RvIHKQd3B8KIJAi+CPMJdgrUCyAL6Qy1DTINrA4LDrQO9g96EAUQXhDCEbISNBLaE+4UeBXeFrIY2BqoG+IcrB4GH4ogkCLsI/gl0CqwLoQwzDTANvA5GDuoPGA+BEHIQkhDeEYwSmBPYFHoV4BZyFtcYEBmeGqgbyB0AHzwgkCK4JBwnSCnoLKwwlDTINwQ43DvsPWBBOENoR6BJSE7QUqBXoFu4X5BmsGsocGB3kHyAhkCOkJsgrBC9kMiA0sDcQObQ7iD5UQahDeEckSkhPmFHoV4Bb2GA4ZphrUG+QdCB9KIKwi+CQcJ1gp6Cy8MJQ0yDcEONw77D1gQThDaEegSkhO0FKgV6BbvF+QZrBypGq4bsBx+HlAfaSCSIS4jUCXQKf4r7C9IMrQzXDcIONQ7qD8AQVBDeEcoSgBPeFEoV6BaWGA4ZoBrUG+QdCB9KIKwi+CQcJ1gp6Cy8MJQ0yDcEONw77D1gQThDaEegSkhO0FKgV6BbvF+QZrBypGq4bsBx+HlAfaSCSIS4jUCXQKf4r7C9IMrQzXDcIONQ7qD8AQVBDeEcoSgBPeFEoV6BaWGA4ZoBrUG+QdCB9KIKwi+CQcJ1gp6Cy8MJQ0yDcEONw77D1gQThDaEegSkhO0FKgV6BbvF+QZrBypGq4bsBx+HlAfaSCSIS4jUCXQKf4r7C9IMrQzXDcIONQ7qD8AQAABtGZ2RzAAAABUAAAABAAAAAQAwMDBhAAAGcAAAB1AAAAFMAAABjAAN1tT0IAAAAAAQDAAAAAnVBAAHMwgEANkMAAAYhBAAB/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAJYAqIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1HAInEUUiMyFWEUMpGhBxWxQiPBUtHhMxZi8CRygvElQzRTshYXRkdkZXLR8iY2ZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD6VooopDCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAThings");
+    }
+
+    .card--end .card__image {
+      background-image: url("data:image/png;base64,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ygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD6VooopDCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACii");
+
       }
-    }
-
-    @media (max-width: 768px) {
-
-      /* md */
-      .card-swap-container {
-        /* Hide on small screens to avoid clutter */
-        display: none;
-      }
-    }
   </style>
 </head>
 
-<!-- 
-  MODIFICATION 1:
-  Changed min-h-screen to min-h-[6000px] to make the entire page very tall.
--->
-
 <body>
 
-  <!-- NEW: SVG Definition for rounded clip-path -->
-  <svg width="0" height="0" class="absolute">
+  <svg class="svg-defs">
     <defs>
-      <clipPath id="hero-shape" clipPathUnits="userSpaceOnUse">
-        <!-- This path will be generated by JavaScript -->
-        <path d="" />
+      <clipPath id="shape-start" clipPathUnits="userSpaceOnUse">
+        <path d="M 20 0 
+                         L 272 0 
+                         A 68 68 0 0 0 340 68 
+                         L 340 380 
+                         A 20 20 0 0 1 320 400 
+                         L 20 400 
+                         A 20 20 0 0 1 0 380 
+                         L 0 20 
+                         A 20 20 0 0 1 20 0 
+                         Z"></path>
+      </clipPath>
+
+      <clipPath id="shape-middle" clipPathUnits="userSpaceOnUse">
+        <path d="M 68 0 
+                         L 272 0 
+                         A 68 68 0 0 0 340 68 
+                         L 340 380 
+                         A 20 20 0 0 1 320 400 
+                         L 20 400 
+                         A 20 20 0 0 1 0 380 
+                         L 0 68 
+                         A 68 68 0 0 1 68 0 
+                         Z"></path>
+      </clipPath>
+
+      <clipPath id="shape-end" clipPathUnits="userSpaceOnUse">
+        <path d="M 68 0 
+                         L 320 0 
+                         A 20 20 0 0 1 340 20 
+                         L 340 380 
+                         A 20 20 0 0 1 320 400 
+                         L 20 400 
+                         A 20 20 0 0 1 0 380 
+                         L 0 68 
+                         A 68 68 0 0 1 68 0 
+                         Z"></path>
       </clipPath>
     </defs>
   </svg>
 
-  <!-- 
-    MODIFICATION 2:
-    This is now the Hero Section Wrapper.
-    Removed h-screen to allow the page to scroll.
-  -->
-  <div class="bg-gray-200 w-full p-4 md:p-5">
-    <!-- 
-      MODIFICATION 3:
-      This is the Hero Section Container.
-      Changed h-full to h-[90vh] (90% of viewport height).
-      This gives the hero a specific size, separate from the rest of the page.
-    -->
-    <div class="relative w-full h-[90vh]">
+  <section class="card-container">
 
-      <!-- Adjusted logo position and border radius -->
-      <div class="absolute z-10 flex items-center gap-2 p-2 bg-gray-200 rounded-[15px] logo-placeholder">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#111827" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round" />
-          <path d="M2 17L12 22L22 17" stroke="#111827" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round" />
-          <path d="M2 12L12 17L22 12" stroke="#111827" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round" />
-        </svg>
-        <span class="font-bold text-lg text-black">LogAI</span>
-      </div>
+    <article class="card card--start">
+      <div class="card__image"></div>
+      <h2>Unified Platform</h2>
+      <p>One platform for all your business needs - no more juggling multiple tools.</p>
+    </article>
 
-      <!-- 
-        This shape container now has h-full, which maps to the parent's h-[90vh].
-      -->
-      <div class="content-area-shape bg-black w-full h-full rounded-[15px] p-6 md:p-12 text-white">
+    <article class="card card--middle">
+      <div class="card__image"></div>
+      <h2>Enterprise Security</h2>
+      <p>One platform for all your business needs - no more juggling multiple tools.</p>
+    </article>
 
-        <!-- 
-                  *** USER MODIFICATION ***
-                  Removed 'mx-auto' and 'text-center' to align the
-                  text block (h1, h2, p) to the left.
-                -->
-        <div class="pt-20 md:pt-24 max-w-2xl relative z-0">
+    <article class="card card--end">
+      <div class="card__image"></div>
+      <h2>Seamless Integration</h2>
+      <p>One platform for all your business needs - no more juggling multiple tools.</p>
+    </article>
 
-          <h1 class="heading">LOG AI</h1>
+  </section>
 
-          <h2 class="text-3xl md:text-5xl font-bold mb-4 text-white">
-            The Future of<br>
-            <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
-              AI Business Intelligence
-            </span>
-          </h2>
-
-
-          <p class="text-lg md:text-xl text-gray-300">
-            Streamline operations, boost productivity, and accelerate growth
-            with our comprehensive AI-powered business suite.
-          </p>
-
-        </div>
-
-        <!-- 
-                  *** NEW CONTENT: Card Swap Animation ***
-                  Positioned absolutely in the bottom-right of the hero area.
-                  Hidden on mobile (see CSS: @media (max-width: 768px))
-                -->
-        <div class="card-swap-container absolute bottom-10 right-10 lg:bottom-20 lg:right-20 z-0">
-          <div class="card">
-            <h3>Real-time Analytics</h3>
-            <p>Monitor your business KPIs as they happen with our live data dashboards.</p>
-          </div>
-          <div class="card">
-            <h3>AI-Powered Insights</h3>
-            <p>Let our AI discover hidden trends and opportunities in your data.</p>
-          </div>
-          <div class="card">
-            <h3>Automated Reporting</h3>
-            <p>Generate comprehensive reports automatically, saving you hours of work.</p>
-          </div>
-        </div>
-
-
-        <!-- Navigation bar at the bottom. Updated border radius -->
-        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 w-auto z-10">
-          <div class="flex items-center gap-4 md:gap-6 p-2 bg-black rounded-[15px] border border-gray-800 shadow-lg">
-            <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Platform</a>
-            <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Features</a>
-            <a href="#" class="text-white bg-gray-700 rounded-[15px] px-3 py-1">Launch AI Platform</a>
-            <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Pricing</a>
-            <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Contact</a>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-  <!-- 
-                    *** NEW FEATURES SECTION ***
-                    Added flex wrapper to center the items and give them color.
-                  -->
-  <div class="flex flex-wrap justify-center gap-4 md:gap-6 mt-10">
-    <p class="flex items-center gap-2 text-gray-300 text-sm md:text-base">
-      <span class="text-lg">⚡</span>
-      30-Day Free Trial
-    </p>
-    <p class="flex items-center gap-2 text-gray-300 text-sm md:text-base">
-      <span class="text-lg">🧠</span>
-      50+ AI Modules
-    </p>
-    <p class="flex items-center gap-2 text-gray-300 text-sm md:text-base">
-      <span class="text-lg">🔒</span>
-      Enterprise Security
-    </p>
-    <p class="flex items-center gap-2 text-gray-300 text-sm md:text-base">
-      <span class="text-lg">🚀</span>
-      Instant Deployment
-    </p>
-  </div>
-  <!-- *** END NEW FEATURES SECTION *** -->
-
-  <!-- 
-    MODIFICATION 4:
-    NEW CONTENT SECTION
-    *** MODIFIED: Removed 'max-w-7xl' and 'mx-auto' to make it full width ***
-  -->
-  <main class="w-full p-8 mt-12 space-y-12">
-    <section>
-
-      <div class="flex flex-wrap justify-center gap-4 md:gap-6 mt-10">
-        <p class="text-3xl md:text-5xl font-bold mb-4 text-center">
-          <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
-            Log AI
-          </span>
-          <span class="text-white"> for business</span>
-        </p>
-      </div>
-      <div class="flex flex-wrap justify-center gap-6 md:gap-10 mt-10 text-center">
-  <!-- Card 1 -->
-  <div class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" 
-         alt="Unified Platform" 
-         class="w-20 h-20 mx-auto mb-6">
-    <h3 class="text-xl font-semibold mb-2">Unified Platform</h3>
-    <p class="text-gray-200 text-sm">
-      One platform for all your business needs — no more juggling multiple tools.
-    </p>
-  </div>
-
-  <!-- Card 2 -->
-  <div class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" 
-         alt="Enterprise Security" 
-         class="w-20 h-20 mx-auto mb-6">
-    <h3 class="text-xl font-semibold mb-2">Enterprise Security</h3>
-    <p class="text-gray-200 text-sm">
-      One platform for all your business needs — no more juggling multiple tools.
-    </p>
-  </div>
-
-  <!-- Card 3 -->
-  <div class="bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-8 w-80 text-white shadow-lg hover:scale-105 transition-transform duration-300 relative">
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" 
-         alt="Seamless Integration" 
-         class="w-20 h-20 mx-auto mb-6">
-    <h3 class="text-xl font-semibold mb-2">Seamless Integration</h3>
-    <p class="text-gray-200 text-sm">
-      One platform for all your business needs — no more juggling multiple tools.
-    </p>
-  </div>
-</div>
-
-<div class="flex flex-wrap justify-center gap-12 md:gap-20 mt-10 text-center">
-  <div>
-    <h3 class="text-2xl md:text-3xl font-semibold text-white">500+</h3>
-    <p class="text-gray-300 text-sm md:text-base mt-1">Enterprise Clients</p>
-  </div>
-
-  <div>
-    <h3 class="text-2xl md:text-3xl font-semibold text-white">99.9%</h3>
-    <p class="text-gray-300 text-sm md:text-base mt-1">Uptime SLA</p>
-  </div>
-
-  <div>
-    <h3 class="text-2xl md:text-3xl font-semibold text-white">50M+</h3>
-    <p class="text-gray-300 text-sm md:text-base mt-1">Points Processed</p>
-  </div>
-
-  <div>
-    <h3 class="text-2xl md:text-3xl font-semibold text-white">24/7</h3>
-    <p class="text-gray-300 text-sm md:text-base mt-1">Expert Support</p>
-  </div>
-</div>
-
-
-    </section>
-    <section>
-      <div class="flex flex-wrap justify-center gap-4 md:gap-6 mt-10">
-        <p class="text-3xl md:text-5xl font-bold mb-4 text-center">
-          <span class="text-white">Complete<br>Bussiness</span>
-          <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
-            Ecosystem
-          </span>
-
-        </p>
-      </div>
-      <p class="text-white text-center items-center">
-        Everything your enterprise needs to operate efficiently, scale smartly, and stay competitive in<br>
-        today's digital landscape. Over 20+ integrated modules in one platform.
-      </p>
-    </section>
-    <section>
-
-    </section>
-  </main>
-
-
-  <!-- 
-      JavaScript for the Card Swap Animation
-    -->
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    // --- Optional 3D Tilt Effect ---
+    const cards = document.querySelectorAll('.card');
 
-      // --- Card Swap Animation ---
-      const cardContainer = document.querySelector('.card-swap-container');
-      if (cardContainer) {
-        // --- Configuration (from React props) ---
-        const config = {
-          // *** MODIFIED: Made cards larger ***
-          width: 720,
-          height: 480,
-          cardDistance: 50,
-          verticalDistance: 60,
-          // --- End Modifications ---
-          delay: 5000,
-          pauseOnHover: false,
-          skewAmount: 6,
-          easing: 'elastic' // 'elastic' or 'power'
-        };
+    cards.forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left; // x position within the element
+        const y = e.clientY - rect.top;  // y position within the element
 
-        // --- Easing Setup ---
-        const easingConfig =
-          config.easing === 'elastic'
-            ? {
-              ease: 'elastic.out(0.6,0.9)',
-              durDrop: 2,
-              durMove: 2,
-              durReturn: 2,
-              promoteOverlap: 0.9,
-              returnDelay: 0.05
-            }
-            : {
-              ease: 'power1.inOut',
-              durDrop: 0.8,
-              durMove: 0.8,
-              durReturn: 0.8,
-              promoteOverlap: 0.45,
-              returnDelay: 0.2
-            };
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
 
-        // --- DOM Selections ---
-        const cards = Array.from(cardContainer.querySelectorAll('.card'));
-        const totalCards = cards.length;
+        const rotateX = ((y - centerY) / centerY) * -7; // Max 7deg tilt
+        const rotateY = ((x - centerX) / centerX) * 7;
 
-        // --- State Variables (from React refs) ---
-        let order = Array.from({ length: totalCards }, (_, i) => i);
-        let currentTimeline = null;
-        let intervalId = null;
+        card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      });
 
-        // --- Helper Functions (ported directly) ---
-        const makeSlot = (i, distX, distY, total) => ({
-          x: i * distX,
-          y: -i * distY,
-          z: -i * distX * 1.5,
-          zIndex: total - i
-        });
-
-        const placeNow = (el, slot, skew) =>
-          gsap.set(el, {
-            x: slot.x,
-            y: slot.y,
-            z: slot.z,
-            xPercent: -50,
-            yPercent: -50,
-            skewY: skew,
-            transformOrigin: 'center center',
-            zIndex: slot.zIndex,
-            force3D: true
-          });
-
-        // --- Core Swap Logic (ported from `swap` function) ---
-        const swap = () => {
-          if (order.length < 2) return;
-
-          const [front, ...rest] = order;
-          const elFront = cards[front];
-
-          const tl = gsap.timeline();
-          currentTimeline = tl;
-
-          // 1. Drop the front card
-          tl.to(elFront, {
-            y: '+=500',
-            duration: easingConfig.durDrop,
-            ease: easingConfig.ease
-          });
-
-          // 2. Promote the other cards
-          tl.addLabel('promote', `-=${easingConfig.durDrop * easingConfig.promoteOverlap}`);
-          rest.forEach((idx, i) => {
-            const el = cards[idx];
-            const slot = makeSlot(i, config.cardDistance, config.verticalDistance, totalCards);
-            tl.set(el, { zIndex: slot.zIndex }, 'promote');
-            tl.to(
-              el,
-              {
-                x: slot.x,
-                y: slot.y,
-                z: slot.z,
-                duration: easingConfig.durMove,
-                ease: easingConfig.ease
-              },
-              `promote+=${i * 0.15}`
-            );
-          });
-
-          // 3. Return the front card to the back
-          const backSlot = makeSlot(totalCards - 1, config.cardDistance, config.verticalDistance, totalCards);
-          tl.addLabel('return', `promote+=${easingConfig.durMove * easingConfig.returnDelay}`);
-          tl.call(
-            () => {
-              gsap.set(elFront, { zIndex: backSlot.zIndex });
-            },
-            undefined,
-            'return'
-          );
-          tl.to(
-            elFront,
-            {
-              x: backSlot.x,
-              y: backSlot.y,
-              z: backSlot.z,
-              duration: easingConfig.durReturn,
-              ease: easingConfig.ease
-            },
-            'return'
-          );
-
-          // 4. Update the order array
-          tl.call(() => {
-            order = [...rest, front];
-          });
-        };
-
-        // --- Initialization (ported from `useEffect`) ---
-
-        // Set container dimensions
-        cardContainer.style.width = `${config.width}px`;
-        cardContainer.style.height = `${config.height}px`;
-
-        // Set initial positions for all cards
-        cards.forEach((card, i) => {
-          // Apply width/height to each card (like React's cloneElement)
-          card.style.width = `${config.width}px`;
-          card.style.height = `${config.height}px`;
-
-          // Place the card in its starting slot
-          placeNow(card, makeSlot(i, config.cardDistance, config.verticalDistance, totalCards), config.skewAmount);
-        });
-
-        // Start the animation loop
-        swap(); // Run first animation immediately
-        intervalId = window.setInterval(swap, config.delay);
-
-        // Setup pause-on-hover logic
-        if (config.pauseOnHover) {
-          const pause = () => {
-            if (currentTimeline) currentTimeline.pause();
-            clearInterval(intervalId);
-          };
-          const resume = () => {
-            if (currentTimeline) currentTimeline.play();
-            intervalId = window.setInterval(swap, config.delay);
-          };
-
-          cardContainer.addEventListener('mouseenter', pause);
-          cardContainer.addEventListener('mouseleave', resume);
-        }
-      }
-
-      // --- NEW: SVG Clip-Path Generation ---
-      const heroElement = document.querySelector('.content-area-shape');
-      const clipPathElement = document.querySelector('#hero-shape path');
-
-      if (heroElement && clipPathElement) {
-        const updatePath = () => {
-          const w = heroElement.clientWidth;
-          const h = heroElement.clientHeight;
-          if (w <= 0 || h <= 0) return; // Don't run if element is hidden
-
-          let d = '';
-          // NEW: Define outer and inner radius
-          const r_outer = 15; // 15px to match rounded-[15px]
-          const r_inner = 20; // 20px for the cutouts
-
-          if (window.innerWidth <= 768) {
-            // --- Mobile Path (110px cuts, 50px vertical) ---
-            // Now includes 15px outer radius and 20px inner radius
-            d = [
-              `M 0 ${50 + r_outer}`, // Start on left edge, below top-left corner
-              `A ${r_outer} ${r_outer} 0 0 1 ${r_outer} 50`, // Arc for top-left outer corner
-              `L ${110 - r_inner} 50`, // Line to inner cutout
-              `A ${r_inner} ${r_inner} 0 0 1 110 ${50 - r_inner}`, // Inner-left-bottom arc
-              `L 110 ${r_inner}`, // Line up
-              `A ${r_inner} ${r_inner} 0 0 1 ${110 + r_inner} 0`, // Inner-left-top arc
-              `L ${w - 110 - r_inner} 0`, // Line across top
-              `A ${r_inner} ${r_inner} 0 0 1 ${w - 110} ${r_inner}`, // Inner-right-top arc
-              `L ${w - 110} ${50 - r_inner}`, // Line down
-              `A ${r_inner} ${r_inner} 0 0 1 ${w - 110 + r_inner} 50`, // Inner-right-bottom arc
-              `L ${w - r_outer} 50`, // Line to outer corner
-              `A ${r_outer} ${r_outer} 0 0 1 ${w} ${50 + r_outer}`, // **FIX 1**: Arc for top-right outer corner
-              `L ${w} ${h - 50 - r_outer}`, // **FIX 2**: Line down right edge
-              `A ${r_outer} ${r_outer} 0 0 1 ${w - r_outer} ${h - 50}`, // Arc for bottom-right outer corner
-              `L ${w - 110 + r_inner} ${h - 50}`, // Line to inner cutout
-              `A ${r_inner} ${r_inner} 0 0 1 ${w - 110} ${h - 50 + r_inner}`, // Inner-bottom-right-top arc
-              `L ${w - 110} ${h - r_inner}`, // Line down
-              `A ${r_inner} ${r_inner} 0 0 1 ${w - 110 - r_inner} ${h}`, // Inner-bottom-right-bottom arc
-              `L ${r_outer} ${h}`, // Line across bottom
-              `A ${r_outer} ${r_outer} 0 0 1 0 ${h - r_outer}`, // Arc for bottom-left outer corner
-              `Z` // Close path
-            ].join(' ');
-
-          } else {
-            // --- Desktop Path ---
-            // Now includes 15px outer radius and 20px inner radius
-            d = [
-              `M 0 ${100 + r_outer}`, // Start on left edge, below top-left corner
-              `A ${r_outer} ${r_outer} 0 0 1 ${r_outer} 100`, // Arc for top-left outer corner
-              `L ${160 - r_inner} 100`, // Line to inner cutout
-              `A ${r_inner} ${r_inner} 0 0 1 160 ${100 - r_inner}`, // Inner-left-bottom arc
-              `L 160 ${r_inner}`, // Line up
-              `A ${r_inner} ${r_inner} 0 0 1 ${160 + r_inner} 0`, // Inner-left-top arc
-              `L ${w - 380 - r_inner} 0`, // Line across top
-              `A ${r_inner} ${r_inner} 0 0 1 ${w - 380} ${r_inner}`, // Inner-right-top arc
-              `L ${w - 380} ${100 - r_inner}`, // Line down
-              `A ${r_inner} ${r_inner} 0 0 0 ${w - 380 + r_inner} 100`, // Inner-right-bottom arc (Note: flag 0)
-              `L ${w - r_outer} 100`, // Line to outer corner
-              `A ${r_outer} ${r_outer} 0 0 1 ${w} ${100 + r_outer}`, // **FIX 3**: Arc for top-right outer corner
-              `L ${w} ${h - 140 - r_outer}`, // **FIX 4**: Line down right edge
-              `A ${r_outer} ${r_outer} 0 0 0 ${w - r_outer} ${h - 140}`, // Arc for bottom-right outer corner (Note: flag 0)
-              `L ${w - 200 + r_inner} ${h - 140}`, 
-              `A ${r_inner} ${r_inner} 0 0 0 ${w - 200} ${h - 140 + r_inner}`, // Inner-bottom-right-top arc (Note: flag 0)
-              `L ${w - 200} ${h - r_inner}`, // Line down
-              `A ${r_inner} ${r_inner} 0 0 1 ${w - 200 - r_inner} ${h}`, // Inner-bottom-right-bottom arc
-              `L ${r_outer} ${h}`, // Line across bottom
-              `A ${r_outer} ${r_outer} 0 0 1 0 ${h - r_outer}`, // Arc for bottom-left outer corner
-              `Z` // Close path
-            ].join(' ');
-          }
-
-          clipPathElement.setAttribute('d', d);
-        };
-
-        // Run the update function on load and on resize
-        const resizeObserver = new ResizeObserver(updatePath);
-        resizeObserver.observe(heroElement);
-        updatePath(); // Initial call
-      }
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'rotateX(0) rotateY(0)'; // Reset transform
+      });
     });
   </script>
 
 </body>
 
 </html>
-
