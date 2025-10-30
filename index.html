@@ -813,7 +813,7 @@
     </defs>
   </svg>
 
-  <div id="hero-section" class="bg-gray-200 w-full p-4 md:p-5">
+  <div class="bg-gray-200 w-full p-4 md:p-5">
     <div class="relative w-full h-[95vh]">
 
       <div class="absolute z-10 flex items-center gap-2 p-2 bg-gray-200 rounded-[15px] logo-placeholder">
@@ -1108,7 +1108,7 @@
                 </div>
               </div>
 
-              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -1519,13 +1519,15 @@
           const isHorizontal = ['left', 'right'].includes(config.position);
           const isPageTarget = config.target === 'page';
 
+          // === SCRIPT MODIFIED HERE ===
           const containerStyle = {
             position: isPageTarget ? 'fixed' : 'absolute',
-            pointerEvents: 'none', // 'auto' if hoverIntensity is used
-            opacity: 1, // Will be controlled by JS now
+            pointerEvents: 'none',
+            opacity: isPageTarget ? 0 : 1, // Start page blur as hidden
             zIndex: isPageTarget ? config.zIndex + 100 : config.zIndex,
-            transition: 'opacity 0.3s ease-out' // Added for smooth fade
+            transition: 'opacity 0.3s ease-out' // Add transition for smooth fade
           };
+          // === END OF MODIFICATION ===
 
           if (isVertical) {
             containerStyle.height = config.height;
@@ -2044,35 +2046,17 @@
       initAllGradualBlurs();
 
 
-      // === 6. HIDE BLUR ON HERO (NEW CODE) ===
-      const heroSection = document.getElementById('hero-section');
+      // === 6. SHOW BLUR ON SCROLL (NEW CODE) ===
       const globalBlur = document.getElementById('global-blur-bottom');
-
-      if (heroSection && globalBlur) {
-        
-        // Set initial state: blur is hidden
-        globalBlur.style.opacity = '0';
-
-        const observerCallback = (entries) => {
-          const [entry] = entries;
-          // entry.isIntersecting is true when the hero is on screen
-          if (entry.isIntersecting) {
-            globalBlur.style.opacity = '0';
-          } else {
+      
+      if (globalBlur) {
+        window.addEventListener('scroll', () => {
+          if (window.scrollY > 10) { // Show blur if scrolled more than 10px
             globalBlur.style.opacity = '1';
+          } else { // Hide blur when at the top
+            globalBlur.style.opacity = '0';
           }
-        };
-
-        // This will trigger when the hero is 10% visible
-        const observerOptions = {
-          root: null, // Observe intersection with the viewport
-          threshold: 0.1 
-        };
-
-        const heroObserver = new IntersectionObserver(observerCallback, observerOptions);
-        
-        // Start observing the hero section
-        heroObserver.observe(heroSection);
+        });
       }
       // === END OF NEW CODE ===
 
