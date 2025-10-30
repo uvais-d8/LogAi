@@ -7,57 +7,179 @@
   <title>Hero Section with Card Swap</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-  <!-- GSAP Animation Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      /* MODIFIED: Updated background color per new code */
-      background-color: #0B0B0B;
-      /* REMOVED height: 3000px; */
-      /* NEW: Prevent horizontal scroll */
-      overflow-x: hidden;
-    }
+ 
+    /* --- Global Styles --- */
+body {
+    /* Set a dark background for the page to match the footer's context */
+    background-color: #02040a;
+    color: #fff;
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s ease;
+}
+
+/* --- Footer Main Container --- */
+.site-footer {
+    /* Use a very dark, almost black background */
+    background-color: #000;
+    padding: 80px 0 40px;
+    position: relative;
+    overflow: hidden; /* Contains the decorative elements */
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+    position: relative;
+    z-index: 2; /* Ensures content is above background elements */
+}
+
+/* --- Decorative Background Elements --- */
+.footer-deco-shape {
+    position: absolute;
+    left: -80px;  /* Position it off-screen to the left */
+    bottom: -50px; /* Position it at the bottom */
+    width: 450px;
+    opacity: 0.9;
+    z-index: 1; /* Above background, below text */
+    pointer-events: none; /* Prevents image from being clicked */
+}
+
+.footer-bg-text {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 200px; /* Extremely large font size */
+    font-weight: 800;
+    /* This blue color creates the background glow */
+    color: #0d1a3f;
+    opacity: 0.6; /* Faint, but visible */
+    z-index: 0; /* Behind everything */
+    user-select: none; /* Prevents text selection */
+    white-space: nowrap;
+}
+
+
+/* --- Top Social Links --- */
+.footer-social {
+    text-align: center;
+    margin-bottom: 70px;
+}
+
+.footer-social ul {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 40px; /* Space between links */
+}
+
+.footer-social a {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    color: #ffffff;
+    opacity: 0.8;
+}
+
+.footer-social a:hover {
+    opacity: 1;
+}
+
+/* --- Main 3-Column Links --- */
+.footer-links {
+    display: flex;
+    justify-content: center; /* Centers the group of columns */
+    flex-wrap: wrap;
+    gap: 100px; /* Large space between columns */
+    margin-bottom: 80px;
+    /* This ensures the columns don't stretch too wide on large screens */
+    max-width: 900px; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.footer-column {
+    min-width: 180px; /* Ensures columns have space */
+}
+
+.footer-column h4 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-top: 0;
+    margin-bottom: 24px;
+}
+
+.footer-column li {
+    margin-bottom: 16px;
+}
+
+.footer-column a {
+    font-size: 16px;
+    color: #aaa; /* Lighter gray for links */
+}
+
+.footer-column a:hover {
+    color: #fff;
+}
+
+/* --- Bottom Copyright Bar --- */
+.footer-bottom {
+    padding-top: 30px;
+    /* This creates the subtle top border from the image */
+    /* border-top: 1px solid #222; */ 
+    /* Edit: Image doesn't have a border, it's just a space */
+}
+
+.footer-bottom p {
+    font-size: 14px;
+    color: #777;
+    margin: 0;
+}
 
     .heading {
       font-size: 170px;
       font-weight: 900;
-      /* MODIFIED: Changed 1rem to -0.05em to prevent overflow */
       letter-spacing: -0.05em;
-      /* MODIFIED: Changed text-align from center to left */
       text-align: left;
     }
 
-    /* MODIFICATION: Removed clip-path: polygon(...) from here */
     .content-area-shape {
-      /* NEW: Link to the SVG clip-path */
       clip-path: url(#hero-shape);
     }
 
     /* Responsive adjustments for smaller screens */
     @media (max-width: 768px) {
-      /* MODIFICATION: Removed responsive clip-path from here */
-
       .logo-placeholder {
         top: 1rem;
-        /* Adjust position for full screen */
         left: 1rem;
       }
 
       .icon-placeholder {
         top: 1rem;
-        /* Adjust position for full screen */
         right: 1rem;
       }
 
-      /* Adjust heading font size on mobile */
       .heading {
         font-size: 80px;
-        /* MODIFIED: Changed 0.5rem to -0.025em to prevent overflow */
         letter-spacing: -0.025em;
       }
 
-      /* NEW: Responsive styles for new ecosystem section */
       .left-panel h1 {
         font-size: 8vw;
       }
@@ -73,7 +195,6 @@
 
       .right-panel {
         flex: 1.5;
-        /* Give more space for scrolling */
       }
 
       .ecosystem-container .card {
@@ -94,92 +215,61 @@
     @media (min-width: 769px) {
       .logo-placeholder {
         top: 1.25rem;
-        /* p-5 value */
         left: 2.25rem;
-        /* p-5 + p-4 value */
       }
     }
 
     /* --- Card Swap Styles --- */
     .card-swap-container {
-      /* This is positioned using Tailwind classes on the div itself.
-            (absolute bottom-10 right-10 lg:bottom-20 lg:right-20) 
-          */
       transform-origin: bottom right;
       perspective: 3000px;
       overflow: visible;
-      /* Set a default transform - MODIFIED */
       transform: scale(0.85);
     }
 
-    /* MODIFIED: Scoped old card styles to .card-swap-container */
     .card-swap-container .card {
       position: absolute;
       top: 70%;
       left: 70%;
       border-radius: 12px;
-      /* Matched to the hero style */
       border: 1px solid #4B5563;
-      /* gray-600 */
       background: #111827;
-      /* gray-900 */
       padding: 24px;
       box-sizing: border-box;
-
-      /* 3D properties */
       transform-style: preserve-3d;
       will-change: transform;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-
-      /* NEW: Resetting values from new section to avoid conflict */
       min-height: auto;
       display: block;
       gap: 0;
       overflow: visible;
       flex-direction: column;
-      /* Resetting flex-direction */
       align-items: initial;
-      /* Resetting align-items */
       backdrop-filter: none;
-      /* Resetting backdrop-filter */
       transition: none;
-      /* Resetting transition */
     }
 
-    /* Card content styling */
-    /* MODIFIED: Scoped old card styles */
     .card-swap-container .card h3 {
       margin-top: 0;
       font-size: 1.25rem;
-      /* text-xl */
       font-weight: 600;
-      /* semibold */
       color: #fff;
     }
 
-    /* MODIFIED: Scoped old card styles */
     .card-swap-container .card p {
       font-size: 0.875rem;
-      /* text-sm */
       color: #D1D5DB;
-      /* gray-300 */
       line-height: 1.25rem;
-      /* Resetting line-height */
     }
 
-    /* Responsive adjustments for cards */
     @media (max-width: 1024px) {
-
-      /* lg */
       .card-swap-container {
-        /* Scale down and move for tablets - MODIFIED */
         transform: scale(0.7);
       }
     }
 
-    /* NEW: Glow effect for title section */
     .glow-background {
       position: relative;
       z-index: 1;
@@ -188,51 +278,39 @@
     .glow-background::before {
       content: '';
       position: absolute;
-      /* Center it */
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      /* Make it large */
       width: 60%;
       height: 60%;
-      /* The glow effect using user's color */
       background-image: radial-gradient(circle, rgba(15, 64, 212, 0.4) 0%, rgba(15, 64, 212, 0) 60%);
       filter: blur(50px);
-      /* Place it behind the content */
       z-index: -1;
       opacity: 0.7;
     }
 
 
-    /* --- START OF NEW AI ECOSYSTEM CSS --- */
-
-    /* NEW: Gradient text styles for new H1 */
+    /* --- START OF AI ECOSYSTEM CSS --- */
     .left-panel h1 {
       color: #ffffff;
-      /* "Complete" is now white */
       font-size: 4.5vw;
       line-height: 1.1;
       margin: 0;
       font-weight: 700;
     }
 
-    /* NEW: Gradient text styles for new H1 span */
     .left-panel h1 span {
-      /* Sky blue to dark blue gradient */
       background-image: linear-gradient(to right, #38bdf8, #2563eb);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      /* Kept -webkit-text-fill-color for broader compatibility */
       -webkit-text-fill-color: transparent;
     }
 
     .ecosystem-container {
       position: relative;
       height: 600vh;
-      /* 100vh per card */
       margin-top: 5rem;
-      /* Space from title */
     }
 
     .sticky-wrapper {
@@ -241,7 +319,6 @@
       height: 100vh;
       width: 100%;
       overflow: hidden;
-      /* FIXED: Added background */
     }
 
     .split-layout {
@@ -251,7 +328,6 @@
       background: transparent;
     }
 
-    /* --- Left (Sticky) Panel --- */
     .left-panel {
       flex: 1;
       display: flex;
@@ -269,10 +345,8 @@
       opacity: 0.9;
       margin-top: 20px;
       color: #ffffff;
-      /* Ensure paragraph text is white */
     }
 
-    /* --- Right (Scrollable) Panel --- */
     .right-panel {
       flex: 1;
       position: relative;
@@ -293,7 +367,6 @@
       z-index: 1;
     }
 
-    /* --- Individual Card Styling (Scoped) --- */
     .ecosystem-container .card {
       background-color: rgba(0, 0, 0, 0.25);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -305,7 +378,6 @@
       min-height: 300px;
       box-sizing: border-box;
       position: relative;
-      /* Changed from absolute */
       transform-origin: center top;
       transition: transform 0.3s ease, opacity 0.3s ease;
       display: flex;
@@ -313,8 +385,6 @@
       align-items: flex-start;
       gap: 15px;
       overflow: hidden;
-
-      /* NEW: Resets for properties from old .card rule */
       top: auto;
       left: auto;
       transform-style: flat;
@@ -327,7 +397,6 @@
       margin-bottom: 25vh;
     }
 
-    /* FIXED: Added background to card glow */
     .ecosystem-container .card::before {
       content: '';
       position: absolute;
@@ -339,7 +408,6 @@
       filter: blur(50px);
       z-index: -2;
       animation: rotateGlow 15s linear infinite;
-      /* NEW: Added example gradient */
       background-image: linear-gradient(to right, #38bdf8, #2563eb);
     }
 
@@ -386,7 +454,6 @@
       line-height: 1.6;
     }
 
-    /* NEW: Stats Section Styles */
     .stats-section {
       display: flex;
       flex-direction: column;
@@ -398,9 +465,7 @@
 
     .stats-icon {
       background-color: rgba(59, 130, 246, 0.2);
-      /* bg-blue-500/20 */
       border: 1px solid rgba(59, 130, 246, 0.5);
-      /* border-blue-500/50 */
       border-radius: 50%;
       padding: 20px;
       margin-bottom: 1.5rem;
@@ -408,53 +473,187 @@
 
     .stats-percent {
       font-size: 6rem;
-      /* text-8xl */
       font-weight: 900;
-      /* font-black */
       line-height: 1;
     }
 
     .stats-label {
       font-size: 1.25rem;
-      /* text-xl */
       font-weight: 500;
-      /* font-medium */
       color: #D1D5DB;
-      /* text-gray-300 */
       margin-top: 0.5rem;
     }
 
-    /* --- END OF NEW CSS --- */
+    /* --- END OF AI ECOSYSTEM CSS --- */
+
+
+    /* --- START OF NEW 3D CAROUSEL CSS ---
+    */
+    .carousel-container {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #555;
+      border-radius: 24px;
+      padding: 16px;
+      --outer-r: 24px;
+      --p-distance: 12px; 
+    }
+    .carousel-track {
+      display: flex;
+      /* JS will set perspective and origin */
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+.carousel-item {
+      position: relative;
+      display: flex;
+      flex-shrink: 0;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+      border: 1px solid #555;
+      border-radius: calc(var(--outer-r) - var(--p-distance));
+      background-color: #0d0716;
+      overflow: hidden;
+      cursor: grab;
+      user-select: none;
+      /* Prevent text selection while dragging */
+      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+      height: 500px; /* <--- ADD THIS LINE HERE */
+    }
+
+    .carousel-item:active {
+      cursor: grabbing;
+    }
+
+    .carousel-container.round {
+      border: 1px solid #555;
+    }
+
+    .carousel-item.round {
+      background-color: #0d0716;
+      position: relative;
+      bottom: 0.1em;
+      border: 1px solid #555;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .carousel-item-header.round {
+      padding: 0;
+      margin: 0;
+    }
+
+    .carousel-indicators-container.round {
+      position: absolute;
+      z-index: 2;
+      bottom: 3em;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .carousel-indicator.active {
+      background-color: #333333;
+    }
+
+    .carousel-indicator.inactive {
+      background-color: rgba(51, 51, 51, 0.4);
+    }
+
+    .carousel-item-header {
+      margin-bottom: 16px;
+      padding: 20px;
+      padding-top: 20px;
+    }
+
+    .carousel-icon-container {
+      display: flex;
+      height: 28px;
+      width: 28px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background-color: #fff;
+    }
+
+    .carousel-icon {
+      height: 16px;
+      width: 16px;
+      color: #060010;
+      stroke: #060010;
+      /* Added for SVGs */
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .carousel-item-content {
+      padding: 20px;
+      padding-bottom: 20px;
+    }
+
+    .carousel-item-title {
+      margin-bottom: 4px;
+      font-weight: 900;
+      font-size: 18px;
+      color: #fff;
+    }
+
+    .carousel-item-description {
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .carousel-indicators-container {
+      display: flex;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .carousel-indicators {
+      margin-top: 16px;
+      display: flex;
+      width: 150px;
+      justify-content: space-between;
+      padding: 0 32px;
+    }
+
+    .carousel-indicator {
+      height: 8px;
+      width: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color 150ms, transform 150ms;
+    }
+
+    .carousel-indicator.active {
+      background-color: #fff;
+      transform: scale(1.2);
+    }
+
+    .carousel-indicator.inactive {
+      background-color: #555;
+      transform: scale(1);
+    }
+    /* --- END OF NEW 3D CAROUSEL CSS ---
+    */
   </style>
 </head>
 
 
 <body>
 
-  <!-- NEW: SVG Definition for rounded clip-path -->
   <svg width="0" height="0" class="absolute">
     <defs>
       <clipPath id="hero-shape" clipPathUnits="userSpaceOnUse">
-        <!-- This path will be generated by JavaScript -->
         <path d="" />
       </clipPath>
     </defs>
   </svg>
 
-  <!-- 
-    MODIFICATION 2:
-    This is now the Hero Section Wrapper.
-    Removed h-screen to allow the page to scroll.
-  -->
   <div class="bg-gray-200 w-full p-4 md:p-5">
-    <!-- 
-      MODIFICATION 3:
-      This is the Hero Section Container.
-      MODIFIED: Changed h-[90vh] to h-[95vh].
-    -->
     <div class="relative w-full h-[95vh]">
 
-      <!-- Adjusted logo position and border radius -->
       <div class="absolute z-10 flex items-center gap-2 p-2 bg-gray-200 rounded-[15px] logo-placeholder">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#111827" stroke-width="2" stroke-linecap="round"
@@ -467,40 +666,22 @@
         <span class="font-bold text-lg text-black">LogAI</span>
       </div>
 
-      <!-- 
-        This shape container now has h-full, which maps to the parent's h-[95vh].
-      -->
       <div class="content-area-shape bg-black w-full h-full rounded-[15px] p-6 md:p-12 text-white">
 
-        <!-- 
-                
-                Removed 'mx-auto' and 'text-center' to align the
-                text block (h1, h2, p) to the left.
-              -->
         <div class="pt-20 md:pt-24 max-w-2xl relative z-0">
-
           <h1 class="heading">LOG AI</h1>
-
           <h2 class="text-3xl md:text-5xl font-bold mb-4 text-white">
             The Future of<br>
             <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
               AI Business Intelligence
             </span>
           </h2>
-
-
           <p class="text-lg md:text-xl text-gray-300">
             Streamline operations, boost productivity, and accelerate growth
             with our comprehensive AI-powered business suite.
           </p>
-
         </div>
 
-        <!-- 
-                
-                Positioned absolutely in the bottom-right of the hero area.
-                Hidden on mobile (see CSS: @media (max-width: 768px))
-              -->
         <div class="card-swap-container absolute bottom-10 right-10 lg:bottom-20 lg:right-20 z-0">
           <div class="card">
             <h3>Real-time Analytics</h3>
@@ -517,7 +698,6 @@
         </div>
 
 
-        <!-- Navigation bar at the bottom. Updated border radius -->
         <div class="absolute bottom-6 left-1/2 -translate-x-1/2 w-auto z-10">
           <div class="flex items-center gap-4 md:gap-6 p-2 bg-black rounded-[15px] border border-gray-800 shadow-lg">
             <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Platform</a>
@@ -531,11 +711,7 @@
 
     </div>
   </div>
-  <!-- 
-                
-                Added flex wrapper to center the items and give them color.
-              -->
-  <!-- MODIFICATION: Reverted to centered layout with dividers -->
+  
   <div class="flex flex-wrap justify-center items-center gap-4 md:gap-8 mt-10">
     <p class="text-white text-sm md:text-base">
       30-Day Free Trial
@@ -553,19 +729,10 @@
       Instant Deployment
     </p>
   </div>
-  <!-- *** END NEW FEATURES SECTION *** -->
 
-  <!-- 
-      MODIFICATION 4:
-      NEW CONTENT SECTION
-      *** MODIFIED: Removed 'max-w-7xl' and 'mx-auto' to make it full width ***
-      *** MODIFICATION: Reduced top margin from mt-24 to mt-12 ***
-      *** MODIFICATION: Removed p-8 from main, added px-8 to section ***
-    -->
   <main class="w-full mt-12 space-y-12">
     <section class="px-8">
 
-      <!-- MODIFICATION: Reduced mt-10 to mt-6 -->
       <div class="flex flex-wrap justify-center gap-4 md:gap-6 mt-6">
         <p class="text-3xl md:text-5xl font-bold mb-4 text-center">
           <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
@@ -574,24 +741,13 @@
           <span class="text-white"> for business</span>
         </p>
       </div>
-      <!-- MODIFIED: Replaced the blue icon cards with image cards -->
-      <!-- 2. "images in the center with proper aligning and spacing" -->
-
-      <!-- MODIFIED: Removed the 'w-full overflow-x-auto' wrapper.
-            This container now centers the "jigsaw" group, which may overflow the viewport.
-            The 'overflow-x: hidden' on the <body> will prevent a scrollbar.
-          -->
-      <!-- MODIFICATION: Added gap-10 to space out the cards -->
-      <!-- MODIFICATION: Increased width from w-80 to w-96 -->
+      
       <div class="flex flex-nowrap w-max mx-auto py-4 gap-10">
-        <!-- Image Card 1 -->
         <div
           class="relative w-96 h-[450px] rounded-3xl overflow-hidden shadow-lg group transition-transform duration-300 border-2 border-gray-700 hover:-translate-y-2">
           <img src="https://placehold.co/600x800/111827/4B5563?text=Platform+UI" alt="Unified Platform"
             onerror="this.src='httpsImage.png'" class="w-full h-full object-cover">
-          <!-- Gradient overlay for text readability -->
           <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/80 to-transparent z-0"></div>
-          <!-- Text at the bottom-left -->
           <div class="absolute bottom-0 left-0 p-6 z-10">
             <h3 class="text-2xl font-semibold text-white mb-2">Unified Platform</h3>
             <p class="text-gray-300 text-sm">
@@ -599,16 +755,11 @@
             </p>
           </div>
         </div>
-
-        <!-- Image Card 2 -->
-        <!-- MODIFIED: Removed -ml-16 -->
         <div
           class="relative w-96 h-[450px] rounded-3xl overflow-hidden shadow-lg group transition-transform duration-300 border-2 border-gray-700 hover:-translate-y-2">
           <img src="https://placehold.co/600x800/111827/4B5563?text=Security+UI" alt="Enterprise Security"
             onerror="this.src='httpsImage.png'" class="w-full h-full object-cover">
-          <!-- Gradient overlay for text readability -->
           <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/80 to-transparent z-0"></div>
-          <!-- Text at the bottom-left -->
           <div class="absolute bottom-0 left-0 p-6 z-10">
             <h3 class="text-2xl font-semibold text-white mb-2">Enterprise Security</h3>
             <p class="text-gray-300 text-sm">
@@ -616,16 +767,11 @@
             </p>
           </div>
         </div>
-
-        <!-- Image Card 3 -->
-        <!-- MODIFIED: Removed -ml-16 -->
         <div
           class="relative w-96 h-[450px] rounded-3xl overflow-hidden shadow-lg group transition-transform duration-300 border-2 border-gray-700 hover:-translate-y-2">
           <img src="https://placehold.co/600x800/111827/4B5563?text=Integration+UI" alt="Seamless Integration"
             onerror="this.src='httpsImage.png'" class="w-full h-full object-cover">
-          <!-- Gradient overlay for text readability -->
           <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/80 to-transparent z-0"></div>
-          <!-- Text at the bottom-left -->
           <div class="absolute bottom-0 left-0 p-6 z-10">
             <h3 class="text-2xl font-semibold text-white mb-2">Seamless Integration</h3>
             <p class="text-gray-300 text-sm">
@@ -634,50 +780,32 @@
           </div>
         </div>
       </div>
-      <!-- END OF REPLACEMENT -->
 
-      <!-- MODIFIED: Moved this content up from the next section -->
-      <!-- MODIFICATION: Re-aligned to 80% width with justify-between -->
       <div class="w-4/5 mx-auto">
         <div class="flex flex-wrap justify-between items-center mt-10">
           <div class="text-center">
-            <!-- MODIFIED: Text updated -->
             <h3 class="text-2xl md:text-3xl font-medium text-white">500+</h3>
             <p class="text-gray-300 text-sm md:text-base mt-1">Enterprise Clients</p>
           </div>
-
           <div class="text-center">
-            <!-- MODIFIED: Text updated -->
             <h3 class="text-2xl md:text-3xl font-medium text-white">99.9%</h3>
             <p class="text-gray-300 text-sm md:text-base mt-1">Uptime SLA</p>
           </div>
-
           <div class="text-center">
-            <!-- MODIFIED: Text updated -->
             <h3 class="text-2xl md:text-3xl font-medium text-white">50M+</h3>
             <p class="text-gray-300 text-sm md:text-base mt-1">Points Processed</p>
           </div>
-
           <div class="text-center">
-            <!-- MODIFIED: Text updated -->
             <h3 class="text-2xl md:text-3xl font-medium text-white">24/7</h3>
             <p class="text-gray-300 text-sm md:text-base mt-1">Expert Support</p>
           </div>
         </div>
       </div>
-      <!-- MODIFIED: Moved this content up from the next section -->
-      <!-- MODIFICATION: Increased mt-24 to mt-40 (10rem) -->
-      <!-- DELETED: Old "Complete Business Ecosystem" title and grid section -->
     </section>
 
-    <!-- NEW: Wrapper for gradient background -->
     <div class="bg-gradient-to-b from-transparent to-[#0F40D4]/20">
-      <!-- 
-        *** NEW "Complete AI Ecosystem" Title (MOVED HERE) ***
-      -->
-      <!-- MODIFICATION: Added px-8 -->
+      
       <section class="px-8">
-        <!-- MODIFICATION: Removed background gradient from inner div, added relative and glow-background -->
         <div
           class="relative glow-background flex flex-wrap flex-col justify-center items-center gap-4 md:gap-6 mt-40 pt-20 pb-10">
           <p class="text-3xl md:text-5xl font-bold mb-4 text-center">
@@ -694,15 +822,8 @@
         </div>
       </section>
 
-      <!-- 
-        *** NEWLY RE-INSERTED 11-CARD GRID SECTION ***
-      -->
-      <!-- MODIFICATION: Added px-8 -->
       <section class="relative z-10 py-24 px-8">
-        <!-- MODIFICATION: Increased gap, reduced card sizes -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-min">
-
-          <!-- Card 1: Smart CRM -->
           <div
             class="md:col-span-1 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col justify-between transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
             <div>
@@ -711,15 +832,11 @@
             <img src="https://placehold.co/80x80/111827/4B5563?text=CRM" alt="Smart CRM Graphic"
               class="w-16 h-16 self-start object-cover rounded-full">
           </div>
-
-          <!-- Card 2: Shield -->
           <div
             class="md:col-span-1 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex items-center justify-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
             <img src="https://placehold.co/120x120/111827/4B5563?text=Shield" alt="Security Graphic"
               class="w-28 h-28 object-cover">
           </div>
-
-          <!-- Card 3: Workflow -->
           <div
             class="md:col-span-2 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col justify-between transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
             <div>
@@ -728,39 +845,29 @@
             <img src="https://placehold.co/250x80/111827/4B5563?text=Workflow" alt="Workflow Graphic"
               class="w-full h-16 object-cover rounded-lg">
           </div>
-
-          <!-- Card 4: AI Content Studio (Tall) -->
           <div
             class="md:col-span-1 md:row-span-2 min-h-[13rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col justify-start transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
             <h3 class="text-white font-semibold text-base">AI Content Studio</h3>
             <p class="text-gray-300 text-xs mt-2">AI-powered banner and poster generator plus intelligent.</p>
           </div>
-
-          <!-- Card 5: AI Report Gen (Center) -->
           <div
             class="md:col-span-1 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
             <img src="https://placehold.co/80x80/111827/4B5563?text=Report" alt="Report Graphic"
               class="w-16 h-16 object-cover rounded-full mb-2">
             <h3 class="text-white font-semibold text-base">AI Report Generator</h3>
           </div>
-
-          <!-- Card 6: Meeting Platform (Tall) -->
           <div
             class="md:col-span-1 md:row-span-2 min-h-[13rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
             <h3 class="text-white font-semibold text-base mb-2">Meeting Platform</h3>
             <img src="https://placehold.co/150x150/111827/4B5563?text=Meeting" alt="Meeting Graphic"
               class="w-36 h-36 object-cover rounded-lg">
           </div>
-
-          <!-- Card 7: AI Report Gen 2 (Tall) -->
           <div
             class="md:col-span-1 md:row-span-2 min-h-[13rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
             <h3 class="text-white font-semibold text-base mb-2">AI Report Generator</h3>
             <img src="https://placehold.co/150x150/111827/4B5563?text=Report+2" alt="Report Graphic 2"
               class="w-36 h-36 object-cover rounded-lg">
           </div>
-
-          <!-- Card 8: AI Report Gen 3 (Text) -->
           <div
             class="md:col-span-1 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
             <img src="https://placehold.co/80x80/111827/4B5563?text=Report+3" alt="Report Graphic"
@@ -768,8 +875,6 @@
             <h3 class="text-white font-semibold text-base">AI Report Generator</h3>
             <p class="text-gray-300 text-xs mt-2">Al-powered banner and poster generator plus intelligent.</p>
           </div>
-
-          <!-- Card 9: AI Content Studio (Bottom) -->
           <div
             class="md:col-span-1 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col justify-between transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
             <div>
@@ -779,15 +884,11 @@
             <img src="https://placehold.co/100x50/111827/4B5563?text=Data" alt="Data Graphic"
               class="w-full h-12 object-cover rounded-lg">
           </div>
-
-          <!-- Card 10: Abstract -->
           <div
             class="md:col-span-2 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex items-center justify-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
             <img src="https://placehold.co/300x150/111827/4B5563?text=Abstract" alt="Abstract Graphic"
               class="w-full h-28 object-cover rounded-lg">
           </div>
-
-          <!-- Card 11: Map -->
           <div
             class="md:col-span-1 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex items-center justify-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
             <img src="https://placehold.co/200x150/111827/4B5563?text=Map" alt="World Map Graphic"
@@ -796,10 +897,6 @@
         </div>
       </section>
 
-      <!-- 
-        *** NEW SCROLLY-TELLING SECTION ***
-      -->
-      <!-- MODIFICATION: Added px-8 -->
       <section class="ecosystem-container px-8" id="ecosystem-container">
         <div class="sticky-wrapper">
           <div class="split-layout">
@@ -852,13 +949,8 @@
         </div>
       </section>
 
-      <!-- 
-        *** NEW STATS SECTION ***
-      -->
-      <!-- MODIFICATION: Added px-8 -->
       <section class="stats-section px-8">
         <div class="stats-icon">
-          <!-- Heroicon: lightning-bolt -->
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
             stroke-linecap="round" stroke-linejoin="round">
             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
@@ -868,133 +960,273 @@
         <div class="stats-label">Less Manual Work</div>
       </section>
 
-      <!-- 
-        *** NEW PRICING SECTION ***
-      -->
-      <!-- MODIFICATION: Added px-8 -->
-     <section class="py-20 px-4 md:px-8 text-white">
+      <section class="py-20 px-4 md:px-8 text-white">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6 text-center">
+          Pricing
+          <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
+            Plans
+          </span>
+        </h2>
 
-  <h2 class="text-4xl md:text-5xl font-bold mb-6 text-center">
-    Pricing
-    <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
-      Plans
-    </span>
-  </h2>
-
-  <div class="flex justify-center mb-12">
-    <div class="bg-black/30 border border-gray-700 p-1 rounded-full flex items-center text-sm font-medium">
-      <button class="bg-white text-black font-semibold rounded-full py-1.5 px-6 transition-all duration-300">
-        Yearly
-      </button>
-      <button class="text-gray-400 rounded-full py-1.5 px-6 transition-all duration-300 hover:text-gray-200">
-        Monthly
-      </button>
-    </div>
-  </div>
-
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto items-start">
-
-    <div class="bg-[#0b0f29]/80 backdrop-blur-sm border border-blue-800/60 rounded-2xl p-8 flex flex-col h-full transition-all duration-300 hover:border-blue-700/80">
-      <h3 class="text-2xl font-semibold text-white mb-4">Basic Plan</h3>
-      <p class="text-5xl font-bold text-white mb-2">₹10,190</p>
-      <p class="text-gray-400 text-sm mb-1">/ yearly per user</p>
-      <p class="text-gray-400 text-sm mb-6">Includes: 5 seats, 1200 AI Credits</p>
-
-      <ul class="space-y-3 text-gray-300 mb-8 flex-grow">
-        <li>Core AI Features</li>
-        <li>Business Hours Support</li>
-        <li>Email Support</li>
-        <li>Basic Analytic</li>
-        <li>Email Supports</li>
-      </ul>
-
-      <a href="#" class="mt-auto text-center bg-transparent border border-gray-500 text-white font-semibold py-3 rounded-lg hover:bg-gray-700/30 hover:border-gray-300 transition-colors w-full">
-        Choose Basic Plan
-      </a>
-    </div>
-
-    <div class="bg-gradient-to-b from-[#1e2a75] to-[#0c102c] border-2 border-blue-500 rounded-2xl p-8 flex flex-col h-full relative shadow-2xl shadow-blue-500/40 -my-6 lg:-my-8">
-      <h3 class="text-2xl font-semibold text-white mb-4">Pro Plan</h3>
-      <p class="text-5xl font-bold text-white mb-2">₹10,190</p>
-      <p class="text-gray-300 text-sm mb-1">/ yearly per user</p>
-      <p class="text-gray-300 text-sm mb-6">Includes: 5 seats, 1600 AI Credits</p>
-
-      <ul class="space-y-3 text-gray-200 mb-8 flex-grow">
-        <li class="font-semibold text-white">Core AI Features</li>
-        <li>Business Hours Support</li>
-        <li>Email Support</li>
-        <li>Basic Analytics</li>
-        <li>Email Support</li>
-      </ul>
-
-      <a href="#" class="mt-auto text-center bg-gradient-to-r from-sky-400 to-blue-600 text-white font-bold py-3 rounded-lg hover:from-sky-500 hover:to-blue-700 transition-all shadow-lg shadow-blue-500/30 w-full">
-        Choose Pro Plan
-      </a>
-    </div>
-
-    <div class="bg-[#0b0f29]/80 backdrop-blur-sm border border-blue-800/60 rounded-2xl p-8 flex flex-col h-full transition-all duration-300 hover:border-blue-700/80">
-      <h3 class="text-2xl font-semibold text-white mb-4">Enterprice Plan</h3>
-      <p class="text-5xl font-bold text-white mb-2">₹10,190</p>
-      <p class="text-gray-400 text-sm mb-1">/ yearly per user</p>
-      <p class="text-gray-400 text-sm mb-6">Includes: 5 seats, 1200 AI Credits</p>
-
-      <ul class="space-y-3 text-gray-300 mb-8 flex-grow">
-        <li>Core AI Features</li>
-        <li>Business Hours Support</li>
-        <li>Email Support</li>
-        <li>Basic Analytic</li>
-        <li>Email Supports</li>
-      </ul>
-
-      <a href="#" class="mt-auto text-center bg-transparent border border-gray-500 text-white font-semibold py-3 rounded-lg hover:bg-gray-700/30 hover:border-gray-300 transition-colors w-full">
-        Choose Enterprice Plan
-      </a>
-    </div>
-
-  </div>
-</section>
-      <!-- 
-        *** NEW CTA SECTION ***
-      -->
-      <!-- MODIFICATION: Added px-8 -->
-      <!-- <section class="py-20 px-8">
-        <div
-          class="max-w-5xl mx-auto bg-gradient-to-r from-sky-500 to-blue-700 rounded-3xl p-12 md:p-16 text-center shadow-2xl shadow-blue-500/30">
-          <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
-            Ready to Transform Your Business?
-          </h2>
-          <p class="text-lg text-blue-100 max-w-2xl mx-auto mb-10">
-            Join over 500 enterprise clients and unlock the full potential of your data.
-            Start your 30-day free trial today. No credit card required.
-          </p>
-          <a href="#"
-            class="inline-block bg-white text-blue-700 font-bold text-lg px-10 py-4 rounded-xl hover:bg-gray-100 transition-colors shadow-lg transform hover:scale-105">
-            Start Your Free Trial
-          </a>
+        <div class="flex justify-center mb-12">
+          <div class="bg-black/30 border border-gray-700 p-1 rounded-full flex items-center text-sm font-medium">
+            <button class="bg-white text-black font-semibold rounded-full py-1.5 px-6 transition-all duration-300">
+              Yearly
+            </button>
+            <button class="text-gray-400 rounded-full py-1.5 px-6 transition-all duration-300 hover:text-gray-200">
+              Monthly
+            </button>
+          </div>
         </div>
-      </section> -->
-      <!-- NEW: Closing gradient wrapper div -->
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto items-start">
+
+          <div
+            class="bg-[#0b0f29]/80 backdrop-blur-sm border border-blue-800/60 rounded-2xl p-8 flex flex-col h-full transition-all duration-300 hover:border-blue-700/80">
+            <h3 class="text-2xl font-semibold text-white mb-4">Basic Plan</h3>
+            <p class="text-5xl font-bold text-white mb-2">₹10,190</p>
+            <p class="text-gray-400 text-sm mb-1">/ yearly per user</p>
+            <p class="text-gray-400 text-sm mb-6">Includes: 5 seats, 1200 AI Credits</p>
+            <ul class="space-y-3 text-gray-300 mb-8 flex-grow">
+              <li>Core AI Features</li>
+              <li>Business Hours Support</li>
+              <li>Email Support</li>
+              <li>Basic Analytic</li>
+              <li>Email Supports</li>
+            </ul>
+            <a href="#"
+              class="mt-auto text-center bg-transparent border border-gray-500 text-white font-semibold py-3 rounded-lg hover:bg-gray-700/30 hover:border-gray-300 transition-colors w-full">
+              Choose Basic Plan
+            </a>
+          </div>
+
+          <div
+            class="bg-gradient-to-b from-[#1e2a75] to-[#0c102c] border-2 border-blue-500 rounded-2xl p-8 flex flex-col h-full relative shadow-2xl shadow-blue-500/40 -my-6 lg:-my-8">
+            <h3 class="text-2xl font-semibold text-white mb-4">Pro Plan</h3>
+            <p class="text-5xl font-bold text-white mb-2">₹10,190</p>
+            <p class="text-gray-300 text-sm mb-1">/ yearly per user</p>
+            <p class="text-gray-300 text-sm mb-6">Includes: 5 seats, 1600 AI Credits</p>
+            <ul class="space-y-3 text-gray-200 mb-8 flex-grow">
+              <li class="font-semibold text-white">Core AI Features</li>
+              <li>Business Hours Support</li>
+              <li>Email Support</li>
+              <li>Basic Analytics</li>
+              <li>Email Support</li>
+            </ul>
+            <a href="#"
+              class="mt-auto text-center bg-gradient-to-r from-sky-400 to-blue-600 text-white font-bold py-3 rounded-lg hover:from-sky-500 hover:to-blue-700 transition-all shadow-lg shadow-blue-500/30 w-full">
+              Choose Pro Plan
+            </a>
+          </div>
+
+          <div
+            class="bg-[#0b0f29]/80 backdrop-blur-sm border border-blue-800/60 rounded-2xl p-8 flex flex-col h-full transition-all duration-300 hover:border-blue-700/80">
+            <h3 class="text-2xl font-semibold text-white mb-4">Enterprice Plan</h3>
+            <p class="text-5xl font-bold text-white mb-2">₹10,190</p>
+            <p class="text-gray-400 text-sm mb-1">/ yearly per user</p>
+            <p class="text-gray-400 text-sm mb-6">Includes: 5 seats, 1200 AI Credits</p>
+            <ul class="space-y-3 text-gray-300 mb-8 flex-grow">
+              <li>Core AI Features</li>
+              <li>Business Hours Support</li>
+              <li>Email Support</li>
+              <li>Basic Analytic</li>
+              <li>Email Supports</li>
+            </ul>
+            <a href="#"
+              class="mt-auto text-center bg-transparent border border-gray-500 text-white font-semibold py-3 rounded-lg hover:bg-gray-700/30 hover:border-gray-300 transition-colors w-full">
+              Choose Enterprice Plan
+            </a>
+          </div>
+
+        </div>
+      </section>
     </div>
-  </main>
+    
+    <section class="py-24 px-8 flex flex-col items-center justify-center text-white">
+      <h2 class="text-4xl md:text-5xl font-bold mb-12 text-center">
+        Explore Our
+        <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
+          Platform Features
+        </span>
+      </h2>
+    
+      <div style="height: 800px; position: relative;">
+        
+        <div class="carousel-container" id="vanilla-carousel">
+          <div class="carousel-track">
+            
+            <div class="carousel-item">
+              <div class="carousel-item-header">
+                <span class="carousel-icon-container">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="carousel-icon">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline>
+                  </svg>
+                </span>
+              </div>
+              <div class="carousel-item-content">
+                <div class="carousel-item-title">Text Animations</div>
+                <p class="carousel-item-description">Cool text animations for your projects.</p>
+              </div>
+            </div>
+    
+            <div class="carousel-item">
+              <div class="carousel-item-header">
+                <span class="carousel-icon-container">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="carousel-icon">
+                    <circle cx="12" cy="12" r="10"></circle>
+                  </svg>
+                </span>
+              </div>
+              <div class="carousel-item-content">
+                <div class="carousel-item-title">Animations</div>
+                <p class="carousel-item-description">Smooth animations for your projects.</p>
+              </div>
+            </div>
+    
+            <div class="carousel-item">
+              <div class="carousel-item-header">
+                <span class="carousel-icon-container">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="carousel-icon">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                    <polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline>
+                  </svg>
+                </span>
+              </div>
+              <div class="carousel-item-content">
+                <div class="carousel-item-title">Components</div>
+                <p class="carousel-item-description">Reusable components for your projects.</p>
+              </div>
+            </div>
+    
+            <div class="carousel-item">
+              <div class="carousel-item-header">
+                <span class="carousel-icon-container">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="carousel-icon">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line>
+                  </svg>
+                </span>
+              </div>
+              <div class="carousel-item-content">
+                <div class="carousel-item-title">Backgrounds</div>
+                <p class="carousel-item-description">Beautiful backgrounds and patterns for your projects.</p>
+              </div>
+            </div>
+    
+            <div class="carousel-item">
+              <div class="carousel-item-header">
+                <span class="carousel-icon-container">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="carousel-icon">
+                    <polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline>
+                  </svg>
+                </span>
+              </div>
+              <div class="carousel-item-content">
+                <div class="carousel-item-title">Common UI</div>
+                <p class="carousel-item-description">Common UI components are coming soon!</p>
+              </div>
+            </div>
+    
+            <div class="carousel-item">
+              <div class="carousel-item-header">
+                <span class="carousel-icon-container">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="carousel-icon">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline>
+                  </svg>
+                </span>
+              </div>
+              <div class="carousel-item-content">
+                <div class="carousel-item-title">Text Animations</div>
+                <p class="carousel-item-description">Cool text animations for your projects.</p>
+              </div>
+            </div>
+    
+          </div>
+          <div class="carousel-indicators-container">
+            <div class="carousel-indicators">
+              <div class="carousel-indicator active" data-index="0"></div>
+              <div class="carousel-indicator inactive" data-index="1"></div>
+              <div class="carousel-indicator inactive" data-index="2"></div>
+              <div class="carousel-indicator inactive" data-index="3"></div>
+              <div class="carousel-indicator inactive" data-index="4"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<footer class="site-footer">
+    <img src="https://i.imgur.com/vP1Gqjb.png" alt="" class="footer-deco-shape" aria-hidden="true">
+    
+    <div class="footer-bg-text" aria-hidden="true">LOG AI</div>
+
+    <div class="footer-container">
+        <nav class="footer-social">
+            <ul>
+                <li><a href="#">LINKEDIN</a></li>
+                <li><a href="#">X</a></li>
+                <li><a href="#">INSTAGRAM</a></li>
+                <li><a href="#">FACEBOOK</a></li>
+            </ul>
+        </nav>
+
+        <div class="footer-links">
+            <div class="footer-column">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">News</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">Community</a></li>
+                    <li><a href="#">API Reference</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Security</a></li>
+                    <li><a href="#">Compliance</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms & Service</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 LogAI. All rights reserved. Built for the future of work.</p>
+        </div>
+    </div>
+</footer>
+    </main>
 
 
-  <!-- 
-      JavaScript for the Card Swap Animation
-    -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-      // --- Card Swap Animation ---
+      // --- 1. Card Swap Animation (GSAP) ---
       const cardContainer = document.querySelector('.card-swap-container');
       if (cardContainer) {
         // --- Configuration (from React props) ---
         const config = {
-          // *** MODIFIED: Made cards larger ***
           width: 720,
           height: 480,
           cardDistance: 50,
           verticalDistance: 60,
-          // --- End Modifications ---
           delay: 5000,
           pauseOnHover: false,
           skewAmount: 6,
@@ -1003,34 +1235,36 @@
 
         // --- Easing Setup ---
         const easingConfig =
-          config.easing === 'elastic'
-            ? {
-              ease: 'elastic.out(0.6,0.9)',
-              durDrop: 2,
-              durMove: 2,
-              durReturn: 2,
-              promoteOverlap: 0.9,
-              returnDelay: 0.05
-            }
-            : {
-              ease: 'power1.inOut',
-              durDrop: 0.8,
-              durMove: 0.8,
-              durReturn: 0.8,
-              promoteOverlap: 0.45,
-              returnDelay: 0.2
-            };
+          config.easing === 'elastic' ?
+          {
+            ease: 'elastic.out(0.6,0.9)',
+            durDrop: 2,
+            durMove: 2,
+            durReturn: 2,
+            promoteOverlap: 0.9,
+            returnDelay: 0.05
+          } :
+          {
+            ease: 'power1.inOut',
+            durDrop: 0.8,
+            durMove: 0.8,
+            durReturn: 0.8,
+            promoteOverlap: 0.45,
+            returnDelay: 0.2
+          };
 
         // --- DOM Selections ---
         const cards = Array.from(cardContainer.querySelectorAll('.card'));
         const totalCards = cards.length;
 
-        // --- State Variables (from React refs) ---
-        let order = Array.from({ length: totalCards }, (_, i) => i);
+        // --- State Variables ---
+        let order = Array.from({
+          length: totalCards
+        }, (_, i) => i);
         let currentTimeline = null;
         let intervalId = null;
 
-        // --- Helper Functions (ported directly) ---
+        // --- Helper Functions ---
         const makeSlot = (i, distX, distY, total) => ({
           x: i * distX,
           y: -i * distY,
@@ -1051,12 +1285,12 @@
             force3D: true
           });
 
-        // --- Core Swap Logic (ported from `swap` function) ---
+        // --- Core Swap Logic ---
         const swap = () => {
           if (order.length < 2) return;
 
-          const [front, ...rest]
-            = order;
+          const [front, ...rest] =
+          order;
           const elFront = cards[front];
 
           const tl = gsap.timeline();
@@ -1074,10 +1308,11 @@
           rest.forEach((idx, i) => {
             const el = cards[idx];
             const slot = makeSlot(i, config.cardDistance, config.verticalDistance, totalCards);
-            tl.set(el, { zIndex: slot.zIndex }, 'promote');
+            tl.set(el, {
+              zIndex: slot.zIndex
+            }, 'promote');
             tl.to(
-              el,
-              {
+              el, {
                 x: slot.x,
                 y: slot.y,
                 z: slot.z,
@@ -1093,14 +1328,15 @@
           tl.addLabel('return', `promote+=${easingConfig.durMove * easingConfig.returnDelay}`);
           tl.call(
             () => {
-              gsap.set(elFront, { zIndex: backSlot.zIndex });
+              gsap.set(elFront, {
+                zIndex: backSlot.zIndex
+              });
             },
             undefined,
             'return'
           );
           tl.to(
-            elFront,
-            {
+            elFront, {
               x: backSlot.x,
               y: backSlot.y,
               z: backSlot.z,
@@ -1116,27 +1352,19 @@
           });
         };
 
-        // --- Initialization (ported from `useEffect`) ---
-
-        // Set container dimensions
+        // --- Initialization ---
         cardContainer.style.width = `${config.width}px`;
         cardContainer.style.height = `${config.height}px`;
 
-        // Set initial positions for all cards
         cards.forEach((card, i) => {
-          // Apply width/height to each card (like React's cloneElement)
           card.style.width = `${config.width}px`;
           card.style.height = `${config.height}px`;
-
-          // Place the card in its starting slot
           placeNow(card, makeSlot(i, config.cardDistance, config.verticalDistance, totalCards), config.skewAmount);
         });
 
-        // Start the animation loop
-        swap(); // Run first animation immediately
+        swap();
         intervalId = window.setInterval(swap, config.delay);
 
-        // Setup pause-on-hover logic
         if (config.pauseOnHover) {
           const pause = () => {
             if (currentTimeline) currentTimeline.pause();
@@ -1152,7 +1380,7 @@
         }
       }
 
-      // --- NEW: SVG Clip-Path Generation ---
+      // --- 2. SVG Clip-Path Generation ---
       const heroElement = document.querySelector('.content-area-shape');
       const clipPathElement = document.querySelector('#hero-shape path');
 
@@ -1160,136 +1388,320 @@
         const updatePath = () => {
           const w = heroElement.clientWidth;
           const h = heroElement.clientHeight;
-          if (w <= 0 || h <= 0) return; // Don't run if element is hidden
+          if (w <= 0 || h <= 0) return;
 
           let d = '';
-          // NEW: Define outer and inner radius
-          const r_outer = 15; // 15px to match rounded-[15px]
-          const r_inner = 20; // 20px for the cutouts
+          const r_outer = 15;
+          const r_inner = 20;
 
           if (window.innerWidth <= 768) {
-            // --- Mobile Path (110px cuts, 50px vertical) ---
-            // Now includes 15px outer radius and 20px inner radius
             d = [
-              `M 0 ${50 + r_outer}`, // Start on left edge, below top-left corner
-              `A ${r_outer} ${r_outer} 0 0 1 ${r_outer} 50`, // Arc for top-left outer corner
-              `L ${110 - r_inner} 50`, // Line to inner cutout
-              `A ${r_inner} ${r_inner} 0 0 1 110 ${50 - r_inner}`, // Inner-left-bottom arc
-              `L 110 ${r_inner}`, // Line up
-              `A ${r_inner} ${r_inner} 0 0 1 ${110 + r_inner} 0`, // Inner-left-top arc
-              `L ${w - 110 - r_inner} 0`, // Line across top
-              `A ${r_inner} ${r_inner} 0 0 1 ${w - 110} ${r_inner}`, // Inner-right-top arc
-              `L ${w - 110} ${50 - r_inner}`, // Line down
-              `A ${r_inner} ${r_inner} 0 0 1 ${w - 110 + r_inner} 50`, // Inner-right-bottom arc
-              `L ${w - r_outer} 50`, // Line to outer corner
-              `A ${r_outer} ${r_outer} 0 0 1 ${w} ${50 + r_outer}`, // **FIX 1**: Arc for top-right outer corner
-              `L ${w} ${h - 50 - r_outer}`, // **FIX 2**: Line down right edge
-              `A ${r_outer} ${r_outer} 0 0 1 ${w - r_outer} ${h - 50}`, // Arc for bottom-right outer corner
-              `L ${w - 110 + r_inner} ${h - 50}`, // Line to inner cutout
-              `A ${r_inner} ${r_inner} 0 0 1 ${w - 110} ${h - 50 + r_inner}`, // Inner-bottom-right-top arc
-              `L ${w - 110} ${h - r_inner}`, // Line down
-              `A ${r_inner} ${r_inner} 0 0 1 ${w - 110 - r_inner} ${h}`, // Inner-bottom-right-bottom arc
-              `L ${r_outer} ${h}`, // Line across bottom
-              `A ${r_outer} ${r_outer} 0 0 1 0 ${h - r_outer}`, // Arc for bottom-left outer corner
-              `Z` // Close path
+              `M 0 ${50 + r_outer}`,
+              `A ${r_outer} ${r_outer} 0 0 1 ${r_outer} 50`,
+              `L ${110 - r_inner} 50`,
+              `A ${r_inner} ${r_inner} 0 0 1 110 ${50 - r_inner}`,
+              `L 110 ${r_inner}`,
+              `A ${r_inner} ${r_inner} 0 0 1 ${110 + r_inner} 0`,
+              `L ${w - 110 - r_inner} 0`,
+              `A ${r_inner} ${r_inner} 0 0 1 ${w - 110} ${r_inner}`,
+              `L ${w - 110} ${50 - r_inner}`,
+              `A ${r_inner} ${r_inner} 0 0 1 ${w - 110 + r_inner} 50`,
+              `L ${w - r_outer} 50`,
+              `A ${r_outer} ${r_outer} 0 0 1 ${w} ${50 + r_outer}`,
+              `L ${w} ${h - 50 - r_outer}`,
+              `A ${r_outer} ${r_outer} 0 0 1 ${w - r_outer} ${h - 50}`,
+              `L ${w - 110 + r_inner} ${h - 50}`,
+              `A ${r_inner} ${r_inner} 0 0 1 ${w - 110} ${h - 50 + r_inner}`,
+              `L ${w - 110} ${h - r_inner}`,
+              `A ${r_inner} ${r_inner} 0 0 1 ${w - 110 - r_inner} ${h}`,
+              `L ${r_outer} ${h}`,
+              `A ${r_outer} ${r_outer} 0 0 1 0 ${h - r_outer}`,
+              `Z`
             ].join(' ');
 
           } else {
-            // --- Desktop Path ---
-            // Now includes 15px outer radius and 20px inner radius
             d = [
-              `M 0 ${100 + r_outer}`, // Start on left edge, below top-left corner
-              `A ${r_outer} ${r_outer} 0 0 1 ${r_outer} 100`, // Arc for top-left outer corner
-              `L ${160 - r_inner} 100`, // Line to inner cutout
-              `A ${r_inner} ${r_inner} 0 0 1 160 ${100 - r_inner}`, // Inner-left-bottom arc
-              `L 160 ${r_inner}`, // Line up
-              `A ${r_inner} ${r_inner} 0 0 1 ${160 + r_inner} 0`, // Inner-left-top arc
-              `L ${w - 380 - r_inner} 0`, // Line across top
-              `A ${r_inner} ${r_inner} 0 0 1 ${w - 380} ${r_inner}`, // Inner-right-top arc
-              `L ${w - 380} ${100 - r_inner}`, // Line down
-              `A ${r_inner} ${r_inner} 0 0 0 ${w - 380 + r_inner} 100`, // Inner-right-bottom arc (Note: flag 0)
-              `L ${w - r_outer} 100`, // Line to outer corner
-              `A ${r_outer} ${r_outer} 0 0 1 ${w} ${100 + r_outer}`, // **FIX 3**: Arc for top-right outer corner
-              `L ${w} ${h - 140 - r_outer}`, // **FIX 4**: Line down right edge
-              `A ${r_outer} ${r_outer} 0 0 0 ${w - r_outer} ${h - 140}`, // Arc for bottom-right outer corner (Note: flag 0)
+              `M 0 ${100 + r_outer}`,
+              `A ${r_outer} ${r_outer} 0 0 1 ${r_outer} 100`,
+              `L ${160 - r_inner} 100`,
+              `A ${r_inner} ${r_inner} 0 0 1 160 ${100 - r_inner}`,
+              `L 160 ${r_inner}`,
+              `A ${r_inner} ${r_inner} 0 0 1 ${160 + r_inner} 0`,
+              `L ${w - 380 - r_inner} 0`,
+              `A ${r_inner} ${r_inner} 0 0 1 ${w - 380} ${r_inner}`,
+              `L ${w - 380} ${100 - r_inner}`,
+              `A ${r_inner} ${r_inner} 0 0 0 ${w - 380 + r_inner} 100`,
+              `L ${w - r_outer} 100`,
+              `A ${r_outer} ${r_outer} 0 0 1 ${w} ${100 + r_outer}`,
+              `L ${w} ${h - 140 - r_outer}`,
+              `A ${r_outer} ${r_outer} 0 0 0 ${w - r_outer} ${h - 140}`,
               `L ${w - 200 + r_inner} ${h - 140}`,
-              `A ${r_inner} ${r_inner} 0 0 0 ${w - 200} ${h - 140 + r_inner}`, // Inner-bottom-right-top arc (Note: flag 0)
-              `L ${w - 200} ${h - r_inner}`, // Line down
-              `A ${r_inner} ${r_inner} 0 0 1 ${w - 200 - r_inner} ${h}`, // Inner-bottom-right-bottom arc
-              `L ${r_outer} ${h}`, // Line across bottom
-              `A ${r_outer} ${r_outer} 0 0 1 0 ${h - r_outer}`, // Arc for bottom-left outer corner
-              `Z` // Close path
+              `A ${r_inner} ${r_inner} 0 0 0 ${w - 200} ${h - 140 + r_inner}`,
+              `L ${w - 200} ${h - r_inner}`,
+              `A ${r_inner} ${r_inner} 0 0 1 ${w - 200 - r_inner} ${h}`,
+              `L ${r_outer} ${h}`,
+              `A ${r_outer} ${r_outer} 0 0 1 0 ${h - r_outer}`,
+              `Z`
             ].join(' ');
           }
 
           clipPathElement.setAttribute('d', d);
         };
 
-        // Run the update function on load and on resize
         const resizeObserver = new ResizeObserver(updatePath);
         resizeObserver.observe(heroElement);
-        updatePath(); // Initial call
+        updatePath();
       }
 
-      // --- START OF NEW JAVASCRIPT ---
+      // --- 3. Scrolly-telling Logic ---
       window.addEventListener('scroll', () => {
         const container = document.getElementById('ecosystem-container');
-
-        // Safety check: if the container isn't on the page, do nothing
         if (!container) {
           return;
         }
-
         const cardsWrapper = document.getElementById('cards-wrapper');
         const rightPanel = document.getElementById('right-panel');
-
-        // Safety check for other elements
         if (!cardsWrapper || !rightPanel || !cardsWrapper.firstElementChild || !cardsWrapper.lastElementChild) {
           return;
         }
-
         const rect = container.getBoundingClientRect();
-
-        // This is the total "track" length for the sticky effect
-        // (e.g., 600vh container - 100vh viewport = 500vh of scroll)
         const scrollableTrack = container.scrollHeight - window.innerHeight;
-
-        // This is how far *into* the track we are (pixels)
         const scrollAmount = -rect.top;
-
-        // Calculate scroll progress from 0 (top of track) to 1 (bottom of track)
-        // We clamp it between 0 and 1 to prevent overscrolling.
         let scrollPercent = Math.max(0, Math.min(1, scrollAmount / scrollableTrack));
-
-        // --- NEW LOGIC ---
-
-        // 1. Define the Start Y position:
-        // We want to center the *first card*. Since the wrapper is at `top: 50%`,
-        // we just need to shift it UP by half the height of the first card.
-        const startY = - (cardsWrapper.firstElementChild.offsetHeight / 2);
-
-        // 2. Define the End Y position:
-        // We want to center the *last card*.
-        // A) The Y-position of the *top* of the last card is:
-        //    (cardsWrapper.scrollHeight - cardsWrapper.lastElementChild.offsetHeight)
-        // B) The Y-position of the *center* of the last card (relative to the wrapper's top) is:
-        //    (Y-top + (cardsWrapper.lastElementChild.offsetHeight / 2))
-        // C) This simplifies to:
-        //    (cardsWrapper.scrollHeight - (cardsWrapper.lastElementChild.offsetHeight / 2))
-        // D) We need to shift the wrapper UP by this full amount.
-        const endY = - (cardsWrapper.scrollHeight - (cardsWrapper.lastElementChild.offsetHeight / 2));
-
-        // 3. Linearly interpolate between startY and endY using our scrollPercent
-        //    Formula: start + (end - start) * percent
+        
+        const startY = -(cardsWrapper.firstElementChild.offsetHeight / 2);
+        const endY = -(cardsWrapper.scrollHeight - (cardsWrapper.lastElementChild.offsetHeight / 2));
         const newTransformY = startY + (endY - startY) * scrollPercent;
 
-        // --- END OF NEW LOGIC ---
-
-        // Apply the new transform. The `translate(-50%, ...)` correctly
-        // handles the `left: 50%` centering from the CSS.
         cardsWrapper.style.transform = `translate(-50%, ${newTransformY}px)`;
       });
-      // --- END OF NEW JAVASCRIPT ---
+
+
+      // --- 4. NEW 3D VANILLA CAROUSEL LOGIC ---
+      const carousel = document.getElementById('vanilla-carousel');
+      
+      // Run carousel logic ONLY if the element exists
+      if (carousel) {
+        
+        // --- 1. Get props ---
+        const props = {
+          baseWidth: 600, // MODIFIED: Increased from 300 to 400
+          autoplay: true,
+          autoplayDelay: 3000,
+          pauseOnHover: true,
+          loop: true,
+          round: false,
+        };
+
+        // --- 2. Define constants and state variables ---
+        const track = carousel.querySelector('.carousel-track');
+        const items = Array.from(track.children);
+        const indicators = carousel.querySelectorAll('.carousel-indicator');
+        
+        const numOriginalItems = items.length - 1;
+        const containerPadding = 16;
+        const GAP = 16;
+        const DRAG_BUFFER = 50;
+        
+        let itemWidth = props.baseWidth - containerPadding * 2;
+        let trackItemOffset = itemWidth + GAP;
+        
+        let currentIndex = 0;
+        let isHovered = false;
+        let isResetting = false;
+        
+        let isDragging = false;
+        let startX = 0;
+        let currentTranslate = 0;
+        let lastTranslate = 0;
+        
+        let autoplayInterval = null;
+
+        // --- 3. Helper Functions ---
+        function interpolate(value, inputRange, outputRange) {
+          if (value <= inputRange[0]) return outputRange[0];
+          if (value >= inputRange[inputRange.length - 1]) return outputRange[outputRange.length - 1];
+
+          for (let i = 1; i < inputRange.length; i++) {
+            if (value <= inputRange[i]) {
+              const x1 = inputRange[i - 1];
+              const y1 = outputRange[i - 1];
+              const x2 = inputRange[i];
+              const y2 = outputRange[i];
+              const t = (value - x1) / (x2 - x1);
+              return y1 + (y2 - y1) * t;
+            }
+          }
+          return outputRange[outputRange.length - 1];
+        }
+        
+        function apply3DRotations(x) {
+          items.forEach((item, index) => {
+            const range = [-(index + 1) * trackItemOffset, -index * trackItemOffset, -(index - 1) * trackItemOffset];
+            const outputRange = [90, 0, -90];
+            const rotateY = interpolate(x, range, outputRange);
+            item.style.transform = `rotateY(${rotateY}deg)`;
+          });
+        }
+
+        function goToSlide(index) {
+          if (isResetting) return;
+          
+          track.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
+          
+          currentIndex = index;
+          currentTranslate = -(currentIndex * trackItemOffset);
+          
+          track.style.transform = `translateX(${currentTranslate}px)`;
+          track.style.perspectiveOrigin = `${currentIndex * trackItemOffset + itemWidth / 2}px 50%`;
+          
+          apply3DRotations(currentTranslate);
+          updateIndicators();
+        }
+
+        function updateIndicators() {
+          const activeIndex = currentIndex % numOriginalItems;
+          indicators.forEach((indicator, index) => {
+            if (index === activeIndex) {
+              indicator.classList.add('active');
+              indicator.classList.remove('inactive');
+            } else {
+              indicator.classList.add('inactive');
+              indicator.classList.remove('active');
+            }
+          });
+        }
+
+        function handleTransitionEnd() {
+          if (currentIndex === numOriginalItems) {
+            isResetting = true;
+            track.style.transition = 'none';
+            currentIndex = 0;
+            currentTranslate = 0;
+            track.style.transform = `translateX(${currentTranslate}px)`;
+            track.style.perspectiveOrigin = `${itemWidth / 2}px 50%`;
+            
+            apply3DRotations(currentTranslate);
+            
+            void track.offsetWidth; 
+            
+            track.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
+            isResetting = false;
+          }
+        }
+
+        // --- 4. Autoplay Logic ---
+        function startAutoplay() {
+          if (!props.autoplay) return;
+          
+          clearInterval(autoplayInterval);
+          autoplayInterval = setInterval(() => {
+            if (props.pauseOnHover && isHovered) {
+              return;
+            }
+            goToSlide(currentIndex + 1);
+          }, props.autoplayDelay);
+        }
+
+        function stopAutoplay() {
+          clearInterval(autoplayInterval);
+        }
+        
+        // --- 5. Event Listeners ---
+        if (props.pauseOnHover) {
+          carousel.addEventListener('mouseenter', () => {
+            isHovered = true;
+          });
+          carousel.addEventListener('mouseleave', () => {
+            isHovered = false;
+          });
+        }
+
+        indicators.forEach((indicator, index) => {
+          indicator.addEventListener('click', () => {
+            goToSlide(index);
+            stopAutoplay();
+            startAutoplay();
+          });
+        });
+        
+        track.addEventListener('transitionend', handleTransitionEnd);
+        
+        track.addEventListener('mousedown', dragStart);
+        track.addEventListener('touchstart', dragStart, { passive: true });
+
+        document.addEventListener('mousemove', dragMove);
+        document.addEventListener('touchmove', dragMove);
+
+        document.addEventListener('mouseup', dragEnd);
+        document.addEventListener('touchend', dragEnd);
+        document.addEventListener('mouseleave', dragEnd);
+
+        function dragStart(e) {
+          isDragging = true;
+          isResetting = false;
+          stopAutoplay();
+          
+          startX = e.pageX || e.touches[0].pageX;
+          
+          const computedStyle = window.getComputedStyle(track);
+          const matrix = new DOMMatrix(computedStyle.transform);
+          lastTranslate = matrix.m41;
+          
+          track.style.transition = 'none';
+          track.style.cursor = 'grabbing';
+        }
+
+        function dragMove(e) {
+          if (!isDragging) return;
+          
+          const currentX = e.pageX || e.touches[0].pageX;
+          const deltaX = currentX - startX;
+          currentTranslate = lastTranslate + deltaX;
+          
+          track.style.transform = `translateX(${currentTranslate}px)`;
+          apply3DRotations(currentTranslate);
+        }
+
+        function dragEnd(e) {
+          if (!isDragging) return;
+          
+          isDragging = false;
+          
+          track.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
+          track.style.cursor = 'grab';
+
+          const deltaX = currentTranslate - lastTranslate;
+
+          if (deltaX < -DRAG_BUFFER) {
+            goToSlide(Math.min(currentIndex + 1, items.length - 1));
+          } else if (deltaX > DRAG_BUFFER) {
+            goToSlide(Math.max(currentIndex - 1, 0));
+          } else {
+            goToSlide(currentIndex);
+          }
+          
+          startAutoplay();
+        }
+
+        // --- 6. Initialization ---
+        function initializeCarousel() {
+          carousel.style.width = `${props.baseWidth}px`;
+          
+          items.forEach(item => {
+            item.style.width = `${itemWidth}px`;
+          });
+          
+          track.style.gap = `${GAP}px`;
+          track.style.perspective = '1000px';
+
+          goToSlide(0);
+          startAutoplay();
+        }
+
+        initializeCarousel();
+      }
+      // --- END OF 3D VANILLA CAROUSEL LOGIC ---
 
     });
   </script>
@@ -1297,4 +1709,3 @@
 </body>
 
 </html>
-
