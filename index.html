@@ -23,9 +23,8 @@
       font-family: 'Manrope', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       line-height: 1.6;
       color: #fff;
-      /* Default text color for the page */
       background-color: #02040a;
-      /* Dark background for the overall page */
+      overflow-x: hidden;
     }
 
     ul {
@@ -40,218 +39,242 @@
       /* Inherit color from parent */
       transition: color 0.3s ease, opacity 0.3s ease;
     }
-/* --- 1. Main Full-Screen Footer --- */
-#site-footer {
-  /* --- NEW: Sticky Positioning --- */
-  position: sticky;
-  top: 0; /* Sticks to the top of the viewport when scrolled to */
-  z-index: 10; /* Ensures it stays on top of other content */
 
-  /* --- Full Screen & Layout (From before) --- */
-  min-height: 100vh;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-  box-sizing: border-box;
+    /* --- 1. Main Full-Screen Footer --- */
+    #site-footer {
+      /* --- NEW: Sticky Positioning --- */
+      position: sticky;
+      top: 0;
+      /* Sticks to the top of the viewport when scrolled to */
+      z-index: 10;
+      /* Ensures it stays on top of other content */
 
-  /* --- Gradient (From image) --- */
-  color: #a0a0a0;
-  background-color: #030508; /* Dark blue fallback */
-  background-image: radial-gradient(circle at 60% 0%, 
-    #000000 15%, 
-    #04005775 80%
-  );
-}
-/* --- 1. Smaller Decorative Image --- */
-.footer-deco-shape {
-  position: absolute;
-  bottom: 0;
-  left: -5%;
-  width: 35%;     /* Changed from 45% */
-  max-width: 400px; /* Changed from 500px */
-  z-index: 1;
-  opacity: 0.8;
-}
-.footer-bg-text {
-  position: absolute;
-  bottom: 0;                   /* Makes it "touch" the bottom */
-  left: 50%;                 /* Puts the start of the text at the center */
-  transform: translateX(-50%); /* Pulls it left by half its width to be perfectly centered */
-  
-  font-size: 20vw;             /* Made it much bigger (was 12vw) */
-  line-height: 1;              /* Helps remove extra space so it sits flush */
-  
-  /* --- Keeping these from before --- */
-  font-weight: 900;
-  color: rgba(60, 80, 120, 0.507);
-  z-index: 0;
-  user-select: none;
-  white-space: nowrap;
-}
+      /* --- Full Screen & Layout (From before) --- */
+      min-height: 100vh;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      box-sizing: border-box;
 
-/* --- 3. Faint Top Line (From image) --- */
-#site-footer::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.1);
-  z-index: 3;
-}
+      /* --- Gradient (From image) --- */
+      color: #a0a0a0;
+      background-color: #030508;
+      /* Dark blue fallback */
+      background-image: radial-gradient(circle at 60% 0%,
+          #000000 15%,
+          #04005775 80%);
+    }
 
-/* --- 4. Main Content Container --- */
-.footer-container {  /* These two new properties add the line */
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 2rem; /* Adjust this value for more/less space */ 
-  /* This container holds all the content and creates the padding */
-  position: relative; 
-  z-index: 2; /* Sits on top of deco elements */
-  width: 100%;
-  min-height: 100vh;
-  padding: 4rem 5rem; /* Padding for the "safe area" */
-  box-sizing: border-box;
-  
-  /* We use flex to separate top-right content from bottom-left */
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* Pushes content to top and bottom */
-}
+    /* --- 1. Smaller Decorative Image --- */
+    .footer-deco-shape {
+      position: absolute;
+      bottom: 0;
+      left: -5%;
+      width: 35%;
+      /* Changed from 45% */
+      max-width: 400px;
+      /* Changed from 500px */
+      z-index: 1;
+      opacity: 0.8;
+    }
 
-/* --- 5. Right-Aligned Content (Social & Links) --- */
-.footer-social,
-.footer-links-grid {
-  /* This pushes both blocks to the right side */
-  width: 50%;
-  margin-left: auto;
-  max-width: 600px;
-}
-.footer-social {
+    .footer-bg-text {
+      position: absolute;
+      bottom: 0;
+      /* Makes it "touch" the bottom */
+      left: 50%;
+      /* Puts the start of the text at the center */
+      transform: translateX(-50%);
+      /* Pulls it left by half its width to be perfectly centered */
 
-  /* This existing margin creates space for the columns below */
-  margin-bottom: 3rem; 
-}
+      font-size: 20vw;
+      /* Made it much bigger (was 12vw) */
+      line-height: 1;
+      /* Helps remove extra space so it sits flush */
 
-.footer-social ul {
-  display: flex;
-  gap: 2rem;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+      /* --- Keeping these from before --- */
+      font-weight: 900;
+      color: rgba(60, 80, 120, 0.507);
+      z-index: 0;
+      user-select: none;
+      white-space: nowrap;
+    }
 
-.footer-social a {
-  color: #ffffff;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.875rem;
-  letter-spacing: 0.05em;
-  transition: color 0.3s ease;
-}
+    /* --- 3. Faint Top Line (From image) --- */
+    #site-footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+      z-index: 3;
+    }
 
-.footer-social a:hover {
-  color: #a0a0a0;
-}
+    /* --- 4. Main Content Container --- */
+    .footer-container {
+      /* These two new properties add the line */
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 2rem;
+      /* Adjust this value for more/less space */
+      /* This container holds all the content and creates the padding */
+      position: relative;
+      z-index: 2;
+      /* Sits on top of deco elements */
+      width: 100%;
+      min-height: 100vh;
+      padding: 4rem 5rem;
+      /* Padding for the "safe area" */
+      box-sizing: border-box;
 
-.footer-links-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  width: 100%;
-}
+      /* We use flex to separate top-right content from bottom-left */
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      /* Pushes content to top and bottom */
+    }
 
-.footer-column h4 {
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 1.1rem;
-  margin-bottom: 1.5rem;
-}
+    /* --- 5. Right-Aligned Content (Social & Links) --- */
+    .footer-social,
+    .footer-links-grid {
+      /* This pushes both blocks to the right side */
+      width: 50%;
+      margin-left: auto;
+      max-width: 600px;
+    }
 
-.footer-column ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+    .footer-social {
 
-.footer-column li {
-  margin-bottom: 1rem;
-}
+      /* This existing margin creates space for the columns below */
+      margin-bottom: 3rem;
+    }
 
-.footer-column a {
-  color: #a0a0a0;
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: color 0.3s ease;
-}
+    .footer-social ul {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
 
-.footer-column a:hover {
-  color: #ffffff;
-}
+    .footer-social a {
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.875rem;
+      letter-spacing: 0.05em;
+      transition: color 0.3s ease;
+    }
 
-/* --- 6. Bottom-Left Copyright (From image) --- */
-.footer-bottom {
-  /* This is the key change:
+    .footer-social a:hover {
+      color: #a0a0a0;
+    }
+
+    .footer-links-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      width: 100%;
+    }
+
+    .footer-column h4 {
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-column ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .footer-column li {
+      margin-bottom: 1rem;
+    }
+
+    .footer-column a {
+      color: #a0a0a0;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s ease;
+    }
+
+    .footer-column a:hover {
+      color: #ffffff;
+    }
+
+    /* --- 6. Bottom-Left Copyright (From image) --- */
+    .footer-bottom {
+      /* This is the key change:
      We override its position in the flex flow */
-  position: absolute;
-  bottom: 4rem; /* Aligns with the container's bottom padding */
-  left: 5rem;   /* Aligns with the container's left padding */
-  z-index: 3;   /* Ensures it's on top of the 3D shape */
-}
+      position: absolute;
+      bottom: 4rem;
+      /* Aligns with the container's bottom padding */
+      left: 5rem;
+      /* Aligns with the container's left padding */
+      z-index: 3;
+      /* Ensures it's on top of the 3D shape */
+    }
 
-.footer-bottom p {
-  margin: 0;
-  font-size: 0.8rem;
-  color: #a0a0a0;
-  max-width: 300px; /* Allows text to wrap */
-}
+    .footer-bottom p {
+      margin: 0;
+      font-size: 0.8rem;
+      color: #a0a0a0;
+      max-width: 300px;
+      /* Allows text to wrap */
+    }
 
-/* --- 7. Responsive (Mobile) --- */
-@media (max-width: 768px) {
-  #site-footer {
-    min-height: auto; /* Let content define height on mobile */
-  }
+    /* --- 7. Responsive (Mobile) --- */
+    @media (max-width: 768px) {
+      #site-footer {
+        min-height: auto;
+        /* Let content define height on mobile */
+      }
 
-  .footer-container {
-    padding: 4rem 2rem;
-    min-height: auto;
-  }
+      .footer-container {
+        padding: 4rem 2rem;
+        min-height: auto;
+      }
 
-  .footer-social,
-  .footer-links-grid {
-    /* Stack content, make it full-width */
-    width: 100%;
-    margin-left: 0;
-  }
-  
-  .footer-links-grid {
-    grid-template-columns: 1fr 1fr; /* 2 columns on mobile */
-  }
+      .footer-social,
+      .footer-links-grid {
+        /* Stack content, make it full-width */
+        width: 100%;
+        margin-left: 0;
+      }
 
-  .footer-bottom {
-    /* Put copyright back in the normal flow, centered */
-    position: relative;
-    bottom: auto;
-    left: auto;
-    text-align: center;
-    margin-top: 4rem;
-    padding-top: 2rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .footer-bottom p {
-    max-width: 100%;
-  }
+      .footer-links-grid {
+        grid-template-columns: 1fr 1fr;
+        /* 2 columns on mobile */
+      }
 
-  .footer-deco-shape {
-    width: 80%;
-    opacity: 0.3;
-  }
+      .footer-bottom {
+        /* Put copyright back in the normal flow, centered */
+        position: relative;
+        bottom: auto;
+        left: auto;
+        text-align: center;
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
 
-  .footer-bg-text {
-    font-size: 25vw;
-  }
-}
+      .footer-bottom p {
+        max-width: 100%;
+      }
+
+      .footer-deco-shape {
+        width: 80%;
+        opacity: 0.3;
+      }
+
+      .footer-bg-text {
+        font-size: 25vw;
+      }
+    }
 
     .heading {
       font-size: 170px;
@@ -426,6 +449,37 @@
       height: 100vh;
       width: 100%;
       overflow: hidden;
+      isolation: isolate;
+    }
+
+    /* --- NEW AI ECOSYSTEM GLOW (WHITE & SHIFTED) --- */
+    .sticky-wrapper::before {
+      content: '';
+      position: absolute;
+
+      /* --- CHANGE 1: MOVED TO THE RIGHT --- */
+      top: 50%;
+      left: 60%;
+      /* <-- Was 50%. This pushes it to the right. */
+      transform: translate(-50%, -50%);
+
+      /* Size of the glow */
+      width: 70vw;
+      height: 70vh;
+
+      /* --- CHANGE 2: "WHITE LIGHTNING" GRADIENT --- */
+      background-image: radial-gradient(circle,
+          rgba(174, 193, 255, 0.596) 0%,
+          /* <-- Bright white center */
+          rgba(255, 255, 255, 0) 65%
+          /* <-- Fades to transparent white */
+        );
+
+      /* This is the key to the soft look */
+      filter: blur(120px);
+
+      /* Put it behind the text and cards */
+      z-index: -1;
     }
 
     .split-layout {
@@ -936,6 +990,67 @@
     }
 
     /* === END OF GLASSSURFACE CSS === */
+    /* --- START OF STATS SEQUENCE CSS --- */
+
+    /* 1. The main container that provides the scrollable height */
+    .stats-sequence-container {
+      position: relative;
+      /* 400vh = 100vh for each of the 4 cards to animate */
+      height: 400vh;
+    }
+
+    /* 2. The wrapper that gets "pinned" to the screen */
+    .stats-sticky-wrapper {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      /* This is crucial! */
+    }
+
+    /* 3. The individual stat cards */
+    .stat-card {
+      /* Positioned on top of each other */
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+
+      /* Start invisible and ready for animation */
+      opacity: 0;
+      will-change: transform, opacity, filter;
+    }
+
+    /* Keep the existing styles you had for the content */
+    .stats-icon {
+      background-color: rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.5);
+      border-radius: 50%;
+      padding: 20px;
+      margin-bottom: 1.5rem;
+    }
+
+    .stats-percent {
+      font-size: 6rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .stats-label {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: #D1D5DB;
+      margin-top: 0.5rem;
+    }
+
+    /* --- END OF STATS SEQUENCE CSS --- */
   </style>
 </head>
 
@@ -1240,17 +1355,66 @@
         </div>
       </section>
 
-      <section class="stats-section px-8">
-        <div class="stats-icon">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
-            stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-          </svg>
-        </div>
-        <div class="stats-percent">85%</div>
-        <div class="stats-label">Less Manual Work</div>
-      </section>
+      <section id="stats-sequence-container" class="stats-sequence-container">
+        <div class="stats-sticky-wrapper">
 
+          <div class="stat-card">
+            <div class="stats-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+            </div>
+            <div class="stats-percent">85%</div>
+            <div class="stats-label">Less Manual Work</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stats-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                <polyline points="17 6 23 6 23 12"></polyline>
+              </svg>
+            </div>
+            <div class="stats-percent">43%</div>
+            <div class="stats-label">Increased Revenue</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stats-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 19 22 12 13 5 13 19"></polygon>
+                <polygon points="2 19 11 12 2 5 2 19"></polygon>
+              </svg>
+            </div>
+            <div class="stats-percent">67%</div>
+            <div class="stats-label">Faster Delivery</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stats-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                <rect x="9" y="9" width="6" height="6"></rect>
+                <line x1="9" y1="1" x2="9" y2="4"></line>
+                <line x1="15" y1="1" x2="15" y2="4"></line>
+                <line x1="9" y1="20" x2="9" y2="23"></line>
+                <line x1="15" y1="20" x2="15" y2="23"></line>
+                <line x1="20" y1="9" x2="23" y2="9"></line>
+                <line x1="20" y1="14" x2="23" y2="14"></line>
+                <line x1="1" y1="9" x2="4" y2="9"></line>
+                <line x1="1" y1="14" x2="4" y2="14"></line>
+              </svg>
+            </div>
+            <div class="stats-percent">1M+</div>
+            <div class="stats-label">AI Decisions Daily</div>
+          </div>
+
+        </div>
+      </section>
       <section class="py-20 px-4 md:px-8 text-white">
         <h2 class="text-4xl md:text-5xl font-bold mb-6 text-center">
           Pricing
@@ -1458,10 +1622,10 @@
       </section>
     </div>
 
-  <div id="global-blur-bottom" class="gradual-blur-init" data-target="page" data-position="bottom" data-height="8rem"
-    data-strength="4" data-div-count="10" data-curve="bezier" data-exponential="true" data-opacity="1"
-    data-z-index="1000">
-  </div>
+    <div id="global-blur-bottom" class="gradual-blur-init" data-target="page" data-position="bottom" data-height="8rem"
+      data-strength="4" data-div-count="10" data-curve="bezier" data-exponential="true" data-opacity="1"
+      data-z-index="1000">
+    </div>
 
 
     <footer id="site-footer" class="site-footer">
@@ -1518,7 +1682,7 @@
     </footer>
   </main>
 
-  <div id="sticky-nav"  data-z-index="10101" class="fixed bottom-8 left-1/2 -translate-x-1/2 w-auto z-[9999]">
+  <div id="sticky-nav" data-z-index="10101" class="fixed bottom-8 left-1/2 -translate-x-1/2 w-auto z-[9999]">
     <div class="flex items-center gap-4 md:gap-6">
       <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Platform</a>
       <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Features</a>
@@ -2114,22 +2278,76 @@
           }
         });
       }
+      // === 9. STATS SCROLLY-TELLING (NEW) ===
+      const statsContainer = document.getElementById('stats-sequence-container');
+      if (statsContainer) {
+        // First, register the ScrollTrigger plugin
+        gsap.registerPlugin(ScrollTrigger);
 
-     // === 8. INITIALIZE GLASSNAV (NEW) ===
+        // Select all the .stat-card elements
+        const statCards = gsap.utils.toArray(".stat-card");
+
+        // Create a GSAP timeline
+        const statsTimeline = gsap.timeline();
+
+        // Loop over each card and add its animation to the timeline
+        statCards.forEach((card, index) => {
+
+          // Animate IN: from bottom, no blur, full opacity
+          statsTimeline.fromTo(card,
+            { y: 100, opacity: 0, filter: 'blur(8px)' },
+            {
+              y: 0,
+              opacity: 1,
+              filter: 'blur(0px)',
+              duration: 0.8, // 0.8 "seconds" in timeline
+              ease: 'power2.out'
+            }
+          );
+
+          // Animate OUT: to top, blurred, faded
+
+          // (Don't animate the last card out, let it stay)
+          if (index < statCards.length - 1) {
+            statsTimeline.to(card,
+              {
+                y: -100,
+                opacity: 0,
+                filter: 'blur(8px)',
+                duration: 0.8, // 0.8 "seconds" in timeline
+                ease: 'power2.in'
+              },
+              "+=1" // Hold the card for 1 "second" before fading out
+            );
+          }
+        });
+
+        // Create the ScrollTrigger to "pin" the section and "scrub" the timeline
+        ScrollTrigger.create({
+          animation: statsTimeline,
+          trigger: "#stats-sequence-container", // The 400vh tall container
+          pin: ".stats-sticky-wrapper",       // The 100vh wrapper to pin
+          scrub: 1, // Smoothly links scrollbar to timeline (1s catch-up)
+          start: "top top", // When the top of the trigger hits the top of the viewport
+          end: "bottom bottom", // When the bottom of the trigger hits the bottom
+        });
+      }
+      // === END OF STATS SCROLLY-TELLING ===
+      // === 8. INITIALIZE GLASSNAV (NEW) ===
       const navElement = document.getElementById('sticky-nav');
       if (navElement) {
         new GlassSurface(navElement, {
           width: 'auto',       // Let Tailwind's `w-auto` control width
           height: 'auto',      // Let content control height
           borderRadius: 15,    // Matches the original `rounded-[15px]`
-          
+
           // Added a more defined borderWidth for the glass effect
           borderWidth: 0.1,    // Increased from default (0.07) to make it more visible
-          
+
           // Slightly tweaked for better border appearance
           brightness: 65,      // Slightly brighter
           opacity: 0.85,       // Slightly less transparent
-          
+
           // Existing distortion settings
           displace: 15,
           distortionScale: -150,
