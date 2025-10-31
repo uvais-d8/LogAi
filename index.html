@@ -443,43 +443,12 @@
       margin-top: 5rem;
     }
 
-       .sticky-wrapper {
+    .sticky-wrapper {
       position: sticky;
       top: 0;
       height: 100vh;
       width: 100%;
       overflow: hidden;
-      isolation: isolate;
-    }
-
-    /* --- NEW AI ECOSYSTEM GLOW (WHITE & SHIFTED) --- */
-    .sticky-wrapper::before {
-      content: '';
-      position: absolute;
-
-      /* --- CHANGE 1: MOVED TO THE RIGHT --- */
-      top: 50%;
-      left: 60%;
-      /* <-- Was 50%. This pushes it to the right. */
-      transform: translate(-50%, -50%);
-
-      /* Size of the glow */
-      width: 70vw;
-      height: 70vh;
-
-      /* --- CHANGE 2: "WHITE LIGHTNING" GRADIENT --- */
-      background-image: radial-gradient(circle,
-          rgba(255, 255, 255, 0.35) 0%,
-          /* <-- Bright white center */
-          rgba(255, 255, 255, 0) 65%
-          /* <-- Fades to transparent white */
-        );
-
-      /* This is the key to the soft look */
-      filter: blur(120px);
-
-      /* Put it behind the text and cards */
-      z-index: -1;
     }
 
     .split-layout {
@@ -1051,6 +1020,145 @@
     }
 
     /* --- END OF STATS SEQUENCE CSS --- */
+    /* === START OF NEW NAVBAR STYLES === */
+    /* Keyframes for the fade-in animation */
+    @keyframes fadeInNav {
+      from {
+        opacity: 0;
+        transform: translate(-50%, 20px) scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: translate(-50%, 0) scale(1);
+      }
+    }
+
+    /* Style for the navbar container itself */
+    #sticky-nav {
+      /* This adds the clean white border */
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      height: 200px;
+      /* This adds the smooth fade-in animation on load */
+      /* It waits 0.5s, then animates for 0.8s */
+      animation: fadeInNav 0.8s 0.5s cubic-bezier(0.25, 1, 0.5, 1) both;
+    }
+
+    /* This is the inner container holding the links */
+    .nav-content {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      /* from: md:gap-6 */
+
+      /* This makes the navbar "bigger" */
+      padding: 0.5rem 1rem;
+    }
+
+    /* Style for the regular navigation links */
+    .nav-link {
+      color: #D1D5DB;
+      /* from: text-gray-300 */
+      padding: 0.75rem 0.5rem;
+      /* 12px 8px */
+      font-size: 0.9rem;
+      font-weight: 700;
+      /* <--- UPDATED */
+      position: relative;
+      transition: color 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: #ffffff;
+      /* from: hover:text-white */
+    }
+
+    /* This adds a smooth underline effect */
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 6px;
+      /* Adjust position */
+      left: 0.5rem;
+      right: 0.5rem;
+      height: 1px;
+      background-color: #fff;
+      opacity: 0;
+      transform: scaleX(0);
+      transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .nav-link:hover::after {
+      opacity: 1;
+      transform: scaleX(1);
+    }
+
+
+    /* Style for the new "different and bold" center button */
+    .nav-cta-button {
+      /* We keep the gradient text from the original button */
+      background-image: linear-gradient(to right, #38bdf8, #2563eb);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+
+      /* New "Bold" Styles */
+      background-color: #111;
+      /* Darker background */
+      font-weight: 700;
+      font-size: 14px;
+
+      /* This makes it bigger and pill-shaped */
+      padding: 10px 20px;
+      border-radius: 30px;
+
+      /* Adds a matching border and cinematic glow */
+      border: 1px solid #38bdf8;
+      box-shadow: 0 5px 15px rgba(59, 130, 246, 0.2);
+
+      /* Smooth transition for hover */
+      transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .nav-cta-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+      background-color: #000;
+    }
+
+    /* --- CHANGE THIS --- */
+    .sticky-wrapper::before {
+      /* --- TO THIS --- */
+
+      content: '';
+      position: absolute;
+
+      /* These 3 lines center it in the full-screen sticky wrapper */
+      top: 50%;
+      left: 60%;
+      transform: translate(-50%, -50%);
+
+      z-index: 0;
+      /* Sits behind all content (left panel and right cards) */
+      width: 70%;
+      height: 70%;
+      max-width: 600px;
+      max-height: 600px;
+
+      /* The cinematic blue/white gradient */
+      background-image: radial-gradient(circle,
+          rgba(255, 255, 255, 0.938) 0%,
+          /* Bright white-blue center */
+          rgba(45, 106, 205, 0.3) 40%,
+          /* The blue from your theme */
+          transparent 70%
+          /* Fades to nothing */
+        );
+
+      filter: blur(100px);
+      mix-blend-mode: hard-light;
+      animation: pulseGlow 12s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    }
   </style>
 </head>
 
@@ -1082,19 +1190,19 @@
 
       <div class="content-area-shape bg-black w-full h-full rounded-[15px] p-6 md:p-12 text-white">
 
-        <div class="pt-20 md:pt-24 max-w-2xl relative z-0">
-          <h1 class="heading">LOG AI</h1>
-          <h2 class="text-3xl md:text-5xl font-bold mb-4 text-white">
-            The Future of<br>
-            <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
-              AI Business Intelligence
-            </span>
-          </h2>
-          <p class="text-lg md:text-xl text-gray-300">
-            Streamline operations, boost productivity, and accelerate growth
-            with our comprehensive AI-powered business suite.
-          </p>
-        </div>
+        <h1 class="heading">LOG AI</h1>
+        <div class="pt-0 md:pt-2 max-w-2xl relative z-0">
+                   
+                              <h2 class="text-4xl md:text-6xl font-bold text-white leading-tight">
+                        The Future of<br>
+                        <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
+                            AI Business Intelligence
+                          </span>
+                      </h2>
+                              <p class="text-lg md:text-xl text-gray-300 leading-snug">
+                        Streamline operations, boost productivity, and accelerate growth
+                        with our comprehensive AI-powered business suite.           </p>
+                  </div>
 
         <div class="card-swap-container absolute bottom-10 right-10 lg:bottom-20 lg-right-20 z-0">
           <div class="card">
@@ -1354,8 +1462,8 @@
           </div>
         </div>
       </section>
-
       <section class="stats-section px-8">
+
         <div class="stats-icon">
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
             stroke-linecap="round" stroke-linejoin="round">
@@ -1364,6 +1472,38 @@
         </div>
         <div class="stats-percent">85%</div>
         <div class="stats-label">Less Manual Work</div>
+
+        <div class="stats-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23"></line>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+        </div>
+        <div class="stats-percent">43%</div>
+        <div class="stats-label">Increased Revenue</div>
+
+        <div class="stats-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+            <polyline points="17 6 23 6 23 12"></polyline>
+          </svg>
+        </div>
+        <div class="stats-percent">67%</div>
+        <div class="stats-label">Faster Delivery</div>
+
+        <div class="stats-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+          </svg>
+        </div>
+        <div class="stats-percent">1M+</div>
+        <div class="stats-label">AI decisions Daily</div>
+
       </section>
 
       <section class="py-20 px-4 md:px-8 text-white">
@@ -1634,12 +1774,12 @@
   </main>
 
   <div id="sticky-nav" data-z-index="10101" class="fixed bottom-8 left-1/2 -translate-x-1/2 w-auto z-[9999]">
-    <div class="flex items-center gap-4 md:gap-6">
-      <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Platform</a>
-      <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Features</a>
-      <a href="#" class="gradient-text-button">Launch AI Platform</a>
-      <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Pricing</a>
-      <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Contact</a>
+    <div class="nav-content">
+      <a href="#" class="nav-link">Platform</a>
+      <a href="#" class="nav-link">Features</a>
+      <a href="#" class="nav-cta-button">Launch AI Platform</a>
+      <a href="#" class="nav-link">Pricing</a>
+      <a href="#" class="nav-link">Contact</a>
     </div>
   </div>
   <script>
@@ -2284,29 +2424,44 @@
         });
       }
       // === END OF STATS SCROLLY-TELLING ===
-      // === 8. INITIALIZE GLASSNAV (NEW) ===
+
+      // === 8. INITIALIZE GLASSNAV (UPDATED FOR CINEMATIC LOOK) ===
       const navElement = document.getElementById('sticky-nav');
       if (navElement) {
+        // 1. Initialize the Glass Surface with new "realistic" settings
         new GlassSurface(navElement, {
-          width: 'auto',       // Let Tailwind's `w-auto` control width
-          height: 'auto',      // Let content control height
-          borderRadius: 15,    // Matches the original `rounded-[15px]`
-
-          // Added a more defined borderWidth for the glass effect
-          borderWidth: 0.1,    // Increased from default (0.07) to make it more visible
-
-          // Slightly tweaked for better border appearance
-          brightness: 65,      // Slightly brighter
-          opacity: 0.85,       // Slightly less transparent
-
-          // Existing distortion settings
-          displace: 15,
-          distortionScale: -150,
+          width: 'auto',
+          height: 'auto',
+          borderRadius: 20,       // More rounded
+          borderWidth: 0.15,      // Brighter "white" edge
+          brightness: 80,         // Brighter edge
+          opacity: 0.8,         // Slightly more transparent
+          displace: 10,           // A bit less distortion
+          distortionScale: -120,  // A bit less distortion
           redOffset: 5,
           greenOffset: 15,
           blueOffset: 25,
           mixBlendMode: "screen"
         });
+
+        // 2. Add the "cinematic" mouse move effect
+        window.addEventListener('mousemove', (e) => {
+          const { clientX, clientY } = e;
+          const { innerWidth, innerHeight } = window;
+
+          // Calculate move percentage (-1 to +1)
+          const moveX = (clientX / innerWidth - 0.5) * 2;
+          const moveY = (clientY / innerHeight - 0.5) * 2;
+
+          // Apply a subtle 3D rotation using GSAP (which is already loaded)
+          gsap.to(navElement, {
+            rotationY: moveX * 5,  // 5 degrees max
+            rotationX: -moveY * 3, // 3 degrees max
+            ease: 'power1.out',
+            duration: 1.5
+          });
+        });
+
       }
       // === END OF GLASSNAV INIT ===
     });
