@@ -40,185 +40,218 @@
       /* Inherit color from parent */
       transition: color 0.3s ease, opacity 0.3s ease;
     }
+/* --- 1. Main Full-Screen Footer --- */
+#site-footer {
+  /* --- NEW: Sticky Positioning --- */
+  position: sticky;
+  top: 0; /* Sticks to the top of the viewport when scrolled to */
+  z-index: 10; /* Ensures it stays on top of other content */
 
-    /* --- Footer Section --- */
-    .site-footer {
-      /* Base background is black with a subtle radial gradient to match the image's depth */
-      background: radial-gradient(at center top, #0c122f 0%, #000000 70%);
-      padding: 80px 0 40px;
-      /* Top and bottom padding for the whole footer */
-      position: relative;
-      /* Crucial for absolute positioning of background elements */
-      overflow: hidden;
-      /* Ensures background elements don't spill out */
-      color: #fff;
-      /* Default text color within the footer */
-    }
+  /* --- Full Screen & Layout (From before) --- */
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
 
-    .footer-container {
-      max-width: 1200px;
-      /* Standard max-width for content */
-      margin: 0 auto;
-      /* Center the container */
-      padding: 0 40px;
-      /* Horizontal padding for responsiveness */
-      position: relative;
-      z-index: 2;
-      /* Ensures foreground content is above background elements */
-    }
+  /* --- Gradient (From image) --- */
+  color: #a0a0a0;
+  background-color: #030508; /* Dark blue fallback */
+  background-image: radial-gradient(circle at 60% 0%, 
+    #000000 15%, 
+    #04005775 80%
+  );
+}
+/* --- 1. Smaller Decorative Image --- */
+.footer-deco-shape {
+  position: absolute;
+  bottom: 0;
+  left: -5%;
+  width: 35%;     /* Changed from 45% */
+  max-width: 400px; /* Changed from 500px */
+  z-index: 1;
+  opacity: 0.8;
+}
+.footer-bg-text {
+  position: absolute;
+  bottom: 0;                   /* Makes it "touch" the bottom */
+  left: 50%;                 /* Puts the start of the text at the center */
+  transform: translateX(-50%); /* Pulls it left by half its width to be perfectly centered */
+  
+  font-size: 20vw;             /* Made it much bigger (was 12vw) */
+  line-height: 1;              /* Helps remove extra space so it sits flush */
+  
+  /* --- Keeping these from before --- */
+  font-weight: 900;
+  color: rgba(60, 80, 120, 0.507);
+  z-index: 0;
+  user-select: none;
+  white-space: nowrap;
+}
 
-    /* --- Background Decorative Elements --- */
-    .footer-deco-shape {
-      position: absolute;
-      left: -80px;
-      /* Position it partially off-screen to the left */
-      bottom: -50px;
-      /* Position it at the bottom */
-      width: 450px;
-      /* Size of the 3D graphic */
-      opacity: 0.9;
-      z-index: 1;
-      /* Above the background text, below the main content */
-      pointer-events: none;
-      /* Prevents interaction with the background image */
-    }
+/* --- 3. Faint Top Line (From image) --- */
+#site-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 3;
+}
 
-    .footer-bg-text {
-      position: absolute;
-      bottom: 10px;
-      /* Closer to the bottom */
-      left: 50%;
-      transform: translateX(-50%);
-      /* Center horizontally */
-      font-size: 200px;
-      /* Large size for the watermark effect */
-      font-weight: 800;
-      /* Extra bold */
-      color: #0d1a3f;
-      /* Dark blue color for the watermark */
-      opacity: 0.6;
-      /* Semi-transparent */
-      z-index: 0;
-      /* Behind all other footer content */
-      user-select: none;
-      /* Prevents text selection */
-      white-space: nowrap;
-      /* Keeps "LOG AI" on one line */
-    }
+/* --- 4. Main Content Container --- */
+.footer-container {  /* These two new properties add the line */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 2rem; /* Adjust this value for more/less space */ 
+  /* This container holds all the content and creates the padding */
+  position: relative; 
+  z-index: 2; /* Sits on top of deco elements */
+  width: 100%;
+  min-height: 100vh;
+  padding: 4rem 5rem; /* Padding for the "safe area" */
+  box-sizing: border-box;
+  
+  /* We use flex to separate top-right content from bottom-left */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Pushes content to top and bottom */
+}
 
-    /* --- Top Social Links --- */
-    .footer-social {
-      text-align: center;
-      margin-bottom: 70px;
-      /* Space between social links and the main grid */
-    }
+/* --- 5. Right-Aligned Content (Social & Links) --- */
+.footer-social,
+.footer-links-grid {
+  /* This pushes both blocks to the right side */
+  width: 50%;
+  margin-left: auto;
+  max-width: 600px;
+}
+.footer-social {
 
-    .footer-social ul {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      /* Allow wrapping on smaller screens */
-      gap: 40px;
-      /* Space between social links */
-    }
+  /* This existing margin creates space for the columns below */
+  margin-bottom: 3rem; 
+}
 
-    .footer-social a {
-      font-size: 14px;
-      font-weight: 600;
-      /* Semi-bold */
-      letter-spacing: 1.5px;
-      /* Spaced out letters */
-      color: #ffffff;
-      /* White text */
-      opacity: 0.8;
-      /* Slightly dimmed */
-      padding: 5px 0;
-      /* Add some vertical padding for better hit area */
-    }
+.footer-social ul {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 
-    .footer-social a:hover {
-      opacity: 1;
-      /* Full opacity on hover */
-      color: #38bdf8;
-      /* Subtle blue highlight on hover */
-    }
+.footer-social a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  transition: color 0.3s ease;
+}
 
-    /* --- Main Link Columns Grid --- */
-    .footer-links-grid {
-      display: flex;
-      /* Use flexbox for desktop layout */
-      justify-content: center;
-      /* Center the columns as a group */
-      flex-wrap: wrap;
-      /* Allow wrapping on smaller screens */
-      gap: 100px;
-      /* Large space between columns on desktop */
-      margin-bottom: 80px;
-      /* Space between columns and copyright */
+.footer-social a:hover {
+  color: #a0a0a0;
+}
 
-      /* On smaller screens, stack columns and adjust spacing */
-      @media (max-width: 768px) {
-        flex-direction: column;
-        /* Stack columns vertically */
-        gap: 40px;
-        /* Reduced gap when stacked */
-        align-items: center;
-        /* Center stacked columns */
-        text-align: center;
-        /* Center text within stacked columns */
-      }
-    }
+.footer-links-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  width: 100%;
+}
 
-    .footer-column {
-      min-width: 180px;
-      /* Ensure columns have a minimum width */
-    }
+.footer-column h4 {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
 
-    .footer-column h4 {
-      font-size: 18px;
-      font-weight: 700;
-      /* Bold heading */
-      color: #fff;
-      /* White heading text */
-      margin-top: 0;
-      margin-bottom: 24px;
-      /* Space below heading */
-    }
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 
-    .footer-column li {
-      margin-bottom: 16px;
-      /* Space between list items */
-    }
+.footer-column li {
+  margin-bottom: 1rem;
+}
 
-    .footer-column a {
-      font-size: 16px;
-      color: #aaa;
-      /* Lighter gray for links */
-    }
+.footer-column a {
+  color: #a0a0a0;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
 
-    .footer-column a:hover {
-      color: #fff;
-      /* White on hover */
-    }
+.footer-column a:hover {
+  color: #ffffff;
+}
 
-    /* --- Bottom Copyright Bar --- */
-    .footer-bottom {
-      /* No border-top as in the previous example, just space */
-    }
+/* --- 6. Bottom-Left Copyright (From image) --- */
+.footer-bottom {
+  /* This is the key change:
+     We override its position in the flex flow */
+  position: absolute;
+  bottom: 4rem; /* Aligns with the container's bottom padding */
+  left: 5rem;   /* Aligns with the container's left padding */
+  z-index: 3;   /* Ensures it's on top of the 3D shape */
+}
 
-    .footer-bottom p {
-      font-size: 14px;
-      color: #777;
-      /* Dim gray for copyright text */
-      margin: 0;
-    }
+.footer-bottom p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #a0a0a0;
+  max-width: 300px; /* Allows text to wrap */
+}
 
-    /* Media query for smaller screens: adjust column text alignment */
-    @media (max-width: 768px) {
-      .footer-column {
-        text-align: center;
-      }
-    }
+/* --- 7. Responsive (Mobile) --- */
+@media (max-width: 768px) {
+  #site-footer {
+    min-height: auto; /* Let content define height on mobile */
+  }
+
+  .footer-container {
+    padding: 4rem 2rem;
+    min-height: auto;
+  }
+
+  .footer-social,
+  .footer-links-grid {
+    /* Stack content, make it full-width */
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  .footer-links-grid {
+    grid-template-columns: 1fr 1fr; /* 2 columns on mobile */
+  }
+
+  .footer-bottom {
+    /* Put copyright back in the normal flow, centered */
+    position: relative;
+    bottom: auto;
+    left: auto;
+    text-align: center;
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .footer-bottom p {
+    max-width: 100%;
+  }
+
+  .footer-deco-shape {
+    width: 80%;
+    opacity: 0.3;
+  }
+
+  .footer-bg-text {
+    font-size: 25vw;
+  }
+}
 
     .heading {
       font-size: 170px;
@@ -1425,10 +1458,15 @@
       </section>
     </div>
 
+  <div id="global-blur-bottom" class="gradual-blur-init" data-target="page" data-position="bottom" data-height="8rem"
+    data-strength="4" data-div-count="10" data-curve="bezier" data-exponential="true" data-opacity="1"
+    data-z-index="1000">
+  </div>
+
 
     <footer id="site-footer" class="site-footer">
 
-      <img src="https://i.imgur.com/vP1Gqjb.png" alt="Abstract 3D graphic" class="footer-deco-shape" aria-hidden="true">
+      <img src="image.png" alt="Abstract 3D graphic" class="footer-deco-shape" aria-hidden="true">
 
       <div class="footer-bg-text" aria-hidden="true">LOG AI</div>
 
@@ -1480,12 +1518,7 @@
     </footer>
   </main>
 
-  <div id="global-blur-bottom" class="gradual-blur-init" data-target="page" data-position="bottom" data-height="8rem"
-    data-strength="4" data-div-count="10" data-curve="bezier" data-exponential="true" data-opacity="1"
-    data-z-index="1000">
-  </div>
-
-  <div id="sticky-nav" class="fixed bottom-8 left-1/2 -translate-x-1/2 w-auto z-[9999]">
+  <div id="sticky-nav"  data-z-index="10101" class="fixed bottom-8 left-1/2 -translate-x-1/2 w-auto z-[9999]">
     <div class="flex items-center gap-4 md:gap-6">
       <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Platform</a>
       <a href="#" class="text-gray-300 hover:text-white px-3 py-1">Features</a>
