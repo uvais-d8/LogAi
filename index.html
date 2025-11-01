@@ -11,11 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@800&display=swap" rel="stylesheet">
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <style>
     /* --- Global Styles & Resets --- */
     body {
@@ -42,17 +38,18 @@
 
     /* --- 1. Main Full-Screen Footer --- */
     #site-footer {
-      /* --- NEW: Sticky Positioning --- */
-      position: sticky;
-      top: 0;
-      /* Sticks to the top of the viewport when scrolled to */
+      /* --- NEW: Removed Sticky Positioning --- */
+      position: relative;
+      /* <-- CHANGED (was sticky) */
+      /* top: 0; */
+      /* <-- REMOVED */
       z-index: 10;
       /* Ensures it stays on top of other content */
 
       /* --- Full Screen & Layout (From before) --- */
       min-height: 100vh;
       width: 100%;
-      position: relative;
+      /* REMOVED: position: relative; --- This was overriding 'sticky' */
       overflow: hidden;
       box-sizing: border-box;
 
@@ -209,7 +206,7 @@
     /* --- 6. Bottom-Left Copyright (From image) --- */
     .footer-bottom {
       /* This is the key change:
-     We override its position in the flex flow */
+     We override its position in the flex flow */
       position: absolute;
       bottom: 4rem;
       /* Aligns with the container's bottom padding */
@@ -405,20 +402,7 @@
       z-index: 1;
     }
 
-    .glow-background::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 60%;
-      height: 60%;
-      background-image: radial-gradient(circle, rgba(15, 64, 212, 0.4) 0%, rgba(15, 64, 212, 0) 60%);
-      filter: blur(50px);
-      z-index: -1;
-      opacity: 0.7;
-    }
-
+    /* REMOVED: .glow-background::before rule. This is now handled by .ecosystem-arc-glow */
 
     /* --- START OF AI ECOSYSTEM CSS --- */
     .left-panel h1 {
@@ -440,7 +424,8 @@
     .ecosystem-container {
       position: relative;
       height: 600vh;
-      margin-top: 5rem;
+      /* margin-top: 5rem; */
+      /* <-- REMOVED this to eliminate the black space */
     }
 
     .sticky-wrapper {
@@ -482,6 +467,7 @@
       position: relative;
       height: 100vh;
       overflow: hidden;
+      /* <-- CHANGED back to 'hidden' */
       /* <-- THIS IS IMPORTANT FOR THE BLUR */
       display: flex;
       align-items: center;
@@ -489,14 +475,19 @@
     }
 
     .cards-wrapper {
-      position: absolute;
-      top: 50%;
-      left: 50%;
+      position: relative;
+      /* <-- CHANGED */
       width: 80%;
-      transform: translate(-50%, -50%);
-      will-change: transform;
+      min-height: 300px;
+      /* <-- ADDED (matches card height) */
       z-index: 1;
-      /* <-- Set z-index to 1 */
+      display: flex;
+      /* <-- ADDED */
+      align-items: center;
+      /* <-- ADDED */
+      justify-content: center;
+      /* <-- ADDED */
+      /* REMOVED: position: absolute, top, left, transform, will-change */
     }
 
     .ecosystem-container .card {
@@ -509,16 +500,25 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
       min-height: 300px;
       box-sizing: border-box;
-      position: relative;
-      transform-origin: center top;
-      transition: transform 0.3s ease, opacity 0.3s ease;
+      position: absolute;
+      /* <-- CHANGED */
+      transform-origin: center center;
+      /* <-- CHANGED */
+      transition: none;
+      /* <-- CHANGED (GSAP will handle it) */
       display: flex;
       flex-direction: column;
       align-items: flex-start;
       gap: 15px;
       overflow: hidden;
-      top: auto;
-      left: auto;
+      top: 0;
+      /* <-- ADDED */
+      left: 0;
+      /* <-- ADDED */
+      width: 100%;
+      /* <-- ADDED */
+      opacity: 0;
+      /* <-- ADDED (initial state for GSAP) */
       transform-style: flat;
       will-change: auto;
       backface-visibility: visible;
@@ -526,7 +526,8 @@
     }
 
     .ecosystem-container .card:not(:last-child) {
-      margin-bottom: 25vh;
+      /* margin-bottom: 25vh; */
+      /* <-- REMOVED */
     }
 
     .ecosystem-container .card::before {
@@ -620,7 +621,7 @@
 
 
     /* --- START OF NEW 3D CAROUSEL CSS ---
-    */
+    */
     .carousel-container {
       position: relative;
       overflow: hidden;
@@ -805,51 +806,6 @@
     /* --- END OF NEW 3D CAROUSEL CSS --- */
 
 
-    /* === START OF GRADUAL BLUR CSS (ADDED) === */
-    .gradual-blur {
-      pointer-events: none;
-      /* Allows clicks to pass through by default */
-      transition: opacity 0.3s ease-out;
-      isolation: isolate;
-      /* Creates a new stacking context */
-    }
-
-    .gradual-blur-parent {
-      overflow: hidden;
-    }
-
-    .gradual-blur-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-
-    .gradual-blur-inner>div {
-      -webkit-backdrop-filter: inherit;
-      backdrop-filter: inherit;
-    }
-
-    .gradual-blur-fixed {
-      position: fixed !important;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      pointer-events: none;
-      z-index: 1000;
-    }
-
-    @supports not (backdrop-filter: blur(1px)) {
-      .gradual-blur-inner>div {
-        background: rgba(0, 0, 0, 0.3);
-        opacity: 0.5;
-      }
-    }
-
-    /* === END OF GRADUAL BLUR CSS === */
-
-
     /* === START OF GLASSSURFACE CSS (NEW) === */
     .glass-surface {
       position: relative;
@@ -1016,10 +972,10 @@
       font-size: 1.25rem;
       font-weight: 500;
       color: #D1D5DB;
-      margin-top: 0.5rem;
+      z-index: 1000;
     }
 
-    /* --- END OF STATS SEQUENCE CSS --- */
+    /* === END OF STATS SEQUENCE CSS --- */
     /* === START OF NEW NAVBAR STYLES === */
     /* Keyframes for the fade-in animation */
     @keyframes fadeInNav {
@@ -1149,7 +1105,8 @@
       background-image: radial-gradient(circle,
           rgba(255, 255, 255, 0.938) 0%,
           /* Bright white-blue center */
-          rgba(45, 106, 205, 0.3) 40%,
+          /* UPDATED: Changed this to match the Stats section blue */
+          rgba(15, 64, 212, 0.3) 40%,
           /* The blue from your theme */
           transparent 70%
           /* Fades to nothing */
@@ -1158,6 +1115,212 @@
       filter: blur(100px);
       mix-blend-mode: hard-light;
       animation: pulseGlow 12s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    }
+
+    /* === NEW CSS FOR ECOSYSTEM GLOW (Point 3) === */
+    .ecosystem-arc-glow {
+      position: relative;
+      overflow: hidden;
+      /* To contain the glow */
+
+      /* --- NEW: Added gradient --- */
+      /* UPDATED: Changed this to a solid blue color to remove the
+        fade-to-black. This color (#0F40D4) exactly matches the
+        starting color of the Stats section gradient below,
+        creating a seamless transition. */
+      background-color: #0F40D4;
+      /* REMOVED: The linear-gradient that faded to black */
+    }
+
+    .ecosystem-arc-glow::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150%;
+      /* Very wide */
+      height: 1000px;
+      /* Tall */
+      /* An arc-shaped gradient at the top-center */
+      background-image: radial-gradient(ellipse 80% 40% at 50% 0%,
+          rgba(15, 64, 212, 0.3),
+          /* #0F40D4 at 30% opacity */
+          transparent 70%);
+      z-index: 0;
+      /* Behind content */
+      pointer-events: none;
+    }
+
+    /* === NEW CSS FOR STATS GRADIENT (Point 4) === */
+    .blue-to-black-gradient-wrapper {
+      /* Black fallback */
+      /* RESTORED: Per your request, this gradient is now back on the stats/pricing section wrapper */
+      background-image: linear-gradient(to bottom,
+          #0F40D4 0px,
+          #0B0B0B 1000px);
+      /* Prevents margin collapse */
+      margin-top: -1rem !important;
+      /* ADDED: position: relative is required for the ::before pseudo-element */
+      position: relative;
+      /* UPDATED: Only hide horizontal overflow to allow vertical sticky */
+      overflow-x: hidden;
+      /* REMOVED: overflow: hidden; (which was clipping sticky elements) */
+    }
+
+    /* ADDED: Copied from .ecosystem-arc-glow::before to add the arc here too */
+    .blue-to-black-gradient-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150%;
+      /* Very wide */
+      height: 1000px;
+      /* Tall */
+      /* An arc-shaped gradient at the top-center */
+      background-image: radial-gradient(ellipse 80% 40% at 50% 0%,
+          rgba(15, 64, 212, 0.3),
+          /* #0F40D4 at 30% opacity */
+          transparent 70%);
+      z-index: 0;
+      /* Behind content */
+      pointer-events: none;
+    }
+
+    /* === NEW CSS FOR STICKY EXPLORE SECTION === */
+    #explore-features-section {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      /* Must be lower than the footer's z-index (10) */
+
+      /* This makes the section fill the screen as it sticks */
+      min-height: 100vh;
+
+      /* This provides the background that the footer will scroll over. */
+      /* It matches the end-color of the gradient from the previous wrapper. */
+      background-color: #0B0B0B;
+
+      /* The existing flex properties on the class will handle centering: */
+      /* (flex flex-col items-center justify-center) */
+    }
+
+    /* === NEW: Section 2 Full Viewport === */
+    #features-and-stats {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* === NEW: Pricing Card Border Animation === */
+    @keyframes rotateBorder {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .pricing-card {
+      position: relative;
+      overflow: hidden;
+      /* Add back the original rounded-2xl */
+      border-radius: 1rem;
+      /* 16px */
+    }
+
+    .pricing-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      z-index: 1;
+      /* Sits below the content but above the base */
+
+      /* Conic gradient for the spinning light */
+      background-image: conic-gradient(
+          transparent,
+          rgba(59, 130, 246, 0.7),
+          /* Using your theme's blue */
+          transparent 30%);
+
+      /* Start animation paused, will be triggered on hover */
+      animation: rotateBorder 6s linear infinite;
+      animation-play-state: paused;
+      opacity: 0;
+      transition: opacity 0.4s ease-out;
+    }
+
+    /* On hover, start the animation */
+    .pricing-card:hover::before {
+      animation-play-state: running;
+      opacity: 1;
+    }
+
+    /* This is the inner content that hides the gradient center */
+    .pricing-card-content {
+      position: relative;
+      z-index: 2;
+      /* Re-apply original styles that were on the parent */
+      background: var(--card-bg, #0b0f29);
+      /* Use variable for bg */
+      border: 1px solid var(--card-border, #3b82f680);
+      /* Use variable for border */
+      border-radius: 1rem;
+      /* Match parent */
+      padding: 2rem;
+      /* 32px */
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      transition: all 0.3s ease;
+    }
+
+    /* Create a "hole" in the middle on hover */
+    .pricing-card:hover .pricing-card-content {
+      /* Make inner content slightly transparent on hover */
+      background: var(--card-bg-hover, var(--card-bg));
+      border-color: var(--card-border-hover, var(--card-border));
+    }
+
+    /* Special "Pro" plan animation (always on) */
+    .pricing-card.pro-plan::before {
+      animation-play-state: running;
+      opacity: 1;
+      animation-duration: 4s;
+      /* Make it faster */
+    }
+
+    .pricing-card.pro-plan:hover::before {
+      opacity: 1;
+    }
+
+    /* === MODIFIED: CAROUSEL WRAPPER FIX === */
+    /* Remove fixed height so the carousel content fills the pinned area */
+    #explore-features-section>div[style="height: 600px; position: relative;"] {
+      height: auto !important;
+      flex-grow: 1;
+      /* Allow it to take up available vertical space */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+      /* Ensure full width */
+      max-width: 600px;
+      /* Limit carousel width */
+    }
+
+    /* Center the carousel container itself */
+    #explore-features-section .carousel-container {
+      margin-left: auto;
+      margin-right: auto;
     }
   </style>
 </head>
@@ -1192,17 +1355,17 @@
 
         <h1 class="heading">LOG AI</h1>
         <div class="pt-0 md:pt-2 max-w-2xl relative z-0">
-                   
-                              <h2 class="text-4xl md:text-6xl font-bold text-white leading-tight">
-                        The Future of<br>
-                        <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
-                            AI Business Intelligence
-                          </span>
-                      </h2>
-                              <p class="text-lg md:text-xl text-gray-300 leading-snug">
-                        Streamline operations, boost productivity, and accelerate growth
-                        with our comprehensive AI-powered business suite.           </p>
-                  </div>
+          <h2 class="text-4xl md:text-6xl font-bold text-white leading-tight">
+            The Future of<br>
+            <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
+              AI Business Intelligence
+            </span>
+          </h2>
+          <p class="text-lg md:text-xl text-gray-300 leading-snug">
+            Streamline operations, boost productivity, and accelerate growth
+            with our comprehensive AI-powered business suite.
+          </p>
+        </div>
 
         <div class="card-swap-container absolute bottom-10 right-10 lg:bottom-20 lg-right-20 z-0">
           <div class="card">
@@ -1243,7 +1406,7 @@
   </div>
 
   <main class="w-full mt-12 space-y-12">
-    <section class="px-8">
+    <section id="features-and-stats" class="px-8 pt-20">
 
       <div class="flex flex-wrap justify-center gap-4 md:gap-6 mt-6">
         <p class="text-3xl md:text-5xl font-bold mb-4 text-center">
@@ -1296,26 +1459,26 @@
       <div class="w-4/5 mx-auto">
         <div class="flex flex-wrap justify-between items-center mt-10">
           <div class="text-center">
-            <h3 class="text-2xl md:text-3xl font-medium text-white">500+</h3>
+            <h3 id="count-clients" class="text-2xl md:text-3xl font-medium text-white">500+</h3>
             <p class="text-gray-300 text-sm md:text-base mt-1">Enterprise Clients</p>
           </div>
           <div class="text-center">
-            <h3 class="text-2xl md:text-3xl font-medium text-white">99.9%</h3>
+            <h3 id="count-uptime" class="text-2xl md:text-3xl font-medium text-white">99.9%</h3>
             <p class="text-gray-300 text-sm md:text-base mt-1">Uptime SLA</p>
           </div>
           <div class="text-center">
-            <h3 class="text-2xl md:text-3xl font-medium text-white">50M+</h3>
+            <h3 id="count-points" class="text-2xl md:text-3xl font-medium text-white">50M+</h3>
             <p class="text-gray-300 text-sm md:text-base mt-1">Points Processed</p>
           </div>
           <div class="text-center">
-            <h3 class="text-2xl md:text-3xl font-medium text-white">24/7</h3>
+            <h3 id="count-support" class="text-2xl md:text-3xl font-medium text-white">24/7</h3>
             <p class="text-gray-300 text-sm md:text-base mt-1">Expert Support</p>
           </div>
         </div>
       </div>
     </section>
 
-    <div class="bg-gradient-to-b from-transparent to-[#0F40D4]/20">
+    <div class="ecosystem-arc-glow">
 
       <section class="px-8">
         <div
@@ -1462,48 +1625,61 @@
           </div>
         </div>
       </section>
-      <section class="stats-section px-8">
+    </div>
+    <div class="blue-to-black-gradient-wrapper">
 
-        <div class="stats-icon">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
-            stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-          </svg>
+      <section class="stats-sequence-container" id="stats-sequence-container">
+        <div class="stats-sticky-wrapper">
+
+          <div class="stat-card">
+            <div class="stats-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+            </div>
+            <div class="stats-percent">85%</div>
+            <div class="stats-label">Less Manual Work</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stats-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+            </div>
+            <div class="stats-percent">43%</div>
+            <div class="stats-label">Increased Revenue</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stats-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                <polyline points="17 6 23 6 23 12"></polyline>
+              </svg>
+            </div>
+            <div class="stats-percent">67%</div>
+            <div class="stats-label">Faster Delivery</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stats-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34-9-3V5"></path>
+              </svg>
+            </div>
+            <div class="stats-percent">1M+</div>
+            <div class="stats-label">AI decisions Daily</div>
+          </div>
+
         </div>
-        <div class="stats-percent">85%</div>
-        <div class="stats-label">Less Manual Work</div>
-
-        <div class="stats-icon">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
-            stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="1" x2="12" y2="23"></line>
-            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-          </svg>
-        </div>
-        <div class="stats-percent">43%</div>
-        <div class="stats-label">Increased Revenue</div>
-
-        <div class="stats-icon">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
-            stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-            <polyline points="17 6 23 6 23 12"></polyline>
-          </svg>
-        </div>
-        <div class="stats-percent">67%</div>
-        <div class="stats-label">Faster Delivery</div>
-
-        <div class="stats-icon">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
-            stroke-linecap="round" stroke-linejoin="round">
-            <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
-            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
-            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
-          </svg>
-        </div>
-        <div class="stats-percent">1M+</div>
-        <div class="stats-label">AI decisions Daily</div>
-
       </section>
 
       <section class="py-20 px-4 md:px-8 text-white">
@@ -1527,68 +1703,73 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto items-start">
 
-          <div
-            class="bg-[#0b0f29]/80 backdrop-blur-sm border border-blue-800/60 rounded-2xl p-8 flex flex-col h-full transition-all duration-300 hover:border-blue-700/80">
-            <h3 class="text-2xl font-semibold text-white mb-4">Basic Plan</h3>
-            <p class="text-5xl font-bold text-white mb-2">₹10,190</p>
-            <p class="text-gray-400 text-sm mb-1">/ yearly per user</p>
-            <p class="text-gray-400 text-sm mb-6">Includes: 5 seats, 1200 AI Credits</p>
-            <ul class="space-y-3 text-gray-300 mb-8 flex-grow">
-              <li>Core AI Features</li>
-              <li>Business Hours Support</li>
-              <li>Email Support</li>
-              <li>Basic Analytic</li>
-              <li>Email Supports</li>
-            </ul>
-            <a href="#"
-              class="mt-auto text-center bg-transparent border border-gray-500 text-white font-semibold py-3 rounded-lg hover:bg-gray-700/30 hover:border-gray-300 transition-colors w-full">
-              Choose Basic Plan
-            </a>
+          <div class="pricing-card">
+            <div class="pricing-card-content"
+              style="--card-bg: #0b0f29cc; --card-border: #3b82f699; --card-bg-hover: #0b0f29; --card-border-hover: #3b82f6cc;">
+              <h3 class="text-2xl font-semibold text-white mb-4">Basic Plan</h3>
+              <p class="text-5xl font-bold text-white mb-2">₹10,190</p>
+              <p class="text-gray-400 text-sm mb-1">/ yearly per user</p>
+              <p class="text-gray-400 text-sm mb-6">Includes: 5 seats, 1200 AI Credits</p>
+              <ul class="space-y-3 text-gray-300 mb-8 flex-grow">
+                <li>Core AI Features</li>
+                <li>Business Hours Support</li>
+                <li>Email Support</li>
+                <li>Basic Analytic</li>
+                <li>Email Supports</li>
+              </ul>
+              <a href="#"
+                class="mt-auto text-center bg-transparent border border-gray-500 text-white font-semibold py-3 rounded-lg hover:bg-gray-700/30 hover:border-gray-300 transition-colors w-full">
+                Choose Basic Plan
+              </a>
+            </div>
           </div>
 
-          <div
-            class="bg-gradient-to-b from-[#1e2a75] to-[#0c102c] border-2 border-blue-500 rounded-2xl p-8 flex flex-col h-full relative shadow-2xl shadow-blue-500/40 -my-6 lg:-my-8">
-            <h3 class="text-2xl font-semibold text-white mb-4">Pro Plan</h3>
-            <p class="text-5xl font-bold text-white mb-2">₹10,190</p>
-            <p class="text-gray-300 text-sm mb-1">/ yearly per user</p>
-            <p class="text-gray-300 text-sm mb-6">Includes: 5 seats, 1600 AI Credits</p>
-            <ul class="space-y-3 text-gray-200 mb-8 flex-grow">
-              <li class="font-semibold text-white">Core AI Features</li>
-              <li>Business Hours Support</li>
-              <li>Email Support</li>
-              <li>Basic Analytics</li>
-              <li>Email Support</li>
-            </ul>
-            <a href="#"
-              class="mt-auto text-center bg-gradient-to-r from-sky-400 to-blue-1000 text-white font-bold py-3 rounded-lg hover:from-sky-500 hover:to-blue-700 transition-all shadow-lg shadow-blue-500/30 w-full">
-              Choose Pro Plan
-            </a>
+          <div class="pricing-card pro-plan relative -my-6 lg:-my-8 shadow-2xl shadow-blue-500/40">
+            <div class="pricing-card-content"
+              style="--card-bg: linear-gradient(to bottom, #1e2a75, #0c102c); --card-border: #3b82f6; --card-bg-hover: linear-gradient(to bottom, #1e2a75, #0c102c); --card-border-hover: #3b82f6;">
+              <h3 class="text-2xl font-semibold text-white mb-4">Pro Plan</h3>
+              <p class="text-5xl font-bold text-white mb-2">₹10,190</p>
+              <p class="text-gray-300 text-sm mb-1">/ yearly per user</p>
+              <p class="text-gray-300 text-sm mb-6">Includes: 5 seats, 1600 AI Credits</p>
+              <ul class="space-y-3 text-gray-200 mb-8 flex-grow">
+                <li class="font-semibold text-white">Core AI Features</li>
+                <li>Business Hours Support</li>
+                <li>Email Support</li>
+                <li>Basic Analytics</li>
+                <li>Email Support</li>
+              </ul>
+              <a href="#"
+                class="mt-auto text-center bg-gradient-to-r from-sky-400 to-blue-1000 text-white font-bold py-3 rounded-lg hover:from-sky-500 hover:to-blue-700 transition-all shadow-lg shadow-blue-500/30 w-full">
+                Choose Pro Plan
+              </a>
+            </div>
           </div>
 
-          <div
-            class="bg-[#0b0f29]/80 backdrop-blur-sm border border-blue-800/60 rounded-2xl p-8 flex flex-col h-full transition-all duration-300 hover:border-blue-700/80">
-            <h3 class="text-2xl font-semibold text-white mb-4">Enterprice Plan</h3>
-            <p class="text-5xl font-bold text-white mb-2">₹10,190</p>
-            <p class="text-gray-400 text-sm mb-1">/ yearly per user</p>
-            <p class="text-gray-400 text-sm mb-6">Includes: 5 seats, 1200 AI Credits</p>
-            <ul class="space-y-3 text-gray-300 mb-8 flex-grow">
-              <li>Core AI Features</li>
-              <li>Business Hours Support</li>
-              <li>Email Support</li>
-              <li>Basic Analytic</li>
-              <li>Email Supports</li>
-            </ul>
-            <a href="#"
-              class="mt-auto text-center bg-transparent border border-gray-500 text-white font-semibold py-3 rounded-lg hover:bg-gray-700/30 hover:border-gray-300 transition-colors w-full">
-              Choose Enterprice Plan
-            </a>
+          <div class="pricing-card">
+            <div class="pricing-card-content"
+              style="--card-bg: #0b0f29cc; --card-border: #3b82f699; --card-bg-hover: #0b0f29; --card-border-hover: #3b82f6cc;">
+              <h3 class="text-2xl font-semibold text-white mb-4">Enterprice Plan</h3>
+              <p class="text-5xl font-bold text-white mb-2">₹10,190</p>
+              <p class="text-gray-400 text-sm mb-1">/ yearly per user</p>
+              <p class="text-gray-400 text-sm mb-6">Includes: 5 seats, 1200 AI Credits</p>
+              <ul class="space-y-3 text-gray-300 mb-8 flex-grow">
+                <li>Core AI Features</li>
+                <li>Business Hours Support</li>
+                <li>Email Support</li>
+                <li>Basic Analytic</li>
+                <li>Email Supports</li>
+              </ul>
+              <a href="#"
+                class="mt-auto text-center bg-transparent border border-gray-500 text-white font-semibold py-3 rounded-lg hover:bg-gray-700/30 hover:border-gray-300 transition-colors w-full">
+                Choose Enterprice Plan
+              </a>
+            </div>
           </div>
 
         </div>
       </section>
 
-
-      <section class="py-24 px-8 flex flex-col items-center justify-center text-white">
+      <section id="explore-features-section" class="px-8 flex flex-col items-center justify-center text-white">
         <h2 class="text-4xl md:text-5xl font-bold mb-12 text-center">
           Explore Our
           <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
@@ -1596,7 +1777,8 @@
           </span>
         </h2>
 
-        <div style="height: 800px; position: relative;">
+        <div
+          style="position: relative; flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
 
           <div class="carousel-container" id="vanilla-carousel">
             <div class="carousel-track">
@@ -1671,6 +1853,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="carousel-icon">
                       <polyline points="16 18 22 12 16 6"></polyline>
                       <polyline points="8 6 2 12 8 18"></polyline>
+                      D
                     </svg>
                   </span>
                 </div>
@@ -1712,13 +1895,6 @@
         </div>
       </section>
     </div>
-
-    <div id="global-blur-bottom" class="gradual-blur-init" data-target="page" data-position="bottom" data-height="8rem"
-      data-strength="4" data-div-count="10" data-curve="bezier" data-exponential="true" data-opacity="1"
-      data-z-index="1000">
-    </div>
-
-
     <footer id="site-footer" class="site-footer">
 
       <img src="image.png" alt="Abstract 3D graphic" class="footer-deco-shape" aria-hidden="true">
@@ -1852,9 +2028,9 @@
                   in="dispRed"
                   type="matrix"
                   values="1 0 0 0 0
-                          0 0 0 0 0
-                          0 0 0 0 0
-                          0 0 0 1 0"
+                      0 0 0 0 0
+                      0 0 0 0 0
+                      0 0 0 1 0"
                   result="red" />
                 <feDisplacementMap
                   in="SourceGraphic"
@@ -1865,18 +2041,18 @@
                   in="dispGreen"
                   type="matrix"
                   values="0 0 0 0 0
-                          0 1 0 0 0
-                          0 0 0 0 0
-                          0 0 0 1 0"
+                      0 1 0 0 0
+                      0 0 0 0 0
+                      0 0 0 1 0"
                   result="green" />
                 <feDisplacementMap in="SourceGraphic" in2="map" id="bluechannel" result="dispBlue" />
                 <feColorMatrix
                   in="dispBlue"
                   type="matrix"
                   values="0 0 0 0 0
-                          0 0 0 0 0
-                          0 0 1 0 0
-                          0 0 0 1 0"
+                      0 0 0 0 0
+                      0 0 1 0 0
+                      0 0 0 1 0"
                   result="blue" />
                 <feBlend in="red" in2="green" mode="screen" result="rg" />
                 <feBlend in="rg" in2="blue" mode="screen" result="output" />
@@ -2026,7 +2202,6 @@
 
 
       // === START OF GRADUAL BLUR JS (ADDED) ===
-      // ... (Configuration Objects and Helper Functions) ...
       const DEFAULT_CONFIG = {
         position: 'bottom',
         strength: 2,
@@ -2226,62 +2401,93 @@
         updatePath();
       }
 
-      // --- 3. Scrolly-telling Logic ---
-      window.addEventListener('scroll', () => {
-        // ... (Scrolly-telling logic remains unchanged) ...
-        const container = document.getElementById('ecosystem-container');
-        if (!container) { return; }
-        const cardsWrapper = document.getElementById('cards-wrapper');
-        const rightPanel = document.getElementById('right-panel');
-        if (!cardsWrapper || !rightPanel || !cardsWrapper.firstElementChild || !cardsWrapper.lastElementChild) { return; }
-        const rect = container.getBoundingClientRect();
-        const scrollableTrack = container.scrollHeight - window.innerHeight;
-        const scrollAmount = -rect.top;
-        let scrollPercent = Math.max(0, Math.min(1, scrollAmount / scrollableTrack));
-        const startY = -(cardsWrapper.firstElementChild.offsetHeight / 2);
-        const endY = -(cardsWrapper.scrollHeight - (cardsWrapper.lastElementChild.offsetHeight / 2));
-        const newTransformY = startY + (endY - startY) * scrollPercent;
-        cardsWrapper.style.transform = `translate(-50%, ${newTransformY}px)`;
-      });
+      /* --- 3. Scrolly-telling Logic (OLD) --- */
 
 
       // --- 4. NEW 3D VANILLA CAROUSEL LOGIC ---
       const carousel = document.getElementById('vanilla-carousel');
       if (carousel) {
         // ... (Carousel logic remains unchanged) ...
-        const props = { baseWidth: 600, autoplay: true, autoplayDelay: 3000, pauseOnHover: true, loop: true, round: false, };
+        const props = {
+          baseWidth: 600,
+          autoplay: true,
+          autoplayDelay: 3000,
+          pauseOnHover: true,
+          loop: true,
+          round: false,
+        };
         const track = carousel.querySelector('.carousel-track');
         const items = Array.from(track.children);
         const indicators = carousel.querySelectorAll('.carousel-indicator');
         const numOriginalItems = items.length - 1;
-        const containerPadding = 16; const GAP = 16; const DRAG_BUFFER = 50;
+        const containerPadding = 16;
+        const GAP = 16;
+        const DRAG_BUFFER = 50;
         let itemWidth = props.baseWidth - containerPadding * 2;
         let trackItemOffset = itemWidth + GAP;
-        let currentIndex = 0; let isHovered = false; let isResetting = false;
-        let isDragging = false; let startX = 0; let currentTranslate = 0; let lastTranslate = 0;
+        let currentIndex = 0;
+        let isHovered = false;
+        let isResetting = false;
+        let isDragging = false;
+        let startX = 0;
+        let currentTranslate = 0;
+        let lastTranslate = 0;
         let autoplayInterval = null;
         function interpolate(value, inputRange, outputRange) {
-          if (value <= inputRange[0]) return outputRange[0]; if (value >= inputRange[inputRange.length - 1]) return outputRange[outputRange.length - 1];
+          if (value <= inputRange[0]) return outputRange[0];
+          if (value >= inputRange[inputRange.length - 1]) return outputRange[outputRange.length - 1];
           for (let i = 1; i < inputRange.length; i++) {
             if (value <= inputRange[i]) {
-              const x1 = inputRange[i - 1]; const y1 = outputRange[i - 1]; const x2 = inputRange[i]; const y2 = outputRange[i]; const t = (value - x1) / (x2 - x1); return y1 + (y2 - y1) * t;
+              const x1 = inputRange[i - 1];
+              const y1 = outputRange[i - 1];
+              const x2 = inputRange[i];
+              const y2 = outputRange[i];
+              const t = (value - x1) / (x2 - x1);
+              return y1 + (y2 - y1) * t;
             }
           }
           return outputRange[outputRange.length - 1];
         }
-        function apply3DRotations(x) { items.forEach((item, index) => { const range = [-(index + 1) * trackItemOffset, -index * trackItemOffset, -(index - 1) * trackItemOffset]; const outputRange = [90, 0, -90]; const rotateY = interpolate(x, range, outputRange); item.style.transform = `rotateY(${rotateY}deg)`; }); }
+
+        function apply3DRotations(x) {
+          items.forEach((item, index) => {
+            const range = [-(index + 1) * trackItemOffset, -index * trackItemOffset, -(index - 1) * trackItemOffset];
+            const outputRange = [90, 0, -90];
+            const rotateY = interpolate(x, range, outputRange);
+            item.style.transform = `rotateY(${rotateY}deg)`;
+          });
+        }
+
         function goToSlide(index) {
           if (isResetting) return;
           track.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
-          currentIndex = index; currentTranslate = -(currentIndex * trackItemOffset);
+          currentIndex = index;
+          currentTranslate = -(currentIndex * trackItemOffset);
           track.style.transform = `translateX(${currentTranslate}px)`;
           track.style.perspectiveOrigin = `${currentIndex * trackItemOffset + itemWidth / 2}px 50%`;
-          apply3DRotations(currentTranslate); updateIndicators();
+          apply3DRotations(currentTranslate);
+          updateIndicators();
         }
-        function updateIndicators() { const activeIndex = currentIndex % numOriginalItems; indicators.forEach((indicator, index) => { if (index === activeIndex) { indicator.classList.add('active'); indicator.classList.remove('inactive'); } else { indicator.classList.add('inactive'); indicator.classList.remove('active'); } }); }
+
+        function updateIndicators() {
+          const activeIndex = currentIndex % numOriginalItems;
+          indicators.forEach((indicator, index) => {
+            if (index === activeIndex) {
+              indicator.classList.add('active');
+              indicator.classList.remove('inactive');
+            } else {
+              indicator.classList.add('inactive');
+              indicator.classList.remove('active');
+            }
+          });
+        }
+
         function handleTransitionEnd() {
           if (currentIndex === numOriginalItems) {
-            isResetting = true; track.style.transition = 'none'; currentIndex = 0; currentTranslate = 0;
+            isResetting = true;
+            track.style.transition = 'none';
+            currentIndex = 0;
+            currentTranslate = 0;
             track.style.transform = `translateX(${currentTranslate}px)`;
             track.style.perspectiveOrigin = `${itemWidth / 2}px 50%`;
             apply3DRotations(currentTranslate);
@@ -2290,42 +2496,88 @@
             isResetting = false;
           }
         }
-        function startAutoplay() { if (!props.autoplay) return; clearInterval(autoplayInterval); autoplayInterval = setInterval(() => { if (props.pauseOnHover && isHovered) { return; } goToSlide(currentIndex + 1); }, props.autoplayDelay); }
-        function stopAutoplay() { clearInterval(autoplayInterval); }
-        if (props.pauseOnHover) { carousel.addEventListener('mouseenter', () => { isHovered = true; }); carousel.addEventListener('mouseleave', () => { isHovered = false; }); }
-        indicators.forEach((indicator, index) => { indicator.addEventListener('click', () => { goToSlide(index); stopAutoplay(); startAutoplay(); }); });
-        track.addEventListener('transitionend', handleTransitionEnd);
+
+        function startAutoplay() {
+          if (!props.autoplay) return;
+          clearInterval(autoplayInterval);
+          autoplayInterval = setInterval(() => {
+            if (props.pauseOnHover && isHovered) {
+              return;
+            }
+            goToSlide(currentIndex + 1);
+          }, props.autoplayDelay);
+        }
+
+        function stopAutoplay() {
+          clearInterval(autoplayInterval);
+        }
+        if (props.pauseOnHover) {
+          carousel.addEventListener('mouseenter', () => {
+            isHovered = true;
+          });
+          carousel.addEventListener('mouseleave', () => {
+            isHovered = false;
+          });
+        }
+        indicators.forEach((indicator, index) => {
+          indicator.addEventListener('click', () => {
+            goToSlide(index);
+            stopAutoplay();
+            startAutoplay();
+          });
+        });
         track.addEventListener('mousedown', dragStart);
-        track.addEventListener('touchstart', dragStart, { passive: true });
+        track.addEventListener('touchstart', dragStart, {
+          passive: true
+        });
         document.addEventListener('mousemove', dragMove);
         document.addEventListener('touchmove', dragMove);
         document.addEventListener('mouseup', dragEnd);
         document.addEventListener('touchend', dragEnd);
         document.addEventListener('mouseleave', dragEnd);
+
         function dragStart(e) {
-          isDragging = true; isResetting = false; stopAutoplay();
+          isDragging = true;
+          isResetting = false;
+          stopAutoplay();
           startX = e.pageX || e.touches[0].pageX;
-          const computedStyle = window.getComputedStyle(track); const matrix = new DOMMatrix(computedStyle.transform); lastTranslate = matrix.m41;
-          track.style.transition = 'none'; track.style.cursor = 'grabbing';
+          const computedStyle = window.getComputedStyle(track);
+          const matrix = new DOMMatrix(computedStyle.transform);
+          lastTranslate = matrix.m41;
+          track.style.transition = 'none';
+          track.style.cursor = 'grabbing';
         }
+
         function dragMove(e) {
           if (!isDragging) return;
-          const currentX = e.pageX || e.touches[0].pageX; const deltaX = currentX - startX;
+          const currentX = e.pageX || e.touches[0].pageX;
+          const deltaX = currentX - startX;
           currentTranslate = lastTranslate + deltaX;
           track.style.transform = `translateX(${currentTranslate}px)`;
           apply3DRotations(currentTranslate);
         }
+
         function dragEnd(e) {
           if (!isDragging) return;
           isDragging = false;
-          track.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)'; track.style.cursor = 'grab';
+          track.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
+          track.style.cursor = 'grab';
           const deltaX = currentTranslate - lastTranslate;
-          if (deltaX < -DRAG_BUFFER) { goToSlide(Math.min(currentIndex + 1, items.length - 1)); } else if (deltaX > DRAG_BUFFER) { goToSlide(Math.max(currentIndex - 1, 0)); } else { goToSlide(currentIndex); }
+          if (deltaX < -DRAG_BUFFER) {
+            goToSlide(Math.min(currentIndex + 1, items.length - 1));
+          } else if (deltaX > DRAG_BUFFER) {
+            goToSlide(Math.max(currentIndex - 1, 0));
+          } else {
+            goToSlide(currentIndex);
+          }
           startAutoplay();
         }
+
         function initializeCarousel() {
           carousel.style.width = `${props.baseWidth}px`;
-          items.forEach(item => { item.style.width = `${itemWidth}px`; });
+          items.forEach(item => {
+            item.style.width = `${itemWidth}px`;
+          });
           track.style.gap = `${GAP}px`;
           track.style.perspective = '1000px';
           goToSlide(0);
@@ -2337,38 +2589,136 @@
 
 
       // --- 5. GRADUAL BLUR INITIALIZATION ---
-      initAllGradualBlurs();
+      // REMOVED: initAllGradualBlurs(); call (Point 1)
 
 
       // === 6. SHOW BLUR ON SCROLL (EXISTING CODE) ===
-      const globalBlur = document.getElementById('global-blur-bottom');
-      if (globalBlur) {
-        window.addEventListener('scroll', () => {
-          if (window.scrollY > 10) { // Show blur if scrolled more than 10px
-            globalBlur.style.opacity = '1';
-          } else { // Hide blur when at the top
-            globalBlur.style.opacity = '0';
-          }
-        });
-      }
+      // REMOVED: Scroll listener for global-blur-bottom (Point 1)
+      // const globalBlur = document.getElementById('global-blur-bottom'); ...
 
-      // === 7. STICKY NAV "STOP AT FOOTER" LOGIC (EXISTING CODE) ===
+
+      // === 7. STICKY NAV "STOP AT FOOTER" LOGIC (MODIFIED) ===
       const stickyNav = document.getElementById('sticky-nav');
       const footer = document.getElementById('site-footer');
-      const navBaseOffset = 24;
+      // Match the 'bottom-8' (2rem = 32px) class in the HTML
+      const navDefaultBottom = 32;
 
       if (stickyNav && footer) {
+        // Add transform-origin to the nav bar so it shrinks correctly
+        stickyNav.style.transformOrigin = 'center bottom';
+        // Add transitions for smooth shrinking and fading
+        // REMOVED: This manual transition will be handled by GSAP
+        // stickyNav.style.transition = 'transform 0.2s ease-out, opacity 0.2s ease-out, bottom 0.2s ease-out'; // Added 'bottom'
+
+
         window.addEventListener('scroll', () => {
           const footerTop = footer.getBoundingClientRect().top;
           const windowHeight = window.innerHeight;
-          if (footerTop < windowHeight) {
-            const bottomPosition = (windowHeight - footerTop) + navBaseOffset;
-            stickyNav.style.bottom = `${bottomPosition}px`;
-          } else {
-            stickyNav.style.bottom = '';
+
+          // --- 1. Push-up logic (REMOVED) ---
+          // The old push-up logic that changed stickyNav.style.bottom has been
+          // removed. This will allow the footer to scroll *over* the nav.
+          // We will just reset the bottom to its default if the footer is off-screen.
+          if (footerTop >= windowHeight) {
+            // Footer is off-screen, reset to default position.
+            stickyNav.style.bottom = `${navDefaultBottom}px`;
+          }
+
+          // --- 2. CORRECTED Shrink & Fade logic ---
+          // Get the nav's height to help calculate the shrink zone
+          const navHeight = stickyNav.offsetHeight;
+
+          // --- Define the "shrink zone" ---
+          // MODIFIED: Start shrinking when footer is 150px from bottom of screen
+          const shrinkStart = windowHeight - 150;
+          // Full shrink when footer has stuck to the top of the screen (top = 0)
+          const shrinkEnd = 0;
+
+          // Calculate progress (0 = no shrink, 1 = full shrink)
+          // We map the footerTop from [shrinkStart, shrinkEnd] to [0, 1]
+          let shrinkProgress = (shrinkStart - footerTop) / (shrinkStart - shrinkEnd);
+          shrinkProgress = Math.max(0, Math.min(1, shrinkProgress)); // Clamp 0-1
+
+          // --- NEW "SHRINK *THEN* FADE" LOGIC ---
+
+          // 1. Scale Progress (happens in the first half of the scroll, 0.0 to 0.5)
+          // Map shrinkProgress from [0, 0.5] to [0, 1]
+          let scaleProgress = shrinkProgress / 0.5;
+          scaleProgress = Math.max(0, Math.min(1, scaleProgress)); // Clamp 0-1
+          // Animate scale from 1 down to 0.8
+          const scale = 1 - scaleProgress * 0.2; // 1.0 -> 0.8
+
+          // 2. Fade Progress (happens in the second half of the scroll, 0.5 to 1.0)
+          // Map shrinkProgress from [0.5, 1.0] to [0, 1]
+          let fadeProgress = (shrinkProgress - 0.5) / 0.5;
+          fadeProgress = Math.max(0, Math.min(1, fadeProgress)); // Clamp 0-1
+          // Animate opacity from 1 down to 0
+          const opacity = 1 - fadeProgress;
+
+          // NEW: Use GSAP.set() to set scale and opacity.
+          gsap.set(stickyNav, {
+            scale: scale,
+            opacity: opacity
+          });
+
+          // --- Reset styles when footer is not in view ---
+          if (footerTop >= shrinkStart) {
+            // NEW: Use GSAP.set() to reset
+            gsap.set(stickyNav, {
+              scale: 1,
+              opacity: 1
+            });
           }
         });
       }
+
+      // --- 3. NEW Ecosystem Card Stacking (GSAP) ---
+      const ecosystemContainer = document.getElementById('ecosystem-container');
+      if (ecosystemContainer) {
+        gsap.registerPlugin(ScrollTrigger);
+
+        const ecosystemCards = gsap.utils.toArray(".ecosystem-container .card");
+
+        // Pin the sticky-wrapper (which holds the left panel and the card container)
+        ScrollTrigger.create({
+          trigger: ".ecosystem-container",
+          pin: ".sticky-wrapper",
+          start: "top top",
+          end: "bottom bottom",
+        });
+
+        // Create a timeline for the cards
+        const cardTimeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: ".ecosystem-container",
+            scrub: 1.5, // <-- MODIFIED: Was 1. Makes scrub smoother.
+            start: "top top",
+            end: "bottom bottom"
+          }
+        });
+
+        // Add animations for each card
+        ecosystemCards.forEach((card, index) => {
+          // Each card will animate in and stay.
+          cardTimeline.fromTo(card,
+            {
+              y: 400, // <-- MODIFIED: Start from further down
+              scale: 0.9,
+              opacity: 0
+            },
+            {
+              y: 0,
+              scale: 1,
+              opacity: 1,
+              duration: 1, // Use duration to space them out
+              ease: 'power2.out' /* <-- MODIFIED: Was power1.inOut */
+            },
+            index * 0.6 // <-- MODIFIED: Was 0.2. Makes stagger slower.
+          );
+        });
+      }
+      // === END OF NEW ECOSYSTEM LOGIC ===
+
       // === 9. STATS SCROLLY-TELLING (NEW) ===
       const statsContainer = document.getElementById('stats-sequence-container');
       if (statsContainer) {
@@ -2386,9 +2736,15 @@
 
           // Animate IN: from bottom, no blur, full opacity
           statsTimeline.fromTo(card,
-            { y: 100, opacity: 0, filter: 'blur(8px)' },
+            // MODIFIED: Start from a larger scale for "depth" effect
             {
-              y: 0,
+              scale: 2,
+              opacity: 0,
+              filter: 'blur(8px)'
+            },
+            {
+              // MODIFIED: Animate to scale 1
+              scale: 1,
               opacity: 1,
               filter: 'blur(0px)',
               duration: 0.8, // 0.8 "seconds" in timeline
@@ -2402,7 +2758,8 @@
           if (index < statCards.length - 1) {
             statsTimeline.to(card,
               {
-                y: -100,
+                // MODIFIED: Animate to a smaller scale for "depth" effect
+                scale: 0.5,
                 opacity: 0,
                 filter: 'blur(8px)',
                 duration: 0.8, // 0.8 "seconds" in timeline
@@ -2417,7 +2774,7 @@
         ScrollTrigger.create({
           animation: statsTimeline,
           trigger: "#stats-sequence-container", // The 400vh tall container
-          pin: ".stats-sticky-wrapper",       // The 100vh wrapper to pin
+          pin: ".stats-sticky-wrapper", // The 100vh wrapper to pin
           scrub: 1, // Smoothly links scrollbar to timeline (1s catch-up)
           start: "top top", // When the top of the trigger hits the top of the viewport
           end: "bottom bottom", // When the bottom of the trigger hits the bottom
@@ -2425,29 +2782,169 @@
       }
       // === END OF STATS SCROLLY-TELLING ===
 
+      // === NEW: Counter Animation for Section 2 ===
+      const statsSection = document.getElementById('features-and-stats');
+      if (statsSection) {
+        const counterDefaults = {
+          val: 0,
+          ease: 'power3.out',
+          duration: 3
+        };
+
+        ScrollTrigger.create({
+          trigger: statsSection,
+          start: 'top 80%', // Start when 80% from top
+          once: true,
+          onEnter: () => {
+            // Animate 500+
+            let clients = {
+              val: 0
+            };
+            gsap.to(clients, {
+              ...counterDefaults,
+              val: 500,
+              onUpdate: () => document.getElementById('count-clients').textContent = Math.round(clients.val) + '+'
+            });
+
+            // Animate 99.9%
+            let uptime = {
+              val: 0
+            };
+            gsap.to(uptime, {
+              ...counterDefaults,
+              val: 99.9,
+              onUpdate: () => document.getElementById('count-uptime').textContent = uptime.val.toFixed(1) + '%'
+            });
+
+            // Animate 50M+
+            let points = {
+              val: 0
+            };
+            gsap.to(points, {
+              ...counterDefaults,
+              val: 50,
+              onUpdate: () => document.getElementById('count-points').textContent = Math.round(points.val) + 'M+'
+            });
+
+            // Animate 24/7 (fade in)
+            gsap.fromTo(document.getElementById('count-support'),
+              {
+                opacity: 0,
+                y: 20
+              },
+              {
+                opacity: 1,
+                y: 0,
+                duration: 1.5,
+                ease: 'power3.out',
+                delay: 0.5
+              }
+            );
+          }
+        });
+      }
+      // === END: Counter Animation ===
+
+
+      // 🚀 === FOOTER OVERLAY ANIMATION (CORE PINNING) === 🚀
+      const exploreSection = document.getElementById('explore-features-section');
+
+      if (exploreSection && footer) {
+        gsap.registerPlugin(ScrollTrigger);
+
+        // 1. CORE PINNING LOGIC: Pin the explore section exactly when it hits the top,
+        // and keep it pinned until the footer scrolls completely over it.
+        ScrollTrigger.create({
+          trigger: exploreSection,
+          pin: true,
+          pinSpacing: false,
+          start: "top top",
+          endTrigger: footer,
+          end: "top top",
+        });
+
+        // 2. FOOTER BLUR/FADE: Animate the explore section as the footer comes up.
+        gsap.to(exploreSection, {
+          scrollTrigger: {
+            trigger: footer,
+            start: "top bottom", // Start when footer top hits bottom of screen
+            end: "top 20%", // End when footer top hits 20% from screen top
+            scrub: 1.5, // Smooth link to scroll
+          },
+          opacity: 0,
+          filter: 'blur(30px)', /* Increased Blur for smoothness */
+          ease: 'power1.inOut',
+          zIndex: 1,
+        });
+      }
+      // 🚀 === END: FOOTER OVERLAY ANIMATION (CORE PINNING) === 🚀
+
+
+      // 🌟 === NEW: ADVANCED HEADER EXIT ANIMATION === 🌟
+      if (stickyNav && footer) {
+        gsap.to(stickyNav, {
+          scrollTrigger: {
+            trigger: footer,
+            start: "top 85%", // Start disappearing when the footer is 85% off the screen (i.e., when scrolling past the content just above the footer)
+            end: "top 20%", // Complete the disappearance when the footer is 20% off the screen
+            scrub: 1, /* Smoother Scrub */
+          },
+          // Advanced Exit Effects
+          opacity: 0,
+          scale: 0.9,
+          rotationX: 10, // Tilt the header forward as it disappears
+          y: -100, // Move it off-screen a bit more
+          filter: 'blur(10px)', /* Increased Blur for smoothness */
+          ease: 'power3.inOut', /* Smoother Ease */
+          zIndex: 1, // Ensure it gets pushed below the footer content
+        });
+
+        // Resetting opacity/transform once scroll is past footer to ensure it doesn't interfere
+        // with the mousemove effect, although the main nav logic handles basic scale/opacity.
+        // This is primarily for a clean exit.
+        ScrollTrigger.create({
+          trigger: footer,
+          start: "top 20%",
+          onEnter: () => gsap.set(stickyNav, {
+            pointerEvents: 'none'
+          }),
+          onLeaveBack: () => gsap.set(stickyNav, {
+            pointerEvents: 'auto'
+          }),
+        });
+      }
+      // 🌟 === END: ADVANCED HEADER EXIT ANIMATION === 🌟
+
+
       // === 8. INITIALIZE GLASSNAV (UPDATED FOR CINEMATIC LOOK) ===
       const navElement = document.getElementById('sticky-nav');
       if (navElement) {
-        // 1. Initialize the Glass Surface with new "realistic" settings
+        // 1. Initialize the Glass Surface with new "realistic" settings (Point 2)
         new GlassSurface(navElement, {
           width: 'auto',
           height: 'auto',
-          borderRadius: 20,       // More rounded
-          borderWidth: 0.15,      // Brighter "white" edge
-          brightness: 80,         // Brighter edge
-          opacity: 0.8,         // Slightly more transparent
-          displace: 10,           // A bit less distortion
-          distortionScale: -120,  // A bit less distortion
-          redOffset: 5,
-          greenOffset: 15,
-          blueOffset: 25,
+          borderRadius: 20,
+          borderWidth: 0.2, // Increased for brighter edge
+          brightness: 95, // Increased for brighter edge
+          opacity: 0.7, // Decreased for more transparency
+          displace: 12, // Increased for more distortion
+          distortionScale: -110, // Adjusted
+          redOffset: 0, // Adjusted for more aberration
+          greenOffset: 12, // Adjusted
+          blueOffset: 28, // Adjusted
           mixBlendMode: "screen"
         });
 
         // 2. Add the "cinematic" mouse move effect
         window.addEventListener('mousemove', (e) => {
-          const { clientX, clientY } = e;
-          const { innerWidth, innerHeight } = window;
+          const {
+            clientX,
+            clientY
+          } = e;
+          const {
+            innerWidth,
+            innerHeight
+          } = window;
 
           // Calculate move percentage (-1 to +1)
           const moveX = (clientX / innerWidth - 0.5) * 2;
@@ -2455,10 +2952,13 @@
 
           // Apply a subtle 3D rotation using GSAP (which is already loaded)
           gsap.to(navElement, {
-            rotationY: moveX * 5,  // 5 degrees max
+            rotationY: moveX * 5, // 5 degrees max
             rotationX: -moveY * 3, // 3 degrees max
             ease: 'power1.out',
             duration: 1.5
+            // NOTE: GSAP automatically combines these rotation 
+            // properties with the 'scale' and 'opacity' 
+            // set by the scroll listener.
           });
         });
 
