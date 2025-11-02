@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hero Section with Card Swap</title>
+  <title>Log Ai</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,6 +12,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <!-- NEW: Add Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <!-- NEW: Add Tone.js for sound -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
   <style>
     /* --- Global Styles & Resets --- */
     body {
@@ -53,6 +57,7 @@
       overflow: hidden;
       box-sizing: border-box;
 
+
       /* --- Gradient (From image) --- */
       color: #a0a0a0;
       background-color: #030508;
@@ -60,6 +65,7 @@
       background-image: radial-gradient(circle at 60% 0%,
           #000000 15%,
           #04005775 80%);
+      /* === END USER REQUEST === */
     }
 
     /* --- 1. Smaller Decorative Image --- */
@@ -402,6 +408,34 @@
       z-index: 1;
     }
 
+    /* === NEW: Glow behind "Business Ecosystem" Heading === */
+    .glow-background::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      /* Center on the container */
+      transform: translate(-50%, -50%);
+      width: 60%;
+      /* Adjust size as needed */
+      height: 60%;
+      /* Adjust size as needed */
+      min-width: 400px;
+      /* Ensure it's wide enough */
+
+      /* The radial glow */
+      background-image: radial-gradient(ellipse 50% 50% at 50% 50%,
+          rgba(59, 130, 246, 0.4),
+          /* Theme blue, 40% opacity */
+          transparent 70%);
+
+      filter: blur(80px);
+      /* Soft blur */
+      z-index: -1;
+      /* Behind the text */
+      pointer-events: none;
+    }
+
     /* REMOVED: .glow-background::before rule. This is now handled by .ecosystem-arc-glow */
 
     /* --- START OF AI ECOSYSTEM CSS --- */
@@ -524,7 +558,7 @@
       backface-visibility: visible;
       -webkit-backface-visibility: visible;
     }
- 
+
     .ecosystem-container .card::before {
       content: '';
       position: absolute;
@@ -931,7 +965,76 @@
       justify-content: center;
       overflow: hidden;
       /* This is crucial! */
+      /* ADDED: position: relative to anchor the pseudo-element */
+      position: relative;
+
+      /* === MOVED FROM PARENT WRAPPER === */
+      /* This makes the gradient "stick" with the animation */
+      /* === MODIFICATION: Replaced linear-gradient with radial-gradient === */
+      /* REMOVED:
+      background-image: linear-gradient(to bottom,
+          #0F40D4 0px,
+          #0B0B0B 1000px);
+      */
+      /* ADDED: A radial glow, blue center fading to black */
+      /* === MODIFICATION 2: Moved radial gradient to bottom === */
+      /* REMOVED:
+      background-image: radial-gradient(ellipse 60% 70% at 50% 50%,
+...
+      */
+      /* ADDED: A radial glow positioned at the bottom ("lower half") */
+      /* === MODIFICATION 3: Moved radial gradient to top ("UPPER HALF") === */
+      /* REMOVED:
+      background-image: radial-gradient(ellipse 100% 70% at 50% 120%,
+          #0F40D4 0%,
+          #0B0B0B 70%);
+      */
+      /* ADDED: A radial glow positioned at the top */
+      background-image: radial-gradient(ellipse 100% 70% at 50% -20%,
+          #0F40D4 0%,
+          #0B0B0B 70%);
+      /* === END MODIFICATION 3 === */
+      /* === MODIFICATION 4: Match Stats glow to #2464EA === */
+      background-image: radial-gradient(ellipse 100% 70% at 50% -20%,
+          #2464EA 0%,
+          /* <-- CHANGED: Use new blue hex code */
+          #0B0B0B 70%);
+      /* === END MODIFICATION 4 === */
+      /* === MODIFICATION 5: Use new color #0F40D4 for Stats glow === */
+      background-image: radial-gradient(ellipse 100% 70% at 50% -20%,
+          #0F40D4 0%,
+          /* <-- CHANGED: Use new blue hex code */
+          #0B0B0B 70%);
+      /* === END MODIFICATION 5 === */
+      /* === MODIFICATION 6: Add blue extension *then* radial glow === */
+      background-image:
+        /* 1. The radial glow, now centered and lower, fading to transparent */
+        /* === USER EDIT: Uplifted radial glow from 60% to 40% === */
+        radial-gradient(ellipse 80% 60% at 50% 40%,
+          /* <-- CHANGED: Was 60% */
+          #0F40D4 0%,
+          transparent 70%),
+        /* 2. The base linear gradient (blue extending down) */
+        linear-gradient(to bottom,
+          #0F40D4 0%,
+          #0B0B0B 70%);
+      background-size: 100% 100%, 100% 100%;
+      /* Apply to both */
+      background-repeat: no-repeat, no-repeat;
+      /* Apply to both */
+      /* === END MODIFICATION 6 === */
     }
+
+    /* === NEW: Black shade overlay === */
+    /* === REMOVED: This black shade is no longer needed === */
+    /*
+    .stats-sticky-wrapper::before {
+      content: '';
+...
+      z-index: 1;
+    }
+    */
+
 
     /* 3. The individual stat cards */
     .stat-card {
@@ -946,6 +1049,9 @@
       /* Start invisible and ready for animation */
       opacity: 0;
       will-change: transform, opacity, filter;
+      /* ADDED: z-index to appear above the new ::before shade */
+      /* (This z-index is still fine, it just ensures text is on top) */
+      z-index: 2;
     }
 
     /* Keep the existing styles you had for the content */
@@ -1077,15 +1183,14 @@
       background-color: #000;
     }
 
-    /* --- CHANGE THIS --- */
     .sticky-wrapper::before {
-      /* --- TO THIS --- */
-
       content: '';
       position: absolute;
 
       /* These 3 lines center it in the full-screen sticky wrapper */
-      top: 50%;
+      /* MODIFICATION 1: "SHIFT IT DOWN A LITTLE" */
+      top: 65%;
+      /* <-- CHANGED: Was 50% */
       left: 60%;
       transform: translate(-50%, -50%);
 
@@ -1097,15 +1202,16 @@
       max-height: 600px;
 
       /* The cinematic blue/white gradient */
+      /* === MODIFICATION 3: Use specific hex code #2464EA === */
       background-image: radial-gradient(circle,
-          rgba(255, 255, 255, 0.938) 0%,
-          /* Bright white-blue center */
-          /* UPDATED: Changed this to match the Stats section blue */
-          rgba(15, 64, 212, 0.3) 40%,
-          /* The blue from your theme */
+          rgba(36, 100, 234, 0.5) 0%,
+          /* <-- New blue center (#2464EA) */
+          rgba(36, 100, 234, 0.3) 40%,
+          /* <-- New blue shade (#2464EA) */
           transparent 70%
-          /* Fades to nothing */
+          /* <-- Fade out */
         );
+      /* === END MODIFICATION 3 === */
 
       filter: blur(100px);
       mix-blend-mode: hard-light;
@@ -1118,42 +1224,45 @@
       overflow: hidden;
       /* To contain the glow */
 
-      /* --- NEW: Added gradient --- */
-      /* UPDATED: Changed this to a solid blue color to remove the
-        fade-to-black. This color (#0F40D4) exactly matches the
-        starting color of the Stats section gradient below,
-        creating a seamless transition. */
-      background-color: #0F40D4;
-      /* REMOVED: The linear-gradient that faded to black */
+      /* --- MODIFIED: Added gradient --- */
+      /* This fades from the black above it (#0B0B0B) to the solid blue (#0F40D4) */
+      /* The fade happens over the first 500px, covering the heading area. */
+      background-image: linear-gradient(to bottom,
+          #02040A 0%,
+          #0F40D4 500px,
+          #0F40D4 100%);
+      /* REMOVED: background-color: #0F40D4; */
     }
 
-    .ecosystem-arc-glow::before {
+    /* REMOVED: .ecosystem-arc-glow::before rule */
+    /* .ecosystem-arc-glow::before {
       content: '';
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 150%;
-      /* Very wide */
-      height: 1000px;
-      /* Tall */
-      /* An arc-shaped gradient at the top-center */
-      background-image: radial-gradient(ellipse 80% 40% at 50% 0%,
-          rgba(15, 64, 212, 0.3),
-          /* #0F40D4 at 30% opacity */
-          transparent 70%);
-      z-index: 0;
-      /* Behind content */
+...
       pointer-events: none;
-    }
+    } */
 
     /* === NEW CSS FOR STATS GRADIENT (Point 4) === */
     .blue-to-black-gradient-wrapper {
       /* Black fallback */
       /* RESTORED: Per your request, this gradient is now back on the stats/pricing section wrapper */
-      background-image: linear-gradient(to bottom,
-          #0F40D4 0px,
-          #0B0B0B 1000px);
+      /*
+        REMOVED: background-image: linear-gradient(...)
+        This was moved to .stats-sticky-wrapper to make it pin correctly.
+      */
+      /* This is the solid black that will appear *after* the sticky section scrolls away */
+      /* === MODIFICATION 1: Replace solid color with a gradient === */
+      /* REMOVED: background-color: #0B0B0B; */
+      /* ADDED: A new gradient that transitions to the footer's base color (#030508) */
+      /* background-image: linear-gradient(to bottom, #0F40D4 0%, #030508 100%); */
+      /* <-- CHANGED: Was #0F34A5 */
+      /* === END MODIFICATION 1 === */
+
+      /* === USER REQUEST: Set background to #0B0B0B === */
+      background-image: none;
+      background-color: #0B0B0B;
+      /* === END USER REQUEST === */
+
+
       /* Prevents margin collapse */
       margin-top: -1rem !important;
       /* ADDED: position: relative is required for the ::before pseudo-element */
@@ -1163,26 +1272,12 @@
       /* REMOVED: overflow: hidden; (which was clipping sticky elements) */
     }
 
-    /* ADDED: Copied from .ecosystem-arc-glow::before to add the arc here too */
-    .blue-to-black-gradient-wrapper::before {
+    /* REMOVED: .blue-to-black-gradient-wrapper::before rule */
+    /* .blue-to-black-gradient-wrapper::before {
       content: '';
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 150%;
-      /* Very wide */
-      height: 1000px;
-      /* Tall */
-      /* An arc-shaped gradient at the top-center */
-      background-image: radial-gradient(ellipse 80% 40% at 50% 0%,
-          rgba(15, 64, 212, 0.3),
-          /* #0F40D4 at 30% opacity */
-          transparent 70%);
-      z-index: 0;
-      /* Behind content */
+...
       pointer-events: none;
-    }
+    } */
 
     /* === NEW CSS FOR STICKY EXPLORE SECTION === */
     #explore-features-section {
@@ -1196,7 +1291,13 @@
 
       /* This provides the background that the footer will scroll over. */
       /* It matches the end-color of the gradient from the previous wrapper. */
-      background-color: #0B0B0B;
+      /* === MODIFICATION 2: Make background transparent === */
+      /* REMOVED: background-color: #0B0B0B; */
+      background-color: transparent;
+      /* === END MODIFICATION 2 === */
+
+      margin-top: 5rem;
+      /* <-- ADDED */
 
       /* The existing flex properties on the class will handle centering: */
       /* (flex flex-col items-center justify-center) */
@@ -1207,7 +1308,7 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      /* justify-content: center; */
     }
 
     /* === NEW: Pricing Card Border Animation === */
@@ -1347,6 +1448,18 @@
 
       <div class="content-area-shape bg-black w-full h-full rounded-[15px] p-6 md:p-12 text-white">
 
+        <!-- NEW: Sound Toggle Button -->
+        <button id="sound-toggle"
+          class="absolute z-20 top-6 right-6 md:top-12 md:right-12 p-3 bg-white/10 backdrop-blur-sm rounded-full text-white hover:bg-white/20 transition-all focus:outline-none">
+          <!--
+              FIX: Replaced w-5 h-5 md:w-6 md:h-6 with
+              Tailwind's font-size utilities (text-xl md:text-2xl)
+              which Font Awesome uses to scale icons.
+            -->
+          <i id="sound-icon" class="fa-solid fa-volume-high text-xl md:text-2xl"></i>
+        </button>
+        <!-- END: Sound Toggle Button -->
+
         <h1 class="heading">LOG AI</h1>
         <div class="pt-0 md:pt-2 max-w-2xl relative z-0">
           <h2 class="text-4xl md:text-6xl font-bold text-white leading-tight">
@@ -1400,7 +1513,7 @@
   </div>
 
   <main class="w-full mt-12 space-y-12">
-    <section id="features-and-stats" class="px-8 pt-20">
+    <section id="features-and-stats" class="px-8 pt-0">
 
       <div class="flex flex-wrap justify-center gap-4 md:gap-6 mt-6">
         <p class="text-3xl md:text-5xl font-bold mb-4 text-center">
@@ -1491,10 +1604,11 @@
         </div>
       </section>
 
-      <section class="relative z-10 py-24 px-8">
+      <!-- MODIFIED: Changed px-1 to px-4 md:px-8 -->
+      <section class="relative z-10 py-24 px-4 md:px-8">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-min">
           <div
-            class="md:col-span-1 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col justify-between transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            class="md:col-span-1 md:row-span-1 min-h-[12rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col justify-between transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20 hover:scale-105 hover:brightness-110">
             <div>
               <h3 class="text-white font-semibold text-base">Smart CRM</h3>
             </div>
@@ -1502,50 +1616,55 @@
               class="w-16 h-16 self-start object-cover rounded-full">
           </div>
           <div
-            class="md:col-span-1 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex items-center justify-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            class="md:col-span-1 md:row-span-1 min-h-[12rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex items-center justify-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20 hover:scale-105 hover:brightness-110">
             <img src="https://placehold.co/120x120/111827/4B5563?text=Shield" alt="Security Graphic"
               class="w-28 h-28 object-cover">
           </div>
           <div
-            class="md:col-span-2 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col justify-between transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            class="md:col-span-2 md:row-span-1 min-h-[12rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col justify-between transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20 hover:scale-105 hover:brightness-110">
             <div>
               <h3 class="text-white font-semibold text-base">Workflow Automation</h3>
             </div>
             <img src="https://placehold.co/250x80/111827/4B5563?text=Workflow" alt="Workflow Graphic"
               class="w-full h-16 object-cover rounded-lg">
           </div>
+          <!-- MODIFIED: Card 4 - Changed row-span-2 to row-span-1 -->
           <div
-            class="md:col-span-1 md:row-span-2 min-h-[13rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col justify-start transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            class="md:col-span-1 md:row-span-1 min-h-[12rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col justify-start transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20 hover:scale-105 hover:brightness-110">
             <h3 class="text-white font-semibold text-base">AI Content Studio</h3>
             <p class="text-gray-300 text-xs mt-2">AI-powered banner and poster generator plus intelligent.</p>
           </div>
           <div
-            class="md:col-span-1 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            class="md:col-span-1 md:row-span-1 min-h-[12rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20 hover:scale-105 hover:brightness-110">
             <img src="https://placehold.co/80x80/111827/4B5563?text=Report" alt="Report Graphic"
               class="w-16 h-16 object-cover rounded-full mb-2">
             <h3 class="text-white font-semibold text-base">AI Report Generator</h3>
           </div>
+          <!-- MODIFIED: Card 6 - Changed row-span-2 to row-span-1 -->
           <div
-            class="md:col-span-1 md:row-span-2 min-h-[13rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            class="md:col-span-1 md:row-span-1 min-h-[12rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20 hover:scale-105 hover:brightness-110">
             <h3 class="text-white font-semibold text-base mb-2">Meeting Platform</h3>
             <img src="https://placehold.co/150x150/111827/4B5563?text=Meeting" alt="Meeting Graphic"
               class="w-36 h-36 object-cover rounded-lg">
           </div>
+          <!-- MODIFIED: Card 7 - Changed row-span-2 to row-span-1 -->
           <div
-            class="md:col-span-1 md:row-span-2 min-h-[13rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            class="md:col-span-1 md:row-span-1 min-h-[12rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20 hover:scale-105 hover:brightness-110">
             <h3 class="text-white font-semibold text-base mb-2">AI Report Generator</h3>
             <img src="https://placehold.co/150x150/111827/4B5563?text=Report+2" alt="Report Graphic 2"
               class="w-36 h-36 object-cover rounded-lg">
           </div>
+          <!-- MODIFIED: Card 8 - This is Row 3, Box 1 (Square) -->
           <div
-            class="md:col-span-1 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            class="md:col-span-1 md:row-span-1 min-h-[12rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20 hover:scale-105 hover:brightness-110">
             <img src="https://placehold.co/80x80/111827/4B5563?text=Report+3" alt="Report Graphic"
               class="w-16 h-16 object-cover rounded-full mb-2">
             <h3 class="text-white font-semibold text-base">AI Report Generator</h3>
             <p class="text-gray-300 text-xs mt-2">Al-powered banner and poster generator plus intelligent.</p>
           </div>
+          <!-- MODIFIED: Card 9 - This is Row 3, Box 2 (Rectangle) - Changed col-span-1 to col-span-2 -->
           <div
-            class="md:col-span-1 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col justify-between transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            class="md:col-span-2 md:row-span-1 min-h-[12rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex flex-col justify-between transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20 hover:scale-105 hover:brightness-110">
             <div>
               <h3 class="text-white font-semibold text-base">AI Content Studio</h3>
               <p class="text-gray-300 text-xs mt-2">AI-powered banner and poster generator plus intelligent.</p>
@@ -1553,16 +1672,20 @@
             <img src="https://placehold.co/100x50/111827/4B5563?text=Data" alt="Data Graphic"
               class="w-full h-12 object-cover rounded-lg">
           </div>
+          <!-- MODIFIED: Card 10 - This is Row 3, Box 3 (Square) - Changed col-span-2 to col-span-1 -->
           <div
-            class="md:col-span-2 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex items-center justify-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            class="md:col-span-1 md:row-span-1 min-h-[12rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex items-center justify-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20 hover:scale-105 hover:brightness-110">
             <img src="https://placehold.co/300x150/111827/4B5563?text=Abstract" alt="Abstract Graphic"
               class="w-full h-28 object-cover rounded-lg">
           </div>
+          <!-- Card 11 - This card now wraps to Row 4 -->
+          <!-- DELETED
           <div
-            class="md:col-span-1 md:row-span-1 min-h-[6rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex items-center justify-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20">
+            class="md:col-span-1 md:row-span-1 min-h-[12rem] rounded-3xl p-4 bg-gray-900 border border-gray-700 flex items-center justify-center transition-all duration-300 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/20 hover:scale-105 hover:brightness-110">
             <img src="https://placehold.co/200x150/111827/4B5563?text=Map" alt="World Map Graphic"
               class="w-full h-28 object-cover rounded-lg">
           </div>
+          -->
         </div>
       </section>
 
@@ -1697,7 +1820,9 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto items-start">
 
-          <div class="pricing-card">
+          <!-- MODIFIED: Added h-[520px] -->
+          <div
+            class="pricing-card transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/30 h-[520px]">
             <div class="pricing-card-content"
               style="--card-bg: #0b0f29cc; --card-border: #3b82f699; --card-bg-hover: #0b0f29; --card-border-hover: #3b82f6cc;">
               <h3 class="text-2xl font-semibold text-white mb-4">Basic Plan</h3>
@@ -1718,7 +1843,9 @@
             </div>
           </div>
 
-          <div class="pricing-card pro-plan relative -my-6 lg:-my-8 shadow-2xl shadow-blue-500/40">
+          <!-- MODIFIED: Removed margins (mt-12 -mb-16 lg:-mb-20), added h-[570px] and lg:-translate-y-6 -->
+          <div
+            class="pricing-card pro-plan relative shadow-2xl shadow-blue-500/40 transition-all duration-300 hover:scale-105 hover:shadow-blue-500/60 h-[570px] lg:-translate-y-6 -mt-6">
             <div class="pricing-card-content"
               style="--card-bg: linear-gradient(to bottom, #1e2a75, #0c102c); --card-border: #3b82f6; --card-bg-hover: linear-gradient(to bottom, #1e2a75, #0c102c); --card-border-hover: #3b82f6;">
               <h3 class="text-2xl font-semibold text-white mb-4">Pro Plan</h3>
@@ -1739,7 +1866,9 @@
             </div>
           </div>
 
-          <div class="pricing-card">
+          <!-- MODIFIED: Added h-[520px] -->
+          <div
+            class="pricing-card transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/30 h-[520px]">
             <div class="pricing-card-content"
               style="--card-bg: #0b0f29cc; --card-border: #3b82f699; --card-bg-hover: #0b0f29; --card-border-hover: #3b82f6cc;">
               <h3 class="text-2xl font-semibold text-white mb-4">Enterprice Plan</h3>
@@ -1762,9 +1891,10 @@
 
         </div>
       </section>
-
+      <br>
+      <br>
       <section id="explore-features-section" class="px-8 flex flex-col items-center justify-center text-white">
-        <h2 class="text-4xl md:text-5xl font-bold mb-12 text-center">
+        <h2 class="text-4xl md:text-5xl font-bold mb-0 text-center mt -16">
           Explore Our
           <span class="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
             Platform Features
@@ -2685,7 +2815,7 @@
         const cardTimeline = gsap.timeline({
           scrollTrigger: {
             trigger: ".ecosystem-container",
-            scrub: 1.5, // <-- MODIFIED: Was 1. Makes scrub smoother.
+            scrub: 3, // <-- MODIFIED: Increased from 2.5 for an even smoother feel
             start: "top top",
             end: "bottom bottom"
           }
@@ -2696,18 +2826,18 @@
           // Each card will animate in and stay.
           cardTimeline.fromTo(card,
             {
-              y: 400, // <-- MODIFIED: Start from further down
-              scale: 0.9,
+              // MODIFIED: Increased 'y' to 300 for a "from the bottom" feel
+              y: 300,
               opacity: 0
             },
             {
               y: 0,
-              scale: 1,
+              scale: 1, // Ensure final scale is 1
               opacity: 1,
-              duration: 1, // Use duration to space them out
-              ease: 'power2.out' /* <-- MODIFIED: Was power1.inOut */
+              duration: 1.5,
+              ease: 'power3.out'
             },
-            index * 0.6 // <-- MODIFIED: Was 0.2. Makes stagger slower.
+            index * 1.0 // <-- MODIFIED: Increased stagger from 0.8
           );
         });
       }
@@ -2776,7 +2906,28 @@
       }
       // === END OF STATS SCROLLY-TELLING ===
 
-      // === NEW: Counter Animation for Section 2 ===
+      // === 10. PRICING PLANS APPEARANCE ANIMATION (NEW) ===
+      const pricingSection = document.querySelector('section.py-20'); // The pricing <section>
+      if (pricingSection) {
+        const pricingCards = gsap.utils.toArray(".pricing-card");
+
+        gsap.from(pricingCards, {
+          scrollTrigger: {
+            trigger: pricingSection,
+            start: "top 70%", // Start when 70% from top
+            toggleActions: "play none none none", // Play once on enter
+          },
+          // MODIFIED: Removed opacity: 0 to make them visible by default
+          y: 100,
+          scale: 0.95,
+          stagger: 0.2, // Animate them in one by one
+          duration: 0.8,
+          ease: "power2.out",
+        });
+      }
+      // === END OF PRICING PLANS ANIMATION ===
+
+      // === 11. Counter Animation for Section 2 ===
       const statsSection = document.getElementById('features-and-stats');
       if (statsSection) {
         const counterDefaults = {
@@ -2838,6 +2989,29 @@
         });
       }
       // === END: Counter Animation ===
+
+
+      // === 12. EXPLORE FEATURES APPEARANCE ANIMATION (NEW) ===
+      const exploreSectionTrigger = document.getElementById('explore-features-section');
+      if (exploreSectionTrigger) {
+        const exploreHeading = exploreSectionTrigger.querySelector('h2');
+        const exploreCarousel = exploreSectionTrigger.querySelector('.carousel-container');
+
+        // Animate the heading and carousel in when the section is about to be pinned
+        gsap.from([exploreHeading, exploreCarousel], {
+          scrollTrigger: {
+            trigger: exploreSectionTrigger,
+            start: "top 80%", // Start when 80% from top
+            toggleActions: "play none none none", // Play once
+          },
+          opacity: 0,
+          y: 80,
+          duration: 1.0,
+          stagger: 0.2, // Animate heading, then carousel
+          ease: "power2.out",
+        });
+      }
+      // === END OF EXPLORE FEATURES ANIMATION ===
 
 
       // 🚀 === FOOTER OVERLAY ANIMATION (CORE PINNING) === 🚀
@@ -2954,10 +3128,95 @@
             // properties with the 'scale' and 'opacity' 
             // set by the scroll listener.
           });
-        });
+
+        }); // <-- FIX: Added closing bracket and parenthesis for the event listener
 
       }
       // === END OF GLASSNAV INIT ===
+
+      // === 13. AMBIENT SOUND LOGIC (NEW) ===
+      const soundButton = document.getElementById('sound-toggle');
+      const soundIcon = document.getElementById('sound-icon');
+
+      if (soundButton && soundIcon && typeof Tone !== 'undefined') {
+        // DELETED: SVG path variables
+        // const iconSoundOn = '...';
+        // const iconSoundOff = '...';
+
+        // Set initial icon - This is now done in the HTML
+        // soundIcon.innerHTML = iconSoundOff;
+        let isMuted = true;
+        let isInitialized = false;
+
+        // Create a simple ambient synth pad
+        const synth = new Tone.PolySynth(Tone.Synth, {
+          oscillator: {
+            type: 'amsine' // A softer, ambient sound
+          },
+          envelope: {
+            attack: 0.5,
+            decay: 0.1,
+            sustain: 1,
+            release: 1
+          },
+          volume: -20 // Lower volume for background music
+        }).toDestination();
+
+        // Create a looping pattern
+        const loop = new Tone.Loop(time => {
+          // A simple C major 7 chord (C, E, G, B)
+          synth.triggerAttackRelease(['C3', 'E3', 'G3', 'B3'], '4n', time);
+          synth.triggerAttackRelease(['C2', 'E2', 'G2', 'B2'], '2n', time + Tone.Time('4n'));
+        }, '1m').start(0); // '1m' = one measure
+
+        soundButton.addEventListener('click', async () => {
+          try {
+            if (!isInitialized) {
+              // Start the audio context on first user interaction
+              await Tone.start();
+              // Start the transport (Tone's master clock)
+              Tone.Transport.start();
+              console.log('Audio context started and transport running.');
+              isInitialized = true;
+              // On first click, user clicks "volume-high" and wants "volume-xmark".
+              // This means we are "muting" from the default visual state.
+              // The sound was already muted, so we just keep it muted.
+              isMuted = true;
+              Tone.Transport.mute = true;
+            } else {
+              // Toggle mute state
+              isMuted = !isMuted;
+              Tone.Transport.mute = isMuted;
+              console.log('Sound toggled. Muted:', isMuted);
+            }
+
+            // Update icon based on state
+            if (isMuted) {
+              // Sound is OFF, show the X-mark icon
+              soundIcon.classList.remove('fa-volume-high');
+              soundIcon.classList.add('fa-volume-xmark');
+            } else {
+              // Sound is ON, show the high-volume icon
+              soundIcon.classList.remove('fa-volume-xmark');
+              soundIcon.classList.add('fa-volume-high');
+            }
+          } catch (e) {
+            console.error("Error starting audio:", e);
+            // Hide button if audio fails to start
+            if (soundButton) {
+              soundButton.style.display = 'none';
+            }
+          }
+        });
+
+      } else {
+        // Hide button if Tone.js fails to load or elements are missing
+        console.log('Sound button or Tone.js not found. Hiding button.');
+        if (soundButton) {
+          soundButton.style.display = 'none';
+        }
+      }
+      // === END OF AMBIENT SOUND LOGIC ===
     });
   </script>
 
